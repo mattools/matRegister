@@ -268,7 +268,7 @@ img.show();
 \end_layout
 
 \begin_layout Standard
-Pour représenter une image 3D, on a deux méthodes :
+Pour représenter une image 3D, on a plusieurs méthodes :
 \end_layout
 
 \begin_layout Description
@@ -277,6 +277,11 @@ showOrthoSlices affiche 3 coupes orthogonales dans un même repère
 
 \begin_layout Description
 showOrthoPlanes affiche 3 coupes orthogonales chacune dans un axe
+\end_layout
+
+\begin_layout Description
+isosurface appelle la fonction éponyme de Matlab, avec la bonne calibration
+ spatiale
 \end_layout
 
 \begin_layout Chapter
@@ -1205,7 +1210,7 @@ La même que précédemment, mais elle hérite en plus de ParametricTransform.
 \end_layout
 
 \begin_layout Subsection
-TransformGradientResampler
+TransformJacobianResampler
 \end_layout
 
 \begin_layout Standard
