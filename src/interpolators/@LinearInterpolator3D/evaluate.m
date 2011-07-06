@@ -29,7 +29,7 @@ zt  = coord(:, 3);
 
 % select points located inside interpolation area
 % (smaller than image physical size)
-siz = getSize(this.image);
+siz = size(this.image);
 isBefore    = sum(coord < 1, 2) > 0;
 isAfter     = xt >= siz(1) | yt >= siz(2) | zt >= siz(3);
 isInside    = ~(isBefore | isAfter);

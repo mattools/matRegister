@@ -32,7 +32,7 @@ methods
         elseif isa(varargin{1}, 'Image')
             % initialisation constructor
             image = varargin{1};
-            if getDimension(image)~=2
+            if ndims(image)~=2
                 error('Image dimension should equal 2');
             end
             

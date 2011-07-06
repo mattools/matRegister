@@ -57,7 +57,7 @@ assertEqual(trans, mat);
 function test_createFromMotion
 
 % create transfo
-rot   = createEulerAnglesRotation(.1, .2, .3);
+rot   = eulerAnglesToRotation3d(10, 20, 30);
 crot  = recenterTransform3d(rot, [3 4 5]);
 transfo = CenteredAffineTransformModel3D(crot);
 
@@ -69,7 +69,7 @@ assertEqual(crot, mat);
 function test_createCenteredRotation
 
 % create transfo
-rot   = createEulerAnglesRotation(.1, .2, .3);
+rot   = eulerAnglesToRotation3d(10, 20, 30);
 transfo = CenteredAffineTransformModel3D(rot);
 
 % add center

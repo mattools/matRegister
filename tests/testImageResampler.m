@@ -23,12 +23,12 @@ img = Image.read('cameraman.tif');
 
 res = ImageResampler(1:300, 1:300);
 img2 = res.resample(img, 'linear');
-assertEqual([300 300], img2.getSize());
+assertEqual([300 300], size(img2));
 
 lin = .5:.5:300;
 res = ImageResampler(lin, lin);
 img2 = res.resample(img, 'linear');
-assertEqual([600 600], img2.getSize());
+assertEqual([600 600], size(img2));
 assertEqual([.5 .5], img2.getOrigin());
 assertEqual([.5 .5], img2.getSpacing());
 
@@ -49,4 +49,4 @@ res = ImageResampler(lx, ly, lz);
 
 % compute resampled image
 img2 = res.resample(img, 'linear');
-assertEqual([20 30 40], img2.getSize());
+assertEqual([20 30 40], size(img2));

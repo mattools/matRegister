@@ -107,6 +107,14 @@ methods (Access = private)
         % This is a (ND+1)-by-ND array containing the coordinates of a
         % vertex on each row.
         
+        if isempty(this.params)
+            if isempty(this.initialParameters)
+                error('oolip:NelderMeadSimplexOptimizer:initialization', ...
+                    'Need to specify initial parameters');
+            end
+            this.params = this.initialParameters;
+        end
+        
         nd = length(this.params);
         
         % ensure delta has valid value

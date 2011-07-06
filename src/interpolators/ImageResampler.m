@@ -60,7 +60,7 @@ methods
         elseif isa(varargin{1}, 'Image')
             % Initialize fields from a given image
             img = varargin{1};
-            this.outputSize = img.getSize();
+            this.outputSize = size(img);
             this.outputType = img.getDataType();
             this.origin     = img.getOrigin();
             this.spacing    = img.getSpacing();

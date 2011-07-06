@@ -48,7 +48,7 @@ methods(Static)
         % interp = ImageInterpolator.create(img, 'linear');
         %
         
-        nd = length(img.getSize());
+        nd = ndims(img);
         
         if strcmpi(type, 'linear')
             % depending on the dimension, create a specific interpolator
@@ -125,7 +125,7 @@ methods
         %
         %   D = img.getDimension();
         %   Returns the dimension of the inner image
-        d = this.image.getDimension();
+        d = ndims(this.image);
     end
     
     function dim = getElementSize(this, varargin)

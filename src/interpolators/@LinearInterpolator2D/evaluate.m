@@ -32,7 +32,7 @@ yt  = coord(:, 2);
 
 % select points located inside interpolation area
 % (smaller than image physical size)
-siz = this.image.getSize();
+siz = size(this.image);
 isInside = ~(xt < 1 | yt < 1 | xt >= siz(1) | yt >= siz(2));
 xt  = xt(isInside);
 yt  = yt(isInside);
@@ -51,7 +51,7 @@ dxi = 1 - dx;
 dyi = 1 - dy;
 
 % image sizes
-siz     = this.image.getSize();
+siz     = size(this.image);
 dimX    = siz(1);
 
 inds    = (j1 - 1) * dimX + i1;

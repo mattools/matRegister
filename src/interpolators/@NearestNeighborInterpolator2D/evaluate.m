@@ -24,7 +24,7 @@ function [val isInside] = evaluate(this, varargin)
 coord = this.image.pointToContinuousIndex(point);
 
 % size of elements: number of channels by number of frames
-elSize = this.image.getElementSize();
+elSize = elementSize(this.image);
 
 % number of dimension of input coordinates
 dim0 = dim;
@@ -43,11 +43,10 @@ yt = coord(:, 2);
 
 % select points located inside interpolation area
 % (smaller than image physical size)
-siz = this.image.getSize();
+siz = size(this.image);
 isInside = ~(xt<-.5 | yt<-.5 | xt>=siz(1)-.5 | yt>=siz(2)-.5);
 xt = xt(isInside);
 yt = yt(isInside);
-isInside = reshape(isInside, dim);
 
 % indices of pixels before and after in each direction
 i1 = round(xt);
@@ -56,7 +55,7 @@ j1 = round(yt);
 % values of the nearest neighbor
 if prod(elSize) == 1
     % case of scalar image, no movie
-    val(isInside,:,:) = double(this.image.getPixels(i1, j1));
+    val(isInside) = double(this.image.getPixels(i1, j1));
     
 else
     % compute interpolated values
@@ -83,3 +82,4 @@ else
     end
 end
 
+isInside = reshape(isInside, dim);
