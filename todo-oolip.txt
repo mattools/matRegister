@@ -26,7 +26,14 @@ Interpolators
     resampleSlicer(IMGFUN, PLANE, UDATA, VDATA);
     sliceResampler(IMGFUN, PLANE, UDATA, VDATA);
 
-
+- 2011.07.13 ajouter une classe "ImageResampler", dans la lignee des options
+    disponibles sous Elastix. Sous-classes :
+    + FullResampler -> itere sur tous les pixels / voxels
+    + GridResampler -> 1 pixel sur 2, 3, 4... dans chaque direction
+    + RandomResampler -> 
+    + RandomPointsResampler
+    Passer par des itérateurs ?
+    
     
 Parametric transforms
 =====================
@@ -55,17 +62,24 @@ Metriques
     stockes dans la classe, mais il serait plus juste de les transmettre
     en parametres ?
     Dans ce cas, utiliser une classe specifique pour eviter les copies de
-    memoire
+    memoire (-> voir la classe ImageResampler)
 
 Optimisateurs
 =============
 
-- gerer plusieurs types de condition d'arret (2010.12.03)
+- 2010.12.03 gerer plusieurs types de condition d'arret
     + max_iter
     + precision en x
     + precision en f
 
+- 2011.07.13 Gerer plusieurs types de décroissance de norme du gradient
+    + exponentiel
+    + exponentiel avec decay ajusté au nombre d'itérations
+    + truc Elastix
     
+- 2011.07.13 Implémenter descente de gradient avec pas adaptatif
+
+        
 Divers
 ======
 
