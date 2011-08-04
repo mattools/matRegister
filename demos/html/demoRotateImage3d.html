@@ -1,0 +1,233 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      --><title>demoRotateImage3d</title><meta name="generator" content="MATLAB 7.9"><meta name="date" content="2010-07-27"><meta name="m-file" content="demoRotateImage3d"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Lecture</a></li><li><a href="#4">Creation du maillage</a></li><li><a href="#5">Interpolation de l'image</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = demoRotateImage3d(varargin)
+</pre><pre class="codeinput"><span class="comment">%DEMOROTATEIMAGE3D  One-line description here, please.</span>
+<span class="comment">%</span>
+<span class="comment">%   output = demoRotateImage3d(input)</span>
+<span class="comment">%</span>
+<span class="comment">%   Example</span>
+<span class="comment">%   demoRotateImage3d</span>
+<span class="comment">%</span>
+<span class="comment">%   See also</span>
+<span class="comment">%</span>
+<span class="comment">%</span>
+<span class="comment">% ------</span>
+<span class="comment">% Author: David Legland</span>
+<span class="comment">% e-mail: david.legland@grignon.inra.fr</span>
+<span class="comment">% Created: 2010-07-27,    using Matlab 7.9.0.529 (R2009b)</span>
+<span class="comment">% Copyright 2010 INRA - Cepia Software Platform.</span>
+</pre><h2>Lecture<a name="3"></a></h2><pre class="codeinput"><span class="comment">% lecture de l'image de test</span>
+imgDir = fullfile(<span class="string">'d:'</span>, <span class="string">'images'</span>, <span class="string">'amib'</span>, <span class="string">'clermont'</span>, <span class="string">'roi_memri'</span>);
+fileName = fullfile(imgDir, <span class="string">'BRNOR39e5p1'</span>, <span class="string">'BRNOR39e5p1Ball5Msk160.mhd'</span>);
+img = metaImageRead(fileName);
+
+<span class="comment">% selectionne la zone interessante, et convertit en 256 niveaux de gris</span>
+imgCrop = img(1:160, 31:130, 81:160);
+imgCrop = imRescale(imgCrop);
+
+figure(1); clf; hold <span class="string">on</span>;
+orthoSlices(imgCrop);
+</pre><img vspace="5" hspace="5" src="demoRotateImage3d_01.png" alt=""> <h2>Creation du maillage<a name="4"></a></h2><pre class="codeinput"><span class="comment">% binarisation et nettoyage</span>
+imgCropBin = imopen(imgCrop&gt;0, ones([3 3 3]));
+
+<span class="comment">% creation de la transformation a appliquer</span>
+rot = createEulerAnglesRotation(10*pi/180, 20*pi/180, 30*pi/180);
+rot2 = recenterTransform3d(rot, [50 80 40]);
+
+<span class="comment">% calcul de la surface du cerveau</span>
+[f0 v0] = isosurface(imgCropBin);
+
+<span class="comment">% affiche la surface</span>
+figure(2); clf; hold <span class="string">on</span>;
+drawMesh(v0, f0, <span class="string">'facecolor'</span>, <span class="string">'g'</span>, <span class="string">'linestyle'</span>, <span class="string">'none'</span>);
+
+<span class="comment">% calibre affichage</span>
+set(gcf, <span class="string">'renderer'</span>, <span class="string">'opengl'</span>)
+camlight <span class="string">left</span>
+camlight <span class="string">right</span>
+lighting <span class="string">phong</span>
+
+<span class="comment">% transforme les sommets du maillage</span>
+vt = transformPoint3d(v0, rot2);
+
+<span class="comment">% affiche le maillage transforme</span>
+drawMesh(vt, f0, <span class="string">'facecolor'</span>, <span class="string">'b'</span>, <span class="string">'linestyle'</span>, <span class="string">'none'</span>);
+</pre><img vspace="5" hspace="5" src="demoRotateImage3d_02.png" alt=""> <h2>Interpolation de l'image<a name="5"></a></h2><pre class="codeinput">I = Image3D(imgCrop);
+
+<span class="comment">% definition de l'interpolateur</span>
+interp = LinearInterpolator3D(I);
+
+samp = ImageResampler(I);
+
+<span class="comment">% Definit la fonction de transfo inverse de l'image</span>
+trans = MatrixAffineTransform(inv(rot2));
+tim = BackwardTransformedImage(interp, trans);
+
+<span class="comment">% echantillonnage de l'image transformee</span>
+I2 = samp.resample(tim);
+
+<span class="comment">% binarise l'image transformee pour comparer les contours</span>
+imgTransBin = imopen(I2.getBuffer&gt;0, ones([3 3 3]));
+
+<span class="comment">% calcul isosurface du resultat</span>
+[ft vt] = isosurface(imgTransBin, .5);
+
+<span class="comment">% affiche en surimpression, les maillages violet et bleu doivent se</span>
+<span class="comment">% superposer</span>
+drawMesh(vt, ft, <span class="string">'facecolor'</span>, <span class="string">'m'</span>, <span class="string">'linestyle'</span>, <span class="string">'none'</span>);
+</pre><img vspace="5" hspace="5" src="demoRotateImage3d_03.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.9<br></p></div><!--
+##### SOURCE BEGIN #####
+function varargout = demoRotateImage3d(varargin)
+%DEMOROTATEIMAGE3D  One-line description here, please.
+%
+%   output = demoRotateImage3d(input)
+%
+%   Example
+%   demoRotateImage3d
+%
+%   See also
+%
+%
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% Author: David Legland
+% e-mail: david.legland@grignon.inra.fr
+% Created: 2010-07-27,    using Matlab 7.9.0.529 (R2009b)
+% Copyright 2010 INRA - Cepia Software Platform.
+
+
+%% Lecture
+
+% lecture de l'image de test
+imgDir = fullfile('d:', 'images', 'amib', 'clermont', 'roi_memri');
+fileName = fullfile(imgDir, 'BRNOR39e5p1', 'BRNOR39e5p1Ball5Msk160.mhd');
+img = metaImageRead(fileName);
+
+% selectionne la zone interessante, et convertit en 256 niveaux de gris
+imgCrop = img(1:160, 31:130, 81:160);
+imgCrop = imRescale(imgCrop);
+
+figure(1); clf; hold on;
+orthoSlices(imgCrop);
+
+
+%% Creation du maillage
+
+% binarisation et nettoyage
+imgCropBin = imopen(imgCrop>0, ones([3 3 3]));
+
+% creation de la transformation a appliquer
+rot = createEulerAnglesRotation(10*pi/180, 20*pi/180, 30*pi/180);
+rot2 = recenterTransform3d(rot, [50 80 40]);
+
+% calcul de la surface du cerveau
+[f0 v0] = isosurface(imgCropBin);
+
+% affiche la surface
+figure(2); clf; hold on;
+drawMesh(v0, f0, 'facecolor', 'g', 'linestyle', 'none');
+
+% calibre affichage
+set(gcf, 'renderer', 'opengl')
+camlight left
+camlight right
+lighting phong
+
+% transforme les sommets du maillage
+vt = transformPoint3d(v0, rot2);
+
+% affiche le maillage transforme
+drawMesh(vt, f0, 'facecolor', 'b', 'linestyle', 'none');
+
+
+%% Interpolation de l'image
+
+I = Image3D(imgCrop);
+
+% definition de l'interpolateur
+interp = LinearInterpolator3D(I);
+
+samp = ImageResampler(I);
+
+% Definit la fonction de transfo inverse de l'image
+trans = MatrixAffineTransform(inv(rot2));
+tim = BackwardTransformedImage(interp, trans);
+
+% echantillonnage de l'image transformee
+I2 = samp.resample(tim);
+
+% binarise l'image transformee pour comparer les contours
+imgTransBin = imopen(I2.getBuffer>0, ones([3 3 3]));
+
+% calcul isosurface du resultat
+[ft vt] = isosurface(imgTransBin, .5);
+
+% affiche en surimpression, les maillages violet et bleu doivent se
+% superposer
+drawMesh(vt, ft, 'facecolor', 'm', 'linestyle', 'none');
+
+
+##### SOURCE END #####
+--></body></html>

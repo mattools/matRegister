@@ -25,14 +25,6 @@ Interpolators
 - 2010.10.10 implementer re echantillonnage d'une image 3D par une coupe
     resampleSlicer(IMGFUN, PLANE, UDATA, VDATA);
     sliceResampler(IMGFUN, PLANE, UDATA, VDATA);
-
-- 2011.07.13 ajouter une classe "ImageResampler", dans la lignee des options
-    disponibles sous Elastix. Sous-classes :
-    + FullResampler -> itere sur tous les pixels / voxels
-    + GridResampler -> 1 pixel sur 2, 3, 4... dans chaque direction
-    + RandomResampler -> 
-    + RandomPointsResampler
-    Passer par des itérateurs ?
     
     
 Parametric transforms
