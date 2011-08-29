@@ -25,7 +25,12 @@ end
 
 methods
     function this = OptimizedValueEvolutionDisplay(varargin)
-        
+        % Create a new OptimizedValueEvolutionDisplay
+        %
+        % Example
+        %   valueDisplay = OptimizedValueEvolutionDisplay(gcf, 'Image Metric');
+        %   addOptimizationListener(optimizer, valueDisplay);
+
         % Initialize axis handle
         if ~isempty(varargin)
             var = varargin{1};

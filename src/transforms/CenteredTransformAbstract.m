@@ -1,7 +1,7 @@
-classdef CenteredTransformAbstract < Transform 
+classdef CenteredTransformAbstract < ParametricTransform 
 %CENTEREDTRANSFORMABSTRACT Add center management to a transform
 %
-%   This class is a skeleton to add the management of center to a trasnform
+%   This class is a skeleton to add the management of center to a transform
 %   class. It is supposed to be derived to more specialized classes.
 %
 %   Example
@@ -62,5 +62,38 @@ methods
     end
 
 end % methods
+
+%% I/O Methods
+methods
+    function writeToFile(this, file)
+        % Write transform parameter to the given file handle
+        % Assumes file handle is an instance of FileWriter.
+        %
+        % Example
+        %   F = fopen('transfo.txt', 'wt');
+        %   fprintf(F, '#--- Transform Parameters ---');
+        %   writeToFile(TRANSFO, F);
+        %   fclose(F);
+        %
+        
+        closeFile = false;
+        if ischar(file)
+            file = fopen(file, 'wt');
+            closeFile = true;
+        end
+        
+        % Write generic information
+        writeToFile@ParametricTransform(this, file);
+        
+        % Add information on transformation center
+        pattern = ['TransformCenter =', repmat(' %g', 1, nParams) '\n'];
+        fprintf(file, pattern, this.center);
+        
+        % close file
+        if closeFile
+            fclose(file);
+        end
+    end
+end
 
 end % classdef

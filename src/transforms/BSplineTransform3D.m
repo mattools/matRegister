@@ -72,6 +72,10 @@ end % construction function
 %% General methods
 methods
 
+    function dim = getDimension(this) %#ok<MANU>
+        dim = 3;
+    end
+
     function [point2 isInside] = transformPoint(this, point)
         % compute centered coords.
         x = point(:, 1);

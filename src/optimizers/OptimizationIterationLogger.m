@@ -53,9 +53,6 @@ methods
         time = toc(this.time0);
         grad = sqrt(sum(optim.gradient .^ 2));
         
-        pattern = 'iter %d, value=%f, time = %f\n';
-        fprintf(pattern, optim.iter, value, time);
-        
         pattern = '%3d    %f    %f    %f\n';
         fprintf(this.file, pattern, optim.iter, value, grad, time);
         

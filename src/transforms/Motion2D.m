@@ -7,7 +7,7 @@ classdef Motion2D <  AffineTransform
 %   rotation.
 %   
 %   Example
-%   T = Motion2D(pi/3, [3 4]);
+%   T = Motion2D(10, [3 4]);
 %
 %   See also
 %   Translation
@@ -19,9 +19,8 @@ classdef Motion2D <  AffineTransform
 % Copyright 2010 INRA - Cepia Software Platform.
 
 properties
-    % angle of rotation around origin
+    % angle of rotation around origin, in degrees
     theta = 0;
-    % TODO: radians or degrees for theta ?
         
     % translation after rotation
     translation = zeros(1, 2);
@@ -56,6 +55,10 @@ end
 
 %% Standard methods
 methods
+    function dim = getDimension(this) %#ok<MANU>
+        dim = 2;
+    end
+
     
     function mat = getAffineMatrix(this)
         % Returns the 3*3 affine matrix that represents this transform

@@ -103,6 +103,10 @@ end
 
 %% Implementation of methods inherited from AffineTransform
 methods
+    function dim = getDimension(this) %#ok<MANU>
+        dim = 3;
+    end
+
     function mat = getAffineMatrix(this)
         % Compute affine matrix associated with this transform
         

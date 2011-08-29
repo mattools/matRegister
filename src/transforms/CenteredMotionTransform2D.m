@@ -48,11 +48,11 @@ methods
                 this.params = var.params;
                 
             elseif isnumeric(var)
-                if length(var)==1 && var(1)~=2
+                if length(var) == 1 && var(1) ~= 2
                     % if argument is a scalar, it corresponds to dimension
                     error('CenteredMotionTransform2D is defined only for 2 dimensions');
                     
-                elseif length(var)==3
+                elseif length(var) == 3
                     % if argument is a row vector, it is the parameters
                     this.params = var(1:3);
                 else
@@ -64,7 +64,7 @@ methods
         end
         
         % eventually parse additional arguments
-        if nargin>2
+        if nargin > 2
             if strcmp(varargin{2}, 'center')
                 % setup rotation center
                 this.center = varargin{3};
@@ -79,11 +79,17 @@ end
 
 %% Standard methods
 methods        
+    function dim = getDimension(this) %#ok<MANU>
+        dim = 2;
+    end
+
     function mat = getAffineMatrix(this)
         % Compute affine matrix associated with this transform
         
+        % converts to radians
+        theta = this.params(1) * pi / 180;
+
         % pre-computations
-        theta = this.params(1)*pi/180;  % converts to radians
         cot = cos(theta);
         sit = sin(theta);
 
@@ -114,8 +120,10 @@ methods
             y = varargin{1};
         end
         
+        % convert angles to degrees
+        theta = this.params(1) * pi / 180;
+        
         % precompute angle functions
-        theta = this.params(1)*pi/180;
         cot = cos(theta);
         sit = sin(theta);
         
@@ -131,5 +139,37 @@ methods
 
 end % methods
 
+
+methods (Static)
+    function transfo = readFromFile(fileName)
+        % Read transform from the given file name.
+        % Returns a new instance of CenteredMotionTransform2D.
+        %
+        % Example
+        %   TRANSFO = CenteredMotionTransform2D.readFromFile('transfo.txt');
+        
+        map = readPropertyFile(fileName);
+        transfo = CenteredMotionTransform2D.createFromPropertyMap(map);
+    end
+    
+    function transfo = createFromPropertyMap(map)
+        % Create a new transform from a set of properties
+        
+        transfo = CenteredMotionTransform2D();
+        
+        nbParams = str2double(map('TransformParameterNumber'));
+        
+        trParams = map('TransformParameters');
+        trParams= cellfun(@str2double, regexp(trParams, '\s*', 'split'));
+        
+        if nbParams ~= length(trParams)
+            error('Wrong number of parameters');
+        end
+        
+        setParameters(transfo, trParams);
+        
+        setParametersmap('TransformCenter');
+    end
+end
 
 end % classdef

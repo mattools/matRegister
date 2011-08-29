@@ -52,6 +52,10 @@ end
 
 %% Methods implementing Transform interface
 methods
+    function dim = getDimension(this)
+        dim = getDimension(this.transforms{1});
+    end
+
     function point = transformPoint(this, point)
         for i=1:length(this.transforms)
             point = this.transforms{i}.transformPoint(point);

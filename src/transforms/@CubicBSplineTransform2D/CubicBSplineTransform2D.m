@@ -30,8 +30,24 @@ end
 %% Constructor
 methods
     function this = CubicBSplineTransform2D(varargin)
-        % Ajouter le code du constructeur ici
-        if nargin==1
+        % Create a new CubicBSplineTransform2D
+        %
+        % TRANSFO = CubicBSplineTransform2D();
+        % Creates a new transfo initialized with default values
+        %
+        % TRANSFO = CubicBSplineTransform2D(GRIDSIZE, GRIDSPACING, GRIDORIGIN);
+        % Creates a new transfo by specifying the grid parameters.
+                
+        if nargin == 0
+            % Initialization with default values
+            nd = 2;
+            this.gridSize       = ones(1, nd);
+            this.gridSpacing    = ones(1, nd);
+            this.gridOrigin     = zeros(1, nd);
+            initializeParameters();
+                
+        elseif nargin == 1
+            % first argument is number of dimension
             var = varargin{1};
             if isscalar(var)
                 nd = var;
@@ -41,7 +57,7 @@ methods
                 initializeParameters();
             end
             
-        elseif nargin==3
+        elseif nargin == 3
             this.gridSize       = varargin{1};
             this.gridSpacing    = varargin{2};
             this.gridOrigin     = varargin{3};
@@ -50,7 +66,7 @@ methods
 
         function initializeParameters()
             dim = this.gridSize();
-            np  = prod(dim)*length(dim);
+            np  = prod(dim) * length(dim);
             this.params = zeros(1, np);
         end
     end % constructor 
@@ -60,16 +76,16 @@ end % construction function
 %% General methods
 methods
 
+    function dim = getDimension(this) %#ok<MANU>
+        dim = 2;
+    end
+
     function [point2 isInside] = transformPoint(this, point)
         % Compute corodinates of transformed point
         
-        % compute centered coords.
-        x = point(:, 1);
-        y = point(:, 2);
-        
         % compute position wrt to the grid vertices
-        xg = (x - this.gridOrigin(1)) / this.gridSpacing(1) + 1;
-        yg = (y - this.gridOrigin(2)) / this.gridSpacing(2) + 1;
+        xg = (point(:, 1) - this.gridOrigin(1)) / this.gridSpacing(1) + 1;
+        yg = (point(:, 2) - this.gridOrigin(2)) / this.gridSpacing(2) + 1;
         
         % compute indices of points located within interpolation area
         isInsideX   = xg >= 2 & xg < this.gridSize(1)-1;
@@ -99,14 +115,14 @@ methods
             @BSplines.beta3_3};
         
         % iteration on each tile of the grid
-        for i=-1:2
+        for i = -1:2
             % coordinates of neighbor vertex
             xv = floor(xg) + i;
             
             fun_i = baseFuns{i+2};
             eval_i = fun_i(xu);
             
-            for j=-1:2
+            for j = -1:2
                 yv = floor(yg) + j;
                 
                 % linear index of translation components
@@ -120,7 +136,7 @@ methods
                 fun_j = baseFuns{j+2};
                 
                 % update total translation component
-                b = eval_i .* fun_j(yu);
+                b  = eval_i .* fun_j(yu);
                 dx = dx + b.*dxv; 
                 dy = dy + b.*dyv; 
             end
@@ -363,10 +379,10 @@ methods
         end
         
         % iteration on each tile of the grid
-        for i=-1:2
+        for i = -1:2
             xv = floor(xg) + i;
             
-            for j=-1:2
+            for j = -1:2
                 % coordinates of neighbor vertex
                 yv = floor(yg) + j;
                 
@@ -393,5 +409,88 @@ methods
     
    
 end % general methods
+
+
+%% I/O Methods
+methods
+    function writeToFile(this, file)
+        % Write transform parameter to the given file handle
+        % Assumes file handle is an instance of FileWriter.
+        %
+        % Example
+        %   F = fopen('transfo.txt', 'wt');
+        %   fprintf(F, '#--- Transform Parameters ---');
+        %   writeToFile(TRANSFO, F);
+        %   fclose(F);
+        %
+        
+        closeFile = false;
+        if ischar(file)
+            file = fopen(file, 'wt');
+            closeFile = true;
+        end
+        
+        nDims = 2;
+        
+        fprintf(file, 'TransformType = %s\n', class(this));
+        fprintf(file, 'TransformDimension = %d\n', nDims);
+        
+        nParams = length(this.params);
+        fprintf(f, 'TransformParameterNumber = %d \n', nParams);
+        
+        pattern = ['TransformParameters =', repmat(' %g', 1, nParams) '\n'];
+        fprintf(f, pattern, this.params);
+        
+        % some transform specific settings
+        pattern = ['%s =' repmat(' %g', 1, nDims) '\n'];
+        fprintf(file, pattern, 'TransformGridSize',     this.gridSize);
+        fprintf(file, pattern, 'TransformGridOrigin',   this.gridOrigin);
+        fprintf(file, pattern, 'TransformGridSpacing',  this.gridSpacing);
+        
+        % close file
+        if closeFile
+            fclose(file);
+        end
+    end
+end
+
+methods (Static)
+    function transfo = readFromFile(fileName)
+        % Read transform from the given file name.
+        % Returns a new instance of CubicBSplineTransform2D.
+        %
+        % Example
+        %   TRANSFO = CubicBSplineTransform2D.readFromFile('transfo.txt');
+        
+        map = readPropertyFile(fileName);
+        transfo = CubicBSplineTransform2D.createFromPropertyMap(map);
+    end
+    
+    function transfo = createFromPropertyMap(map)
+        % Create a new transform from a set of properties
+        
+        grSize  = map('TransformGridSize');
+        grSize  = cellfun(@str2double, regexp(grSize, '\s*', 'split'));
+        grSpac  = map('TransformGridSpacing');
+        grSpac  = cellfun(@str2double, regexp(grSpac, '\s*', 'split'));
+        grOrig  = map('TransformGridOrigin');
+        grOrig  = cellfun(@str2double, regexp(grOrig, '\s*', 'split'));
+        
+        transfo = CubicBSplineTransform2D(grSize, grSpac, grOrig);
+        
+        
+        nbParams = str2double(map('TransformParameterNumber'));
+        
+        trParams = map('TransformParameters');
+        trParams= cellfun(@str2double, regexp(trParams, '\s*', 'split'));
+        
+        if nbParams ~= length(trParams)
+            error('Wrong number of parameters');
+        end
+        
+        setParameters(transfo, trParams);
+        
+    end
+end
 
 end % classdef

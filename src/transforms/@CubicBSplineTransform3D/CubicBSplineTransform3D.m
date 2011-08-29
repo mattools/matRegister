@@ -59,6 +59,9 @@ end % construction function
 
 %% General methods
 methods
+    function dim = getDimension(this) %#ok<MANU>
+        dim = 3;
+    end
 
     function [point2 isInside] = transformPoint(this, point)
         % Compute coordinates of transformed point
@@ -486,5 +489,87 @@ methods
     end
    
 end % general methods
+
+%% I/O Methods
+methods
+    function writeToFile(this, file)
+        % Write transform parameter to the given file handle
+        % Assumes file handle is an instance of FileWriter.
+        %
+        % Example
+        %   F = fopen('transfo.txt', 'wt');
+        %   fprintf(F, '#--- Transform Parameters ---');
+        %   writeToFile(TRANSFO, F);
+        %   fclose(F);
+        %
+        
+        closeFile = false;
+        if ischar(file)
+            file = fopen(file, 'wt');
+            closeFile = true;
+        end
+        
+        nDims = 3;
+        
+        fprintf(file, 'TransformType = %s\n', class(this));
+        fprintf(file, 'TransformDimension = %d\n', nDims);
+        
+        nParams = length(this.params);
+        fprintf(file, 'TransformParameterNumber = %d \n', nParams);
+        
+        pattern = ['TransformParameters =', repmat(' %g', 1, nParams) '\n'];
+        fprintf(file, pattern, this.params);
+        
+        % some transform specific settings
+        pattern = ['%s =' repmat(' %g', 1, nDims) '\n'];
+        fprintf(file, pattern, 'TransformGridSize',     this.gridSize);
+        fprintf(file, pattern, 'TransformGridOrigin',   this.gridOrigin);
+        fprintf(file, pattern, 'TransformGridSpacing',  this.gridSpacing);
+
+        % close file
+        if closeFile
+            fclose(file);
+        end
+    end
+end
+
+methods (Static)
+    function transfo = readFromFile(fileName)
+        % Read transform from the given file name.
+        % Returns a new instance of CubicBSplineTransform3D.
+        %
+        % Example
+        %   TRANSFO = CubicBSplineTransform3D.readFromFile('transfo.txt');
+        
+        map = readPropertyFile(fileName);
+        transfo = CubicBSplineTransform3D.createFromPropertyMap(map);
+    end
+    
+    function transfo = createFromPropertyMap(map)
+        % Create a new transform from a set of properties
+        
+        grSize  = map('TransformGridSize');
+        grSize  = cellfun(@str2double, regexp(grSize, '\s*', 'split'));
+        grSpac  = map('TransformGridSpacing');
+        grSpac  = cellfun(@str2double, regexp(grSpac, '\s*', 'split'));
+        grOrig  = map('TransformGridOrigin');
+        grOrig  = cellfun(@str2double, regexp(grOrig, '\s*', 'split'));
+        
+        transfo = CubicBSplineTransform3D(grSize, grSpac, grOrig);
+        
+        
+        nbParams = str2double(map('TransformParameterNumber'));
+        
+        trParams = map('TransformParameters');
+        trParams= cellfun(@str2double, regexp(trParams, '\s*', 'split'));
+        
+        if nbParams ~= length(trParams)
+            error('Wrong number of parameters');
+        end
+        
+        setParameters(transfo, trParams);
+        
+    end
+end
 
 end % classdef

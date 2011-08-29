@@ -35,6 +35,11 @@ end
 %% Abstract methods
 methods (Abstract)
     
+    getDimension(this)
+    % GETDIMENSION Return the dimension of this transform
+    % In case of a projection transform, returns the dimension of input
+    % points.
+    
     transformPoint(this, point)
     % TRANSFORMPOINT Computes coordinates of transformed point
     % PT2 = this.transformPoint(PT);

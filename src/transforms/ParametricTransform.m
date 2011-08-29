@@ -38,7 +38,7 @@ methods (Access = protected)
         % initialize parameter vector
         if ~isempty(varargin)
             var = varargin{1};
-            if length(var)==1
+            if isscalar(var)
                 this.params = zeros(1, var);
             else
                 this.params = var;
@@ -46,7 +46,7 @@ methods (Access = protected)
         end
         
         % parameter names ciould also be specified
-        if nargin>1
+        if nargin > 1
             this.paramNames = varargin{2};
         end
     end
@@ -83,7 +83,7 @@ methods
         %
         
         % check index is not too high
-        if paramIndex>length(this.params)
+        if paramIndex > length(this.params)
             error('Index greater than the number of parameters');
         end
         
@@ -116,5 +116,43 @@ methods (Abstract)
     % Compute jacobian matrix, i.e. derivatives for each parameter
     
 end % abstract methods 
+
+
+%% I/O Methods
+methods
+    function writeToFile(this, file)
+        % Write transform parameter to the given file handle
+        % Assumes file handle is an instance of FileWriter.
+        %
+        % Example
+        %   F = fopen('transfo.txt', 'wt');
+        %   fprintf(F, '#--- Transform Parameters ---');
+        %   writeToFile(TRANSFO, F);
+        %   fclose(F);
+        %
+        
+        closeFile = false;
+        if ischar(file)
+            file = fopen(file, 'wt');
+            closeFile = true;
+        end
+        
+        nDims = getDimension(this);
+        
+        fprintf(file, 'TransformType = %s\n', class(this));
+        fprintf(file, 'TransformDimension = %d\n', nDims);
+        
+        nParams = length(this.params);
+        fprintf(file, 'TransformParameterNumber = %d \n', nParams);
+        
+        pattern = ['TransformParameters =', repmat(' %g', 1, nParams) '\n'];
+        fprintf(file, pattern, this.params);
+        
+        % close file
+        if closeFile
+            fclose(file);
+        end
+    end
+end
 
 end % classdef

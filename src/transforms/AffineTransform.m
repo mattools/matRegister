@@ -78,7 +78,14 @@ end
 
 %% Methods implementing the transform interface
 methods
-        function varargout = transformPoint(this, point, varargin)
+    function dim = getDimension(this)
+
+        % extract affine coefficients
+        mat = getAffineMatrix(this);
+        dim = size(mat, 1) - 1;
+    end
+
+    function varargout = transformPoint(this, point, varargin)
         % Transform the point using affine coefficient
         % 
         % transfo.transformPoint(POINT);
@@ -93,7 +100,7 @@ methods
         if ~isempty(varargin)
             point = point(:);
             point(1, nargin-1)=0;
-            for i=3:nargin
+            for i = 3:nargin
                 var = varargin{i-2};
                 point(:,i) = var(:);
             end
@@ -105,15 +112,15 @@ methods
         
         % compute coordinate of result point
         res = zeros(size(point));
-        for i=1:size(point, 2)
-            res(:,i) = point*mat(i, 1:end-1)' + mat(i, end);
+        for i = 1:size(point, 2)
+            res(:,i) = point * mat(i, 1:end-1)' + mat(i, end);
         end
         
         % format output arguments
-        if nargout<=1
+        if nargout <= 1
             varargout{1} = res;
         else
-            for i=1:nargout
+            for i = 1:nargout
                 varargout{i} = reshape(res(:,i), baseSize);
             end
         end
@@ -126,8 +133,8 @@ methods
 
         mat = this.getAffineMatrix();
         res = zeros(size(point));
-        for i=1:size(point, 2)
-            res(:,i) = point*mat(i, 1:end-1)';
+        for i = 1:size(point, 2)
+            res(:,i) = point * mat(i, 1:end-1)';
         end
     end
 

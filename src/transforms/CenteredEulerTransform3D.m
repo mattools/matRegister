@@ -76,6 +76,10 @@ end
 
 %% Standard methods
 methods    
+    function dim = getDimension(this) %#ok<MANU>
+        dim = 3;
+    end
+
     function initFromTranslation(this, vector)
         % Initialize parameters from a translation vector
         %

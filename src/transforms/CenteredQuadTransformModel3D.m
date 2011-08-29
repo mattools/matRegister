@@ -126,6 +126,10 @@ end
 
 %% Implementation of methods inherited from Transform
 methods
+    function dim = getDimension(this) %#ok<MANU>
+        dim = 3;
+    end
+
     function point2 = transformPoint(this, point)
         % TRANSFORMPOINT Computes coordinates of transformed point
         % PT2 = this.transformPoint(PT);
