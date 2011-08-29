@@ -30,12 +30,12 @@ end
 % Notify beginning of optimization
 this.notify('OptimizationStarted');
 
-for i=1:nIter
+for i = 1:nIter
     %fprintf('iter %d / %d\n', i, nIter);
+    this.iter = i;
     
     % update metric
-    [value deriv] = this.costFunction(this.params);
-    this.value = value;
+    [this.value this.gradient] = this.costFunction(this.params);
     
     % if scales are initialized, scales the derivative
     if ~isempty(this.parameterScales)
@@ -44,16 +44,15 @@ for i=1:nIter
             error('Scaling parameters should have same size as parameters');
         end
         
-        deriv = deriv ./ this.parameterScales;
+        this.gradient = this.gradient ./ this.parameterScales;
     end
     
     % search direction (with a minus sign because we are looking for the
     % minimum)
-    direction = -deriv / norm(deriv);
+    direction = -this.gradient / norm(this.gradient);
     
     % compute step depending on current iteration
     step(i) = evaluate(this.decayFunction, i);
-%     step(i) = step0*exp(-i/tau); % deprecated
     
     % compute new set of parameters
     this.params = this.params + direction * step(i);

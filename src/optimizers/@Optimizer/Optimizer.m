@@ -71,7 +71,7 @@ methods (Access = protected)
         % See Also
         % setCostFunction, setInitialParameters
         
-        if nargin==0
+        if nargin == 0
             return;
         end
         
@@ -164,8 +164,9 @@ methods
         %   OPTIM is an instance of Optimizer
         %   LISTENER is an instance of OptimizationListener
         %   The listener will listen the events of type:
-        %   OptimizationStarted, OptimizationIterated, and
-        %   OptimizationTerminated 
+        %    OptimizationStarted, 
+        %    OptimizationIterated,
+        %    OptimizationTerminated 
         
         % Check class of input
         if ~isa(listener, 'OptimizationListener')
