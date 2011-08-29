@@ -1,12 +1,16 @@
 classdef TransformJacobianResampler < handle
 %TRANSFORMJACOBIANRESAMPLER Create a new image showing jacobian of a transform 
 %
-%   output = TransformJacobianResampler(input)
+%   Resample the jacobian matrix determinant of a transform, and build a
+%   grayscale image to represent it.
 %
 %   Example
-%   TransformJacobianResampler
+%     TJR = TransformJacobianResampler(REFIMG);
+%     JACIMG = resample(TJR, TRANSFO);
+%     show(JACIMG)
 %
 %   See also
+%     ImageResampler
 %
 %
 % ------
@@ -18,9 +22,6 @@ classdef TransformJacobianResampler < handle
 
 %% Declaration of class properties
 properties
-%     % the transform from whom the jcaobian will be computed
-%     transform;
-    
     % The size of the resulting image
     outputSize = [];
 
@@ -40,7 +41,21 @@ end
 methods
     function this = TransformJacobianResampler(varargin)
         % Constructs a new TransformJacobianResampler object.
+        %
+        % TJR = TransformJacobianResampler(REFIMG)
+        % Creates a resampler using the same spatial basis as the given
+        % reference image.
+        %
+        % TJR = TransformJacobianResampler(TJR0)
+        % Copy constructor
+        %
+        %
 
+        if isempty(varargin)
+            error('TransformJacobianResampler:WrongNumberOfARguments', ...
+                'Need to specify at least one argument to initialise TransformJacobianResampler');
+        end
+        
         if isa(varargin{1}, 'TransformJacobianResampler')
             % copy constructor
 
@@ -53,7 +68,7 @@ methods
         elseif isa(varargin{1}, 'Image')
             % Initialize fields from a given image
             img = varargin{1};
-            this.outputSize = img.getSize();
+            this.outputSize = size(img);
             this.origin     = img.getOrigin();
             this.spacing    = img.getSpacing();
             
@@ -73,10 +88,6 @@ methods
             error('Wrong parameter when constructing an ImageResampler');
         end
         
-%         if nargin > 1
-%             this.transform = varargin{1};
-%         end
-        
     end % constructor declaration
 end % methods
 
@@ -91,37 +102,17 @@ methods
         type = this.outputType;
     end
     
-%     function setTransform(this, transfo)
-%         % Specifiy the transform for jacobian computation
-%         this.transform = transfo;
-%     end
-%     
-%     function transfo = getTransform(this)
-%         % Return the transform
-%         transfo = this.transform;
-%     end
-    
-    function img2 = resample(this, varargin)
-        % Resample an image, or an interpolated image
-        %
-        % IMG2 = this.resample(IMGFUN);
-        % Use image function IMGFUN as reference. IMGFUN is an instance of 
-        % ImageFunction, such as ImageInterpolator.
-        %
-        % IMG2 = this.resample(IMG);
-        % Resample image IMG using linear interpolation.
-        %
-        % IMG2 = this.resample(IMG, TYPE);  
-        % Resample image with specified interpolation type. TYPE can be:
-        % 'linear' (default)
-        % 'nearest', but is only supported for 2D images.
+    function img2 = resample(this, transform)
+        % Resample a transform
         %
         
-        if isempty(varargin)
+        if nargin < 2
             error('Need to specify a transform');
         end
         
-        transform = varargin{1};
+        if ~isa(transform, 'Transform')
+            error('First argument must be a transform');
+        end
         
         % precompute grid basis for 2D
         lx = (0:this.outputSize(1)-1)*this.spacing(1) + this.origin(1);
@@ -129,7 +120,7 @@ methods
         
         % different processing depending on image dimension
         outputDim = length(this.outputSize);
-        if outputDim==2
+        if outputDim == 2
             % Process 2D images
             
             % sample grid
@@ -139,18 +130,12 @@ methods
             vals = zeros(size(x), this.outputType);
         
             % compute all jacobians (result stored in a 2*2*N array)
-            jac = transform.getJacobian([x(:) y(:)]);
-            for i=1:numel(x)
+            jac = getJacobian(transform, [x(:) y(:)]);
+            for i = 1:numel(x)
                 vals(i) = det(jac(:,:,i));
             end
 
-%             % compute result values
-%             for i=1:numel(x)
-%                 jac = transform.getJacobian([x(i) y(i)]);
-%                 vals(i) = det(jac(:,:)' * jac(:,:));
-%             end
-
-        elseif outputDim==3
+        elseif outputDim == 3
             % Process 3D images
             
             % sample grid
@@ -164,7 +149,7 @@ methods
             try
                 % try first with full call
                 jac = transform.getJacobian([x(:) y(:) z(:)]);
-                for i=1:numel(x)
+                for i = 1:numel(x)
                     vals(i) = det(jac(:,:,i));
                 end
                 
@@ -172,7 +157,7 @@ methods
                 % if memory limit is reached, performs element by element
                 warning([mfilename ':MemoryLimit'], ...
                     'Memory limit reached - switched to elementwise computation');
-                for i=1:numel(x)
+                for i = 1:numel(x)
                     jac = transform.getJacobian([x(i) y(i) z(i)]);
                     vals(i) = det(jac);
                 end

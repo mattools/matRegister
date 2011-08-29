@@ -7,7 +7,7 @@ classdef DecayFunction < handle
 %   Decayfunction
 %
 %   See also
-%
+%   ExponentialDecayFunction, ElastixDecayFunction
 %
 % ------
 % Author: David Legland

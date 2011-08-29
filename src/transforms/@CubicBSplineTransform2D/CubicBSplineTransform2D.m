@@ -202,7 +202,11 @@ methods
     function jac = getJacobian(this, point)
         % Jacobian matrix of the given point
         %
-        
+        %   JAC = getJacobian(TRANS, PT)
+        %   where PT is a N-by-2 array of points, returns the spatial
+        %   jacobian matrix of each poitn in the form of a 2-by-2-by-N
+        %   array.
+        %
         
         %% Constants
         
@@ -222,25 +226,22 @@ methods
         
         %% Initializations
        
-        % extract coordinates
-        x = point(:, 1);
-        y = point(:, 2);
-        
-        % compute position wrt to the grid vertices
+        % extract grid spacing for normalization
         deltaX = this.gridSpacing(1);
         deltaY = this.gridSpacing(2);
-        xg = (x - this.gridOrigin(1)) / deltaX + 1;
-        yg = (y - this.gridOrigin(2)) / deltaY + 1;
+        
+        % compute position of points wrt to grid vertices
+        xg = (point(:, 1) - this.gridOrigin(1)) / deltaX + 1;
+        yg = (point(:, 2) - this.gridOrigin(2)) / deltaY + 1;
         
         % compute indices of values within interpolation area
         isInsideX = xg >= 2 & xg < this.gridSize(1)-1;
         isInsideY = yg >= 2 & yg < this.gridSize(2)-1;
-        isInside = isInsideX & isInsideY;
-        inds = isInside;
-
+        inds = isInsideX & isInsideY;
+        
         % keep only valid positions
-        xg = xg(isInside);
-        yg = yg(isInside);
+        xg = xg(inds);
+        yg = yg(inds);
         
         % initialize zeros translation vector
         nValid = length(xg);
@@ -261,7 +262,7 @@ methods
         
         %% Iteration on neighbor tiles 
         
-        for i=-1:2
+        for i = -1:2
             % x-coordinate of neighbor vertex
             xv  = floor(xg) + i;
             
@@ -269,7 +270,7 @@ methods
             bx  = baseFuns{i+2}(xu);
             bxd = derivFuns{i+2}(xu);
             
-            for j=-1:2
+            for j = -1:2
                 % y-coordinate of neighbor vertex
                 yv = floor(yg) + j;
                 
