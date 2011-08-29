@@ -19,9 +19,11 @@ properties
     %TODO: add gradient descent control
     nIter   = 200;
     
-    tau     = 50;
+    tau     = 50;   % deprecated
     
-    step0   = 1;
+    step0   = 1;    % deprecated
+    
+    decayFunction = ExponentialDecay(200);
 end
 
 %% Constructor
@@ -35,6 +37,14 @@ end
 
 %% General methods
 methods
+    function setDecayFunction(this, decayFcn)
+        
+        if ~isa(decayFcn, 'DecayFunction')
+            error('decay function should be a subclass of "DecayFunction"');
+        end
+        
+        this.decayFunction = decayFcn;
+    end
 end
 
 end

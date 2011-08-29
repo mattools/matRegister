@@ -17,9 +17,7 @@ function [params value] = startOptimization(this)
 
 
 % optimisation parameters
-step0   = this.step0;
 nIter   = this.nIter;
-tau     = this.tau;
 
 % allocate memory
 step = zeros(nIter, 1);
@@ -51,13 +49,14 @@ for i=1:nIter
     
     % search direction (with a minus sign because we are looking for the
     % minimum)
-    direction = -deriv/norm(deriv);
+    direction = -deriv / norm(deriv);
     
     % compute step depending on current iteration
-    step(i) = step0*exp(-i/tau);
+    step(i) = evaluate(this.decayFunction, i);
+%     step(i) = step0*exp(-i/tau); % deprecated
     
     % compute new set of parameters
-    this.params = this.params + direction*step(i);
+    this.params = this.params + direction * step(i);
 
     
     % Notify the end of iteration to OptimizationListeners
