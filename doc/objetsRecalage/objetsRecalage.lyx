@@ -550,7 +550,7 @@ Exemple d'utilisation
 \end_layout
 
 \begin_layout Standard
-Exemple de ré-échnatillonnage d'une image apès transformation :
+Exemple de ré-échantillonnage d'une image apès transformation :
 \end_layout
 
 \begin_layout Standard
@@ -906,6 +906,56 @@ La classe de base est la classe Transform.
  limiter la ré-écriture des transformations spécialisées.
 \end_layout
 
+\begin_layout Standard
+Conventions (par toujours) utilisées :
+\end_layout
+
+\begin_layout Itemize
+on utilise le suffixe 
+\begin_inset Quotes fld
+\end_inset
+
+Model
+\begin_inset Quotes frd
+\end_inset
+
+ ou 
+\begin_inset Quotes fld
+\end_inset
+
+TransformModel
+\begin_inset Quotes frd
+\end_inset
+
+ pour distinguer les transformations paramétrées des transformations non
+ paramétrées.
+ Exemple : 
+\begin_inset Quotes fld
+\end_inset
+
+TranslationModel
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+on utilise le préfixe 
+\begin_inset Quotes fld
+\end_inset
+
+Centered
+\begin_inset Quotes frd
+\end_inset
+
+ pour préciser que l'on peut modifier le centre de la transformation.
+\end_layout
+
+\begin_layout Itemize
+on ajoute le suffixe 2D ou 3D quand la transformation n'est pas générique.
+\end_layout
+
 \begin_layout Section
 Interfaces et classes abstraites
 \end_layout
@@ -961,28 +1011,6 @@ params
 
 , sous la forme d'un vecteur ligne, qui peut être modifié via les méthodes
  appropriées.
-\end_layout
-
-\begin_layout Standard
-Pour distinguer les transformations paramétrées des transformations non
- paramétrées, j'ajoute parfois le suffixe 
-\begin_inset Quotes fld
-\end_inset
-
-Model
-\begin_inset Quotes frd
-\end_inset
-
- au nom de la classe.
- Exemple : 
-\begin_inset Quotes fld
-\end_inset
-
-TranslationModel
-\begin_inset Quotes frd
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -1100,7 +1128,7 @@ getInverse renvoie la transformation affine inverse
 \end_layout
 
 \begin_layout Section
-Modèles de transformation
+Transformation globales
 \end_layout
 
 \begin_layout Standard
@@ -1109,46 +1137,6 @@ Les classes décrites ici permettent de représenter un modèle de transformatio
  Ces transformations héritent donc à la fois de Transform et de ParametricTransf
 orm.
  
-\end_layout
-
-\begin_layout Standard
-Conventions (par toujours) utilisées :
-\end_layout
-
-\begin_layout Itemize
-on utilise le suffixe 
-\begin_inset Quotes fld
-\end_inset
-
-Model
-\begin_inset Quotes frd
-\end_inset
-
- ou 
-\begin_inset Quotes fld
-\end_inset
-
-TransformModel
-\begin_inset Quotes frd
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-on utilise le préfixe 
-\begin_inset Quotes fld
-\end_inset
-
-Centered
-\begin_inset Quotes frd
-\end_inset
-
- pour préciser que l'on peut modifier le centre de la transformation.
-\end_layout
-
-\begin_layout Itemize
-on ajoute le suffixe 2D ou 3D quand la transformation n'est pas générique.
 \end_layout
 
 \begin_layout Standard
@@ -1287,6 +1275,115 @@ Le centre de la transformation est initialisé par défaut à (0,0,0).
 \end_layout
 
 \begin_layout Section
+Transformation élastiques (Splines)
+\end_layout
+
+\begin_layout Subsection
+CubicBSplineTransform2D
+\end_layout
+
+\begin_layout Standard
+Classe de base pour les transformations BSplines en 2D.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Champs de classe
+\end_layout
+
+\begin_layout Description
+gridSize la taille de la grille (vecteur de 2 éléments)
+\end_layout
+
+\begin_layout Description
+gridOrigin position du premier (en haut à gauche) point de la grille (vecteur
+ de 2 éléments)
+\end_layout
+
+\begin_layout Description
+gridSpacing espacement entre les points de la grille (vecteur de 2 éléments)
+\end_layout
+
+\begin_layout Subsubsection*
+Méthodes 
+\end_layout
+
+\begin_layout Description
+drawGrid affiche la grille en sur-impression sur le graphique courant
+\end_layout
+
+\begin_layout Subsection
+CubicBSplineTransform3D
+\end_layout
+
+\begin_layout Standard
+Classe de base pour les transformations BSplines en 3D.
+\end_layout
+
+\begin_layout Description
+gridSize la taille de la grille (vecteur de 3 éléments)
+\end_layout
+
+\begin_layout Description
+gridOrigin position du premier (en haut à gauche) point de la grille (vecteur
+ de 3 éléments)
+\end_layout
+
+\begin_layout Description
+gridSpacing espacement entre les points de la grille (vecteur de 3 éléments)
+\end_layout
+
+\begin_layout Subsection
+BSplines
+\end_layout
+
+\begin_layout Standard
+Il s'agit d'une classes utilitaire ne contenant que des méthodes statiques,
+ en l'occurence les fonctions polynomiales de calcul de splines.
+\end_layout
+
+\begin_layout Section
+Utilitaires
+\end_layout
+
+\begin_layout Subsection
+TransformJacobianResampler
+\end_layout
+
+\begin_layout Standard
+Cette classe est initialisée avec une image.
+ Quand on appelle la méthode 
+\begin_inset Quotes fld
+\end_inset
+
+resample
+\begin_inset Quotes frd
+\end_inset
+
+ sur une transformation, on obtient une nouvelle image en niveaux de gris
+ de la même taille que l'image d'initialisation, et qui contient pour chaque
+ pixel ou voxel la valeur locale du déterminant du jacobien de la transformation.
+\end_layout
+
+\begin_layout Subsection
+saveTransformParameters
+\end_layout
+
+\begin_layout Standard
+Fonction de sauvegarde des paramètres d'une transformation.
+ Stockée dans le répertoire 
+\begin_inset Quotes fld
+\end_inset
+
+registerUtils
+\begin_inset Quotes frd
+\end_inset
+
+, qui en fait pas partie de OOLIP.
+ Utilise la classe FileWriter.
+\end_layout
+
+\begin_layout Section
 Implémentations utilitaires
 \end_layout
 
@@ -1363,25 +1460,6 @@ ComposedTransformModel
 La même que précédemment, mais elle hérite en plus de ParametricTransform.
  Les méthodes de manipulation des paramètres ont été surchargées pour tavailler
  sur les paramètres de la dernière transformation.
-\end_layout
-
-\begin_layout Subsection
-TransformJacobianResampler
-\end_layout
-
-\begin_layout Standard
-Cette classe est initialisée avec une image.
- Quand on appelle la méthode 
-\begin_inset Quotes fld
-\end_inset
-
-resample
-\begin_inset Quotes frd
-\end_inset
-
- sur une transformation, on obtient une nouvelle image en niveaux de gris
- de la même taille que l'image d'initialisation, et qui contient pour chaque
- pixel ou voxel la valeur locale du déterminant du jacobien de la transformation.
 \end_layout
 
 \begin_layout Chapter
@@ -2090,21 +2168,98 @@ Champs à renseigner :
 \end_layout
 
 \begin_layout Description
-nIter le nombre max d'itération
+nIter le nombre max d'itérations
 \end_layout
 
 \begin_layout Description
-step0 l'amplitude du pas de déplacement à la première itération
-\end_layout
-
-\begin_layout Description
-tau la taux de décroissance du pas de déplacement
+decayFunction la fonction qui évalue la longueur du pas en fonction du nombre
+ d'itération.
 \end_layout
 
 \begin_layout Standard
 On peut ensuite avoir des variantes de la descente de gradient, par exemple
  en utilisant une descente stochastique de gradient (on retire les points
  d'évaluation à chaque itération).
+\end_layout
+
+\begin_layout Section
+Contrôle du taux de décroissance
+\end_layout
+
+\begin_layout Standard
+Pour les algorithmes de descente de gradient, une implémentation est de
+ contrôler la longueur du pas à chaque itération, qui décroît en fonction
+ du nombre d'itérations.
+ Afin de pouvoir choisir la nature de la fonction de décroissance, on a
+ plusieurs classes utilitaires.
+\end_layout
+
+\begin_layout Subsection
+DecayFunction
+\end_layout
+
+\begin_layout Standard
+Interface générale pour les fonctions de décroissance
+\end_layout
+
+\begin_layout Description
+evaluate fonction abstraite qui évalue la décroissance en fonction du nombre
+ d'itération
+\end_layout
+
+\begin_layout Subsection
+ExponentialDecay
+\end_layout
+
+\begin_layout Standard
+Le taux de déroissance est donné par une fonction exponentielle :
+\begin_inset Formula 
+\begin{equation}
+\alpha=\alpha_{0}\exp\frac{-i}{\tau}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Les deux paramètres de la fonction sont la valeur initiale 
+\begin_inset Formula $\alpha_{0}$
+\end_inset
+
+ (par défaut égale à 1) et le taux de decroissance 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+ Pour 
+\begin_inset Formula $\tau,$
+\end_inset
+
+ une valeur égal à 20 ou 30% du nombre d'itérations semble assez générique.
+\end_layout
+
+\begin_layout Subsection
+ElastixDecay
+\end_layout
+
+\begin_layout Standard
+Cette classes réprésente la décroissance utilisée par Elastix.
+ Elle est de la forme :
+\begin_inset Formula 
+\begin{eqnarray*}
+a(i) & = & \frac{a}{(A+i)^{\alpha}}
+\end{eqnarray*}
+
+\end_inset
+
+avec 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ qui vaut 0.602 par défaut, A qui vaut 50 ou 100, et a qui dépend du type
+ d'image et du type de métrique (.01 pour MSD, 500 pour MI).
 \end_layout
 
 \begin_layout Chapter
