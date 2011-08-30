@@ -1,9 +1,9 @@
-function test_suite = testTranslation(varargin)
-%TESTTRANSLATION  Test function for class Translation
-%   output = testTranslation(input)
+function test_suite = test_TranslationModel(varargin) %#ok<STOUT>
+%test_TranslationModel  Test function for class Translation
+%   output = test_TranslationModel(input)
 %
 %   Example
-%   testTranslation
+%   testTranslationModel
 %
 %   See also
 %
@@ -17,45 +17,59 @@ function test_suite = testTranslation(varargin)
 
 initTestSuite;
 
-function testEmptyConstructor
+function testEmptyConstructor %#ok<*DEFNU>
 
 % test empty constructor
-trans = Translation();
+trans = TranslationModel();
 assertTrue(trans.isvalid());
 
 function testConstructor2D
 
 % test constructor with separate arguments
-trans = Translation(2, 3);
+trans = TranslationModel(2, 3);
 assertTrue(trans.isvalid());
 
 % test constructor with bundled arguments
-trans = Translation([2, 3]);
+trans = TranslationModel([2, 3]);
 assertTrue(trans.isvalid());
 
 % test copy constructor
-trans2 = Translation(trans);
+trans2 = TranslationModel(trans);
 assertTrue(trans2.isvalid());
 
 function testConstructor3D
 
 % test constructor with separate arguments
-trans = Translation(2, 3, 4);
+trans = TranslationModel(2, 3, 4);
 assertTrue(trans.isvalid());
 
 % test constructor with bundled arguments
-trans = Translation([2, 3, 4]);
+trans = TranslationModel([2, 3, 4]);
 assertTrue(trans.isvalid());
 
 % test copy constructor
-trans2 = Translation(trans);
+trans2 = TranslationModel(trans);
 assertTrue(trans2.isvalid());
+
+
+function testGetAffineMatrix
+
+refMat = [1 0 2;0 1 3;0 0 1];
+trans = TranslationModel([2 3]);
+mat = trans.getAffineMatrix();
+assertElementsAlmostEqual(refMat, mat);
 
 
 function testIsa
 
-trans = Translation([2 3]);
+trans = TranslationModel([2 3]);
 assertTrue(isa(trans, 'Transform'));
 assertTrue(isa(trans, 'AffineTransform'));
 
+function testSetParameters
 
+refMat = [1 0 2;0 1 3;0 0 1];
+trans = TranslationModel();
+trans.setParameters([2 3]);
+mat = trans.getAffineMatrix();
+assertElementsAlmostEqual(refMat, mat);

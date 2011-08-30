@@ -1,9 +1,9 @@
-function test_suite = testMatrixAffineTransform(varargin)
-%TESTMATRIXAFFINETRANSFORM  One-line description here, please.
-%   output = testMatrixAffineTransform(input)
+function test_suite = test_MatrixAffineTransform(varargin) %#ok<STOUT>
+%TEST_MATRIXAFFINETRANSFORM  One-line description here, please.
+%   output = test_MatrixAffineTransform(input)
 %
 %   Example
-%   testMatrixAffineTransform
+%   test_MatrixAffineTransform
 %
 %   See also
 %
@@ -17,7 +17,7 @@ function test_suite = testMatrixAffineTransform(varargin)
 
 initTestSuite;
 
-function testCreateFromArray
+function testCreateFromArray %#ok<*DEFNU>
 
 % identity
 mat1 = eye(3);

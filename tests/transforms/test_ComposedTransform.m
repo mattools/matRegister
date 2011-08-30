@@ -1,9 +1,9 @@
-function test_suite = testComposedTransform(varargin)
-%TESTCOMPOSEDTRANSFORM  One-line description here, please.
-%   output = testComposedTransform(input)
+function test_suite = test_ComposedTransform(varargin) %#ok<STOUT>
+%TEST_COMPOSEDTRANSFORM  One-line description here, please.
+%   output = test_ComposedTransform(input)
 %
 %   Example
-%   testComposedTransform
+%   test_ComposedTransform
 %
 %   See also
 %
@@ -16,7 +16,7 @@ function test_suite = testComposedTransform(varargin)
 
 initTestSuite;
 
-function testTwoTranslations
+function testTwoTranslations %#ok<*DEFNU>
 
 t1 = Translation([1 2]);
 t2 = Translation([3 4]);

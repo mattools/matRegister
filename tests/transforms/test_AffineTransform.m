@@ -1,6 +1,6 @@
-function test_suite = testAffineTransform(varargin)
-%testAffineTransform  One-line description here, please.
-%   output = testAffineTransform(input)
+function test_suite = test_AffineTransform(varargin) %#ok<STOUT>
+%test_AffineTransform  One-line description here, please.
+%   output = test_AffineTransform(input)
 %
 %   Example
 %   testAffineTransform
@@ -17,7 +17,7 @@ function test_suite = testAffineTransform(varargin)
 
 initTestSuite;
 
-function test_mtimes
+function test_mtimes %#ok<*DEFNU>
 
 % Compose two translations
 T1 = Translation([2 3]);
@@ -40,4 +40,4 @@ res = T2*R*T1;
 
 T = CenteredMotionTransform2D([30 0 0], 'center', center);
 
-assertElementsAlmostEqual(res.getAffineMatrix(), T.getAffineMatrix());
+assertElementsAlmostEqual(getAffineMatrix(res), getAffineMatrix(T));

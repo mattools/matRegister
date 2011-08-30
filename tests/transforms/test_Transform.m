@@ -1,4 +1,4 @@
-function test_suite = testTransform(varargin)
+function test_suite = test_Transform(varargin) %#ok<STOUT>
 %testTransform  One-line description here, please.
 %   output = testTransform(input)
 %
@@ -17,7 +17,7 @@ function test_suite = testTransform(varargin)
 
 initTestSuite;
 
-function test_compose
+function test_compose %#ok<*DEFNU>
 
 % transform parameters
 center = [6 8];

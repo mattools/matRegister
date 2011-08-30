@@ -1,9 +1,9 @@
-function test_suite = testCenteredAffineTransformModel3D(varargin) %#ok<STOUT>
-%testCenteredAffineTransformModel3D  One-line description here, please.
-%   output = testCenteredAffineTransformModel3D(input)
+function test_suite = test_CenteredAffineTransformModel3D(varargin) %#ok<STOUT>
+%test_CenteredAffineTransformModel3D  One-line description here, please.
+%   output = test_CenteredAffineTransformModel3D(input)
 %
 %   Example
-%   testCenteredAffineTransformModel3D
+%   test_CenteredAffineTransformModel3D
 %
 %   See also
 %
