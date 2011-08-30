@@ -86,7 +86,8 @@ methods
         writeToFile@ParametricTransform(this, file);
         
         % Add information on transformation center
-        pattern = ['TransformCenter =', repmat(' %g', 1, nParams) '\n'];
+        nDims = getDimension(this);
+        pattern = ['TransformCenter =', repmat(' %g', 1, nDims) '\n'];
         fprintf(file, pattern, this.center);
         
         % close file

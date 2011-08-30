@@ -3,7 +3,7 @@ function map = readPropertyFile(fileName)
 %
 %   PROPS = readPropertyFile(FILENAME)
 %   Reads the set of properties stored in file FILENAME. Properties are
-%   given in one line each, with a key, the equal sign, and the value of
+%   given in one line each, with a key, the equal signe, and the value of
 %   the property. Comment in #-style are supported when they are aloe on
 %   the line. The result is a Map object (implemented in containers.Map),
 %   with each key being a property.
@@ -28,13 +28,13 @@ function map = readPropertyFile(fileName)
 % Created: 2011-08-29,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
-fID = fopen(fileName, 'wt');
+file = FileReader(fileName);
 
 map = containers.Map();
 
 % Prints only the non-empty text lines
 while true
-    line = fgetl(fID);
+    line = file.readLine();
     
     if line == -1
         break; 
@@ -68,5 +68,5 @@ while true
     map(key) = value;
 end
 
-fclose(fID);
+close(file);
 

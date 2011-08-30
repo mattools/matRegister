@@ -163,5 +163,39 @@ methods
 
 end % methods
 
+%% I/O Methods
+methods (Static)
+    function transfo = readFromFile(fileName)
+        % Read transform from the given file name.
+        % Returns a new instance of CenteredEulerTransform3D.
+        %
+        % Example
+        %   TRANSFO = CenteredEulerTransform3D.readFromFile('transfo.txt');
+        
+        map = readPropertyFile(fileName);
+        transfo = CenteredEulerTransform3D.createFromPropertyMap(map);
+    end
+    
+    function transfo = createFromPropertyMap(map)
+        % Create a new transform from a set of properties
+        
+        transfo = CenteredEulerTransform3D();
+        
+        nbParams = str2double(map('TransformParameterNumber'));
+        
+        trParams = map('TransformParameters');
+        trParams= cellfun(@str2double, regexp(trParams, '\s*', 'split'));
+        
+        if nbParams ~= length(trParams)
+            error('Wrong number of parameters');
+        end
+        
+        setParameters(transfo, trParams);
+        
+        center = map('TransformCenter');
+        center = cellfun(@str2double, regexp(center, '\s*', 'split'));
+        transfo.center = center;
+    end
+end
 
 end % classdef

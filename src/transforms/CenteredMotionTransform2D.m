@@ -139,7 +139,7 @@ methods
 
 end % methods
 
-
+%% I/O Methods
 methods (Static)
     function transfo = readFromFile(fileName)
         % Read transform from the given file name.
@@ -168,7 +168,9 @@ methods (Static)
         
         setParameters(transfo, trParams);
         
-        setParametersmap('TransformCenter');
+        center = map('TransformCenter');
+        center = cellfun(@str2double, regexp(center, '\s*', 'split'));
+        transfo.center = center;
     end
 end
 
