@@ -27,6 +27,9 @@ properties
     
     % current value of function gradient
     gradient;
+    
+    bestValue;
+    bestParams;
 end
 
 %% Constructor

@@ -16,6 +16,8 @@ function [params value] = startOptimization(this)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
+%% Initialisation
+
 % optimisation parameters
 nIter   = this.nIter;
 
@@ -27,15 +29,37 @@ if ~isempty(this.initialParameters)
     this.params = this.initialParameters;
 end
 
+% initialize optimization result
+this.bestValue = inf;
+this.bestParams = this.params;
+
+% reset direction vector to null vector
+% -> first iteration will be equal to the initial parameter vector
+direction = zeros(size(this.params));
+
 % Notify beginning of optimization
 this.notify('OptimizationStarted');
 
+
 for i = 1:nIter
-    %fprintf('iter %d / %d\n', i, nIter);
+    %% Update parameters and dependent parameters
+
     this.iter = i;
     
+    % compute step depending on current iteration
+    step(i) = evaluate(this.decayFunction, i);
+    
+    % compute new set of parameters
+    this.params = this.params + direction * step(i);
+
     % update metric
     [this.value this.gradient] = this.costFunction(this.params);
+    
+    % if value is better than before, update best value
+    if this.value < this.bestValue
+        this.bestValue = this.value;
+        this.bestParams = this.params;
+    end
     
     % if scales are initialized, scales the derivative
     if ~isempty(this.parameterScales)
@@ -51,22 +75,17 @@ for i = 1:nIter
     % minimum)
     direction = -this.gradient / norm(this.gradient);
     
-    % compute step depending on current iteration
-    step(i) = evaluate(this.decayFunction, i);
     
-    % compute new set of parameters
-    this.params = this.params + direction * step(i);
-
+    %% Notifications   
     
     % Notify the end of iteration to OptimizationListeners
     this.notify('OptimizationIterated');
 
-    
     % Call an output function for processing about current point
     % (for compatibility with Matlab syntax)
     if ~isempty(this.outputFunction)
         % setup optim values
-        optimValues.fval = value;
+        optimValues.fval = this.value;
         optimValues.iteration = i;
         optimValues.procedure = 'Gradient descent';
         
@@ -78,9 +97,13 @@ for i = 1:nIter
     end
 end
 
+
+%% Finalisation
+
 % Notify termination event
 this.notify('OptimizationTerminated');
 
 % returns the current set of parameters
-params = this.params;
+value = this.bestValue;
+params = this.bestParams;
 
