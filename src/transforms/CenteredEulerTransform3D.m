@@ -37,16 +37,16 @@ methods
                 
             elseif isnumeric(var)
                 len = length(var);
-                if len==6
+                if len == 6
                     % all parameters are specified
                     this.params = var;
-                elseif len==3
+                elseif len == 3
                     % specify only angles, initialize translation to 0
                     this.params = [var 0 0 0];
-                elseif len==1
+                elseif len == 1
                     % give the possibility to call constructor with the
                     % dimension of image
-                    if var~=3
+                    if var ~= 3
                         error('Defined only for 3 dimensions');
                     end
                 else
@@ -59,7 +59,7 @@ methods
         end
         
         % eventually parse additional arguments
-        if nargin>2
+        if nargin > 2
             if strcmp(varargin{2}, 'center')
                 % setup rotation center
                 this.center = varargin{3};
@@ -102,17 +102,30 @@ methods
         theta   = this.params(2) * deg2rad;
         psi     = this.params(3) * deg2rad;
 
-        % compute elementary rotation matrices
-        Rx = createRotationOx(phi);
-        Ry = createRotationOy(theta);
-        Rz = createRotationOz(psi);
+%         % compute elementary rotation matrices
+%         Rx = createRotationOx(phi);
+%         Ry = createRotationOy(theta);
+%         Rz = createRotationOz(psi);
+%         
+%         % compute compound rotation matrix around center
+%         mat = recenterTransform3d(Rz * Ry * Rx, this.center);
+%         
+%         % add translation
+%         mat = createTranslation3d(this.params(4:6)) * mat;
+
+        % pre-computations of trigonometric functions
+        a = cos(phi);      b = sin(phi);
+        c = cos(theta);    d = sin(theta);
+        e = cos(psi);      f = sin(psi);
         
-        % compute compound rotation matrix around center
-        mat = recenterTransform3d(Rz * Ry * Rx, this.center);
+        % base matrix
+        bd = b * d;
+        ad = a * d;
+        mat = [c*e bd*e-a*f ad*e+b*f; c*f bd*f+a*e ad*f-b*e; -d b*c a*c];
         
-        % add translation
-        mat = createTranslation3d(this.params(4:6)) * mat;
-        
+        p0 = this.center';
+        shift = p0 - mat*p0 + this.params(4:6)';
+        mat = [mat shift ; 0 0 0 1];
     end
   
     function jacobian = getParametricJacobian(this, x, varargin)

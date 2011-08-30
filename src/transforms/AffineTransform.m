@@ -93,13 +93,13 @@ methods
         % transfo.transformPoint(X, Y, Z);
         
         % extract affine coefficients
-        mat = this.getAffineMatrix();
+        mat = getAffineMatrix(this);
         
         % format to process a single array
         baseSize = size(point);
         if ~isempty(varargin)
             point = point(:);
-            point(1, nargin-1)=0;
+            point(1, nargin-1) = 0;
             for i = 3:nargin
                 var = varargin{i-2};
                 point(:,i) = var(:);
@@ -107,7 +107,7 @@ methods
         end
 
         if size(mat, 2)-1 ~= size(point, 2)
-            error('Point and transform must be same dimension');
+            error('Point and transform must have same dimension');
         end
         
         % compute coordinate of result point
@@ -118,7 +118,7 @@ methods
         
         % format output arguments
         if nargout <= 1
-            varargout{1} = res;
+            varargout = {res};
         else
             for i = 1:nargout
                 varargout{i} = reshape(res(:,i), baseSize);

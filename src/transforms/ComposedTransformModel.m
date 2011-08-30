@@ -1,6 +1,9 @@
 classdef ComposedTransformModel < ParametricTransform
-%ComposedTransformModel  Compose several parametric transforms
-%   output = ComposedTransformModel(input)
+%COMPOSEDTRANSFORMMODEL Compose several transforms, the last one being parametric 
+%
+%   TC = ComposedTransformModel(T0, T1)
+%   T0 is the initial transform, T1 is the transform to optimize. The
+%   result TC is the combination of the two transforms.
 %
 %   Example
 %   ParametricTransform2D
@@ -34,7 +37,7 @@ methods
             % initialize tranform array
             nbTrans = length(varargin);
             this.transforms = cell(nbTrans, 1);
-            for i=1:nbTrans
+            for i = 1:nbTrans
                 this.transforms{i} = varargin{i};
             end
             
@@ -57,13 +60,13 @@ methods
     end
 
     function point = transformPoint(this, point)
-        for i=1:length(this.transforms)
+        for i = 1:length(this.transforms)
             point = this.transforms{i}.transformPoint(point);
         end
     end
     
     function vector = transformVector(this, vector, position)
-        for i=1:length(this.transforms)
+        for i = 1:length(this.transforms)
             vector = this.transforms{i}.transformVector(vector, position);
         end
     end
@@ -71,8 +74,9 @@ methods
     function jacobian = getJacobian(this, point, varargin)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
+        
         jacobian = this.transforms{1}.getJacobian(point);
-        for i=2:length(this.transforms)
+        for i = 2:length(this.transforms)
             jacobian = this.transforms{i}.getJacobian(point, varargin{:}) * jacobian;
         end
     end
@@ -84,7 +88,7 @@ methods
         nTransfos = length(this.transforms);
         
         % first, transform points
-        for i=1 : nTransfos-1
+        for i = 1:nTransfos-1
             point = this.transforms{i}.transformPoint(point, varargin{:});
         end
 
