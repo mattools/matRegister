@@ -328,7 +328,7 @@ un tit schéma
 \end_layout
 
 \begin_layout Section
-Interfaces et classes abstraites
+Interfaces pour l'interpolation
 \end_layout
 
 \begin_layout Subsection
@@ -429,16 +429,6 @@ ImageInterpolator2D, ImageInterpolator3D
 
 \begin_layout Standard
 Interfaces permettant de typer les classes dérivées.
-\end_layout
-
-\begin_layout Subsection
-ImageSampler
-\end_layout
-
-\begin_layout Standard
-Interface qui permet de choisir des positions dans une image.
- Le résultat n'est pas une image, mais une liste de positions ou de points.
- Permet de calculer 
 \end_layout
 
 \begin_layout Section
@@ -621,7 +611,7 @@ tim = BackwardTransformedImage(interp, transfo);
 
 \begin_layout Plain Layout
 
-% create resampler, initialized with corodinates of input image
+% create resampler, initialized with coordinates of input image
 \end_layout
 
 \begin_layout Plain Layout
@@ -655,6 +645,97 @@ show(res);
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+Échantillonnage des images
+\end_layout
+
+\begin_layout Standard
+La bibliothèque dispose de quelques classes pou échantilloner des points
+ ou des positions dans les images.
+ Le but est de pouvoir accélérer le calcul des métriques, en ne calculant
+ pas les métriques sur l'ensmble des pixels ou voxels de l'image.
+\end_layout
+
+\begin_layout Subsection
+ImageSampler
+\end_layout
+
+\begin_layout Standard
+Interface qui permet de choisir des positions dans une image.
+ Le résultat n'est pas une image, mais une liste de positions ou de points.
+ 
+\end_layout
+
+\begin_layout Standard
+L'interface définit deux méthodes :
+\end_layout
+
+\begin_layout Description
+positionNumber renvoie le nombre de points considérés par cet échantillonnneur
+\end_layout
+
+\begin_layout Description
+positions  renvoie un tableau de points correspondant aux positions échantillonn
+ées
+\end_layout
+
+\begin_layout Subsection
+FullImageSampler
+\end_layout
+
+\begin_layout Standard
+Implémentation de ImageSampler qui parcourt tous les éléments de l'image
+ cible.
+ 
+\end_layout
+
+\begin_layout Standard
+S'initialise avec l'image à échantillonner.
+\end_layout
+
+\begin_layout Subsection
+GridImageSampler
+\end_layout
+
+\begin_layout Standard
+Implémentation de ImageSampler qui les éléments de l'image cible en ne gardant
+ qu'un élément sur plusieurs dans chaque dimension.
+ Cela revient à sous-échantillonner l'image avec une grille régulière.
+\end_layout
+
+\begin_layout Standard
+S'initialise avec l'image à échantillonner, et le pas de la grille dans
+ chaque direction.
+\end_layout
+
+\begin_layout Subsection
+RandomImageSampler
+\end_layout
+
+\begin_layout Standard
+Implémentation de ImageSampler qui tire au hasard les pixels ou voxels de
+ l'image à échantillonner.
+\end_layout
+
+\begin_layout Standard
+S'initialise avec la référence de l'image à échantillonner, et le nombre
+ d'éléments à échantillonner.
+\end_layout
+
+\begin_layout Subsection
+RandomPositionImageSampler
+\end_layout
+
+\begin_layout Standard
+Implémentation de ImageSampler qui tire au hasard des positions 2D ou 3D
+ dans l'image à échantillonner.
+\end_layout
+
+\begin_layout Standard
+S'initialise avec la référence de l'image à échantillonner, et le nombre
+ d'éléments à échantillonner.
 \end_layout
 
 \begin_layout Section
@@ -749,7 +830,7 @@ points un ensemble de points de test
 status open
 
 \begin_layout Plain Layout
-voir si on remplace pas le tableau de points par un PointGenerator ou une
+voir si on remplace pas le tableau de points par un ImageSampler ou une
  structure assimilée
 \end_layout
 
@@ -1125,6 +1206,31 @@ On a aussi une méthode spécifique aux transformations affines
 
 \begin_layout Description
 getInverse renvoie la transformation affine inverse
+\end_layout
+
+\begin_layout Subsection
+Sérialisation des transformations
+\end_layout
+
+\begin_layout Standard
+On essaie d'avoir des méthodes homogènes pour sauvegarder une transformation
+ donnée dans un fichier, et lire une transformation depuis une fichier.
+\end_layout
+
+\begin_layout Description
+writeToFile sauvegarde les paramètres de la transformation dans le fichier
+ dont le nom est passé en paramètre
+\end_layout
+
+\begin_layout Description
+readFromFile méthode statique de classe qui crée une nouvelle instance de
+ transformation à partir d'un nom de fichier 
+\end_layout
+
+\begin_layout Description
+createFromPropertyMap autre méthode statique qui crée une instance de transforma
+tion à partir d'un tableau associatif de propriétés.
+ 
 \end_layout
 
 \begin_layout Section
