@@ -30,6 +30,10 @@ end
 methods
     function this = BSplineTransform2D(varargin)
         % Ajouter le code du constructeur ici
+        
+        warning('oolip:deprecated', ...
+            'BSplineTransform2D is deprecated, use CubicBSplineTransform2D instead');
+ 
         if nargin==1
             var = varargin{1};
             if isscalar(var)

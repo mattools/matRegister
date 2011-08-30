@@ -38,8 +38,14 @@ Parametric transforms
     + definir une 'valeur moyenne' typique, ou alors le parameterScaling 
     + definir une 'variabilite' par defaut
     
+- 2011.08.29 sauvegarder et recuperer les transformations parametrees de maniere
+    homogene.
+        
+- 2011.08.29 check obsolescence :
+    + BSplineTransform2D
+    + BSplineTransform3D
     
-    
+        
 Metriques 
 =========
 
@@ -63,12 +69,7 @@ Optimisateurs
     + max_iter
     + precision en x
     + precision en f
-
-- 2011.07.13 Gerer plusieurs types de décroissance de norme du gradient
-    + exponentiel
-    + exponentiel avec decay ajusté au nombre d'itérations
-    + truc Elastix
-    
+ 
 - 2011.07.13 Implémenter descente de gradient avec pas adaptatif
 
         
