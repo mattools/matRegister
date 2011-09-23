@@ -436,10 +436,10 @@ methods
         fprintf(file, 'TransformDimension = %d\n', nDims);
         
         nParams = length(this.params);
-        fprintf(f, 'TransformParameterNumber = %d \n', nParams);
+        fprintf(file, 'TransformParameterNumber = %d \n', nParams);
         
         pattern = ['TransformParameters =', repmat(' %g', 1, nParams) '\n'];
-        fprintf(f, pattern, this.params);
+        fprintf(file, pattern, this.params);
         
         % some transform specific settings
         pattern = ['%s =' repmat(' %g', 1, nDims) '\n'];
