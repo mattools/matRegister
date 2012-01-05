@@ -1052,6 +1052,11 @@ Il s'agit de la classe la plus générique.
 \end_layout
 
 \begin_layout Description
+getDimension renvoie la dimension de l'espace dans laquelle opère la transformat
+ion.
+\end_layout
+
+\begin_layout Description
 transformPoint transforme un point en un autre
 \end_layout
 
@@ -1094,7 +1099,7 @@ params
  appropriées.
 \end_layout
 
-\begin_layout Subsubsection*
+\begin_layout Subsubsection
 Méthodes implémentées
 \end_layout
 
@@ -1134,6 +1139,31 @@ getParametricJacobian calcule la matrice jacobienne, qui a autant de lignes
  de paramètres
 \end_layout
 
+\begin_layout Subsubsection
+Sérialisation des transformations
+\end_layout
+
+\begin_layout Standard
+On essaie d'avoir des méthodes homogènes pour sauvegarder une transformation
+ donnée dans un fichier, et lire une transformation depuis une fichier.
+\end_layout
+
+\begin_layout Description
+writeToFile sauvegarde les paramètres de la transformation dans le fichier
+ dont le nom est passé en paramètre
+\end_layout
+
+\begin_layout Description
+readFromFile méthode statique de classe qui crée une nouvelle instance de
+ transformation à partir d'un nom de fichier 
+\end_layout
+
+\begin_layout Description
+createFromPropertyMap autre méthode statique qui crée une instance de transforma
+tion à partir d'un tableau associatif de propriétés.
+ 
+\end_layout
+
 \begin_layout Subsection
 AffineTransform
 \end_layout
@@ -1142,8 +1172,8 @@ AffineTransform
 Cette classe sert de base abstraite aux autres transformations affines.
  Elle implémente plusieurs méthodes qui se basent sur la matrice de transformati
 on associée.
- Notons que la matrice de transformation n'est pas définie dans cette classe,
- mais dans les classes dérivées.
+ La matrice de transformation n'est pas définie dans cette classe, mais
+ dans les classes dérivées.
  
 \end_layout
 
@@ -1209,32 +1239,17 @@ getInverse renvoie la transformation affine inverse
 \end_layout
 
 \begin_layout Subsection
-Sérialisation des transformations
+MatrixAffineTransform
 \end_layout
 
 \begin_layout Standard
-On essaie d'avoir des méthodes homogènes pour sauvegarder une transformation
- donnée dans un fichier, et lire une transformation depuis une fichier.
-\end_layout
-
-\begin_layout Description
-writeToFile sauvegarde les paramètres de la transformation dans le fichier
- dont le nom est passé en paramètre
-\end_layout
-
-\begin_layout Description
-readFromFile méthode statique de classe qui crée une nouvelle instance de
- transformation à partir d'un nom de fichier 
-\end_layout
-
-\begin_layout Description
-createFromPropertyMap autre méthode statique qui crée une instance de transforma
-tion à partir d'un tableau associatif de propriétés.
- 
+Implémentation classique d'une transformation affine, sous la forme d'une
+ matrice.
+ Utilisées pour des tests, ou pour implémenter des transformations classiques.
 \end_layout
 
 \begin_layout Section
-Transformation globales
+Modèles de transformation globaux
 \end_layout
 
 \begin_layout Standard
@@ -1243,23 +1258,6 @@ Les classes décrites ici permettent de représenter un modèle de transformatio
  Ces transformations héritent donc à la fois de Transform et de ParametricTransf
 orm.
  
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO :
-\end_layout
-
-\begin_layout Itemize
-peaufiner le choix des conventions de noms pour les transfos
-\end_layout
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Subsection
@@ -1380,8 +1378,39 @@ z' & = & p{}_{3}+p_{6}x+p_{9}y+p_{12}z+p_{15}x^{2}+p_{18}y^{2}+p_{21}z^{2}+p_{24
 Le centre de la transformation est initialisé par défaut à (0,0,0).
 \end_layout
 
+\begin_layout Subsection
+CenteredTransformAbstract
+\end_layout
+
+\begin_layout Standard
+Squelette d'implémentation d'une transformation centrée autour d'un point.
+ La classe définit un champ 
+\begin_inset Quotes fld
+\end_inset
+
+center
+\begin_inset Quotes frd
+\end_inset
+
+, ainsi qu'un accesseur et un modifieur.
+\end_layout
+
 \begin_layout Section
 Transformation élastiques (Splines)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+à voir si on peut factoriser avec une classe abstraite qui contient les
+ informations de la grille
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -1449,7 +1478,7 @@ Il s'agit d'une classes utilitaire ne contenant que des méthodes statiques,
 \end_layout
 
 \begin_layout Section
-Utilitaires
+Classes et fonctions utilitaires
 \end_layout
 
 \begin_layout Subsection
@@ -1500,33 +1529,6 @@ Les transformations présentées ici servent soit de base à l'implémentation
 \end_layout
 
 \begin_layout Subsection
-MatrixAffineTransform
-\end_layout
-
-\begin_layout Standard
-Implémentation classique d'une transformation affine, sous la forme d'une
- matrice.
- Utilisées pour des tests, ou pour implémenter des transformations classiques.
-\end_layout
-
-\begin_layout Subsection
-CenteredTransformAbstract
-\end_layout
-
-\begin_layout Standard
-Squelette d'implémentation d'une transformation centrée autour d'un point.
- La classe définit un champ 
-\begin_inset Quotes fld
-\end_inset
-
-center
-\begin_inset Quotes frd
-\end_inset
-
-, ainsi qu'un accesseur et un modifieur.
-\end_layout
-
-\begin_layout Subsection
 ComposedTransform
 \end_layout
 
@@ -1566,6 +1568,14 @@ ComposedTransformModel
 La même que précédemment, mais elle hérite en plus de ParametricTransform.
  Les méthodes de manipulation des paramètres ont été surchargées pour tavailler
  sur les paramètres de la dernière transformation.
+\end_layout
+
+\begin_layout Subsection
+InitializedTransformModel
+\end_layout
+
+\begin_layout Standard
+Une version simplifiée, qui considère
 \end_layout
 
 \begin_layout Chapter
@@ -2041,6 +2051,55 @@ ParametricFunctionEvolutionDisplay
 Affiche l'évolution de la valeur courante d'une fonction paramétrique quelconque
  en fonction du nombre d'itérations.
  Affiche dans un objet axes.
+\end_layout
+
+\begin_layout Subsection
+OptimizationIterationLogger
+\end_layout
+
+\begin_layout Standard
+Sauvegarde quelques paramètres de chaque itération dans un fichier texte.
+ Syntaxe :
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+logger = OptimizationIterationLogger(fileName);
+\end_layout
+
+\begin_layout Plain Layout
+
+optimizer.addOptimizationListener(logger);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Les paramètres sauvegardés sont :
+\end_layout
+
+\begin_layout Itemize
+le numéro de l'itération
+\end_layout
+
+\begin_layout Itemize
+la valeur de la fonction de coût
+\end_layout
+
+\begin_layout Itemize
+la norme du vecteur gradient
+\end_layout
+
+\begin_layout Itemize
+le temps écoulé depuis l'itération précédente
 \end_layout
 
 \begin_layout Chapter

@@ -26,9 +26,21 @@ Interpolators
     resampleSlicer(IMGFUN, PLANE, UDATA, VDATA);
     sliceResampler(IMGFUN, PLANE, UDATA, VDATA);
     
+- 2011.08.31 creation des images a partir d'une ImageFunction n'est pas tres 
+    ergnomique. reflechir a simplification
+    Pour le moment :
+        tim = BackwardTransformedImage(I1, transfo);
+        samp = ImageResampler(I1);
+        res = sampler.resampler(tim);
+    -> Methode ImageFunction.resample(Image) ?
     
+     
 Parametric transforms
 =====================
+
+- 2011.09.23 Splines3D ok ? gradient aussi ?
+
+- 2011.08.31 FourierTransform, LegendreTransform...
 
 - 2010.06.17 Idealement, ce serait mieux que la composition de deux transfos
     affines renvoie une transfo qui herite elle-meme de AffineTransform
@@ -38,17 +50,27 @@ Parametric transforms
     + definir une 'valeur moyenne' typique, ou alors le parameterScaling 
     + definir une 'variabilite' par defaut
     
-- 2011.08.29 sauvegarder et recuperer les transformations parametrees de maniere
-    homogene.
-        
-- 2011.08.29 check obsolescence :
-    + BSplineTransform2D
-    + BSplineTransform3D
-    
         
 Metriques 
 =========
 
+- Revoir l'Interface pour les metriques de 2 images ?
+    * une metrique est un algo, donc ne devrait pas stocker les images.
+        * stocker les points a la rigueur ?
+        
+    * computeValue(I1, I2, PTS)
+        I1, I2 : pointeurs vers des images interpolees
+        PTS : un ensemble de point, ou un pointeur vers un "ImageSampler"
+        
+    * computeValueAndGradient(I1, I2, PTS, TRANSFO, GRAD2)
+    
+    * fonction a optimiser devient un pointeur de fonction
+    * metrique MSD ne stocke rien
+    * metrique MI stocke qlq params.
+    
+- et du coup, quelle interface pour les metriques multiples ?
+    
+           
 - mieux gerer les points qui tombent en dehors des fenetres.
     avant: on calcule moyenne sur les points dans les 2 fenetres
     maintenant : on affecte une valeur par defaut
@@ -71,8 +93,8 @@ Optimisateurs
     + precision en f
  
 - 2011.07.13 Implémenter descente de gradient avec pas adaptatif
-
-        
+ 
+    
 Divers
 ======
 
@@ -85,3 +107,5 @@ Divers
 - think about a way to measure parameters
     + use consistent interface for returning params
     + use Table object ?
+
+    

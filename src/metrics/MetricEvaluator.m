@@ -2,8 +2,8 @@ classdef MetricEvaluator < handle
 %METRICEVALUATOR Evaluate a metric that depend on a parametric object
 %
 %   Usage:
-%   ME = MetricEvaluator(TRANSFO, METRIC);
-%   ME.evaluate(PARAMS);
+%   EV = MetricEvaluator(TRANSFO, METRIC);
+%   EV.evaluate(PARAMS);
 %
 %   Example
 %   MetricEvaluator
@@ -53,8 +53,8 @@ methods
         % uupdate params
         setParameters(this.transform, params);
         
-        % compute value and eventually graident
-        if nargout<=1
+        % compute value and eventually gradient
+        if nargout <= 1
             res = computeValue(this.metric);
         else
             [res grad] = computeValueAndGradient(this.metric);

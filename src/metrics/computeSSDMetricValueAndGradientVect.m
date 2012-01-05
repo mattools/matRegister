@@ -1,5 +1,5 @@
 function [res grad] = computeSSDMetricValueAndGradientVect(img1, img2, points, transfo, grad)
-%COMPUTESSDMETRIC  One-line description here, please.
+%COMPUTESSDMETRIC Compute SSD value and gradient in 2D image using gradient image
 %   output = computeSSDMetric(input)
 %
 %   Version utilisant une image gradient
@@ -22,7 +22,7 @@ if isa(img1, 'ImageFunction')
     % ok
 elseif isa(img1, 'Image')
     % if points are no specified, compute their position from image
-    if nargin==2
+    if nargin == 2
         x = img1.getX();
         y = img1.getY();
         points = [x(:) y(:)];
@@ -57,17 +57,16 @@ end
 insideBoth = inside1 & inside2;
 
 % compute result
-diff = values2(insideBoth)-values1(insideBoth);
-res = mean(diff.^2);
+diff = values2(insideBoth) - values1(insideBoth);
+res = mean(diff .^ 2);
 
 
 %% Compute gradient direction
 
 % convert to indices
-inds = find(insideBoth);
-nbInds = length(inds);
+inds    = find(insideBoth);
+nbInds  = length(inds);
 
-%nPoints = size(points, 1);
 nParams = length(transfo.getParameters());
 g = zeros(nbInds, nParams);
 
@@ -75,27 +74,23 @@ g = zeros(nbInds, nParams);
 % (assumes spacing is 1 and origin is 0)
 points2 = transfo.transformPoint(points);
 
-% % also converts from (x,y) to (i,j)
-% index = round(points2(inds, [2 1]))+1;
+% just need to keep integer coordinates
 indices = round(points2(inds, :));
 
-for i=1:length(inds)
+% iterate on valid points
+for i = 1:length(inds)
     % calcule jacobien pour points valides (repere image fixe)
-    jac = transfo.getParametricJacobian(points(inds(i),:));
-%     
-%     % local gradient in moving image
-%     i1 = index(i, 1);
-%     i2 = index(i, 2);
-%     grad = [gx(i1,i2) gy(i1,i2)];    
+    jac = transfo.getParametricJacobian(points(inds(i), :));
+
     grad_i = grad.getPixel(indices(i,1), indices(i,2));
     
     % local contribution to metric gradient
-    g(inds(i),:) = grad_i*jac;
+    g(inds(i),:) = grad_i * jac;
 end
 
 % calcul du vecteur gradient pondere par difference locale
-gd = g(inds,:).*diff(:, ones(1, nParams));
+gd = g(inds,:) .* diff(:, ones(1, nParams));
 
-% moyenne des vecteurs gradient valides
+% average of valid gradient vectors
 grad = mean(gd, 1);
 
