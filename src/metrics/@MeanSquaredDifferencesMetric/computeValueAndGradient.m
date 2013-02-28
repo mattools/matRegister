@@ -154,7 +154,8 @@ points2 = transformPoint(transfo, this.points);
 
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
-indices = round(points2(inds, :)) + 1;
+% indices = round(points2(inds, :)) + 1;
+indices = pointToIndex(this.gradientImage, points2(inds,:));
 
 gradImg = this.gradientImage.data;
 
@@ -222,9 +223,10 @@ points2 = transformPoint(transfo, this.points);
 
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
-indices = round(points2(inds, :)) + 1;
-
+% indices = round(points2(inds, :)) + 1;
 gradImg = this.gradientImage.data;
+indices = pointToIndex(gradImg, points2(inds,:));
+
 
 for i = 1:length(inds)
     iInd = inds(i);
