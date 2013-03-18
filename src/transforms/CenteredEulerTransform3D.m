@@ -1,5 +1,5 @@
 classdef CenteredEulerTransform3D < AffineTransform & ParametricTransform & CenteredTransformAbstract
-%Transformation model for a centered rotation followed by a translation
+%Transformation model for a centered 3D rotation followed by a translation
 %   
 %   Inner optimisable parameters of the transform have the following form:
 %   params[1] = phi, rotation angle around Ox, in degrees

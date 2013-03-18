@@ -1,5 +1,5 @@
 classdef CenteredAffineTransformModel3D < AffineTransform & ParametricTransform & CenteredTransformAbstract
-%CENTEREDAFFINETRANSFORMMODEL3D  One-line description here, please.
+%Transformation model for a centered 3D affine transform followed by a translation
 %
 %   output = CenteredAffineTransformModel3D(input)
 %

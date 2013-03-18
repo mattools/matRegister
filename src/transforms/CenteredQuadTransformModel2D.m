@@ -1,37 +1,44 @@
-classdef CenteredQuadTransformModel3D < CenteredTransformAbstract & ParametricTransform
-% Polynomial 3D transform up to degree 2 (3*10=30 parameters)
+classdef CenteredQuadTransformModel2D < CenteredTransformAbstract & ParametricTransform
+% Polynomial 2D transform up to degree 2 (2*6=12 parameters)
 %
-%   output = CenteredQuadTransformModel3D(input)
+%   TRANSFO = CenteredQuadTransformModel2D(PARAMS)
+%   Creates a new 2D centered quadratic transform model.
+%
+%   x' = P1 + P3 * x + P5 * y + P7 * x^2 +  P9 * x*y + P11 * y^2
+%   y' = P2 + P4 * x + P6 * y + P8 * x^2 + P10 * x*y + P12 * y^2
 %
 %   Example
-%   CenteredQuadTransformModel3D
+%     T = CenteredQuadTransformModel2D([0 0  1 0  0 1  .1 .1 .1 .1 .1 .1]);
+%     [x y] = meshgrid(-1.5:.1:1.5, -1.5:.1:1.5);
+%     pts = [x(:) y(:)];
+%     figure;
+%     drawPoint(pts, '.'); hold on
+%     axis([-2 2 -2 2]); axis equal
+%     pts2 = T.transformPoint(pts);
+%     drawPoint(pts2, 'g.')
 %
 %   See also
-%
+%     CenteredQuadTransformModel3D
 %
 % ------
 % Author: David Legland
 % e-mail: david.legland@grignon.inra.fr
-% Created: 2010-11-18,    using Matlab 7.9.0.529 (R2009b)
+% Created: 2013-03-18,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 %% Constructors
 methods
-    function this = CenteredQuadTransformModel3D(varargin)
+    function this = CenteredQuadTransformModel2D(varargin)
         % Create a new centered affine transform model
         
         this.params = [ ...
-            0 0 0 ...   % constant terms for x', y', and z'
-            1 0 0 ...   % x coef 
-            0 1 0 ...   % y coef 
-            0 0 1 ...   % z coef 
-            0 0 0 ...   % x^2 coef
-            0 0 0 ...   % y^2 coef
-            0 0 0 ...   % z^2 coef
-            0 0 0 ...   % x*y coef
-            0 0 0 ...   % x*z coef
-            0 0 0 ...   % y*z coef
+            0 0 ...   % constant terms for x', y', and z'
+            1 0 ...   % x coef 
+            0 1 ...   % y coef 
+            0 0 ...   % x^2 coef
+            0 0 ...   % x*y coef
+            0 0 ...   % y^2 coef
             ];
         
         if ~isempty(varargin)
@@ -43,7 +50,7 @@ methods
                 
             elseif isnumeric(var)
                 len = length(var);
-                if len == 30
+                if len == 12
                     % all parameters are specified as a row vector
                     this.params = var;
                     
@@ -56,12 +63,12 @@ methods
                     % give the possibility to call constructor with the
                     % dimension of image
                     % Initialize with identity transform
-                    if var ~= 3
-                        error('Defined only for 3 dimensions');
+                    if var ~= 2
+                        error('Defined only for 2 dimensions');
                     end
                     
                 else
-                    error('Please specify affine parameters');
+                    error('Please specify quadratic parameters');
                 end
                 
             else
@@ -79,16 +86,12 @@ methods
         
         % setup parameter names
         this.paramNames = {...
-            'x_w2', 'y_w2','z_w2', ...  % constant terms for x', y', and z'
-            'x_wx', 'y_wx','z_wx', ...  % x coef
-            'x_wy', 'y_wy','z_wy', ...  % y coef
-            'x_wz', 'y_wz','z_wz', ...  % z coef
-            'x_x2', 'y_x2','z_x2', ...  % x^2 coef
-            'x_y2', 'y_y2','z_y2', ...  % y^2 coef
-            'x_z2', 'y_z2','z_z2', ...  % z^2 coef
-            'x_xy', 'y_xy','z_xy', ...  % x*y coef
-            'x_xz', 'y_xz','z_xz', ...  % x*z coef
-            'x_yz', 'y_yz','z_yz', ...  % x*z coef
+            'x_w2', 'y_w2', ...  % constant terms for x', y', and z'
+            'x_wx', 'y_wx', ...  % x coef
+            'x_wy', 'y_wy', ...  % y coef
+            'x_x2', 'y_x2', ...  % x^2 coef
+            'x_xy', 'y_xy', ...  % x*y coef
+            'x_y2', 'y_y2', ...  % y^2 coef
             };
     end     
     
@@ -127,7 +130,7 @@ end
 %% Implementation of methods inherited from Transform
 methods
     function dim = getDimension(this) %#ok<MANU>
-        dim = 3;
+        dim = 2;
     end
 
     function point2 = transformPoint(this, point)
@@ -137,53 +140,31 @@ methods
         % compute centered coords.
         x = point(:, 1) - this.center(1);
         y = point(:, 2) - this.center(2);
-        z = point(:, 3) - this.center(3);
         
         % init with translation part
         x2 = ones(size(x)) * this.params(1);
         y2 = ones(size(x)) * this.params(2);
-        z2 = ones(size(x)) * this.params(3);
         
         % add linear contributions
-        x2 = x2 + x * this.params(4);
-        y2 = y2 + x * this.params(5);
-        z2 = z2 + x * this.params(6);
-        x2 = x2 + y * this.params(7);
-        y2 = y2 + y * this.params(8);
-        z2 = z2 + y * this.params(9);
-        x2 = x2 + z * this.params(10);
-        y2 = y2 + z * this.params(11);
-        z2 = z2 + z * this.params(12);
+        x2 = x2 + x * this.params(3);
+        y2 = y2 + x * this.params(4);
+        x2 = x2 + y * this.params(5);
+        y2 = y2 + y * this.params(6);
 
         % add quadratic contributions
-        x2 = x2 + x.^2 * this.params(13);
-        y2 = y2 + x.^2 * this.params(14);
-        z2 = z2 + x.^2 * this.params(15);
-        x2 = x2 + y.^2 * this.params(16);
-        y2 = y2 + y.^2 * this.params(17);
-        z2 = z2 + y.^2 * this.params(18);
-        x2 = x2 + z.^2 * this.params(19);
-        y2 = y2 + z.^2 * this.params(20);
-        z2 = z2 + z.^2 * this.params(21);
-
-        % add product contributions
-        x2 = x2 + x.*y * this.params(22);
-        y2 = y2 + x.*y * this.params(23);
-        z2 = z2 + x.*y * this.params(24);
-        x2 = x2 + x.*z * this.params(25);
-        y2 = y2 + x.*z * this.params(26);
-        z2 = z2 + x.*z * this.params(27);
-        x2 = x2 + y.*z * this.params(28);
-        y2 = y2 + y.*z * this.params(29);
-        z2 = z2 + y.*z * this.params(30);
+        x2 = x2 + x.^2 * this.params(7);
+        y2 = y2 + x.^2 * this.params(8);
+        x2 = x2 + x.*y * this.params(9);
+        y2 = y2 + x.*y * this.params(10);
+        x2 = x2 + y.^2 * this.params(11);
+        y2 = y2 + y.^2 * this.params(12);
 
         % recenter points
         x2 = x2 + this.center(1);
         y2 = y2 + this.center(2);
-        z2 = z2 + this.center(3);
 
         % concatenate coordinates
-        point2 = [x2 y2 z2];
+        point2 = [x2 y2];
     end
     
     function vect2 = transformVector(this, vector, position)
@@ -200,22 +181,15 @@ methods
         % compute centered coords.
         x = point(:, 1) - this.center(1);
         y = point(:, 2) - this.center(2);
-        z = point(:, 3) - this.center(3);
- 
+       
         p = this.params;
-        dxx = p(4)  + 2*x*p(13) + y*p(22) + z*p(25);
-        dyx = p(5)  + 2*x*p(14) + y*p(23) + z*p(26);
-        dzx = p(6)  + 2*x*p(15) + y*p(24) + z*p(27);
+        dxx = p(3)  + 2*x*p(7) + y*p(9);
+        dyx = p(4)  + 2*x*p(8) + y*p(10);
         
-        dxy = p(7)  + 2*y*p(16) + x*p(22) + z*p(28);
-        dyy = p(8)  + 2*y*p(17) + x*p(23) + z*p(29);
-        dzy = p(9)  + 2*y*p(18) + x*p(24) + z*p(30);
+        dxy = p(5)  + 2*y*p(11) + x*p(9);
+        dyy = p(6)  + 2*y*p(12) + x*p(10);
         
-        dxz = p(10) + 2*y*p(19) + x*p(25) + y*p(28);
-        dyz = p(11) + 2*y*p(20) + x*p(26) + y*p(29);
-        dzz = p(12) + 2*y*p(21) + x*p(27) + y*p(30);
-        
-        jacobian = [dxx dxy dxz ; dyx dyy dyz ; dzx dzy dzz];
+        jacobian = [dxx dxy ; dyx dyy];
     end
     
 end % Transform methods 
