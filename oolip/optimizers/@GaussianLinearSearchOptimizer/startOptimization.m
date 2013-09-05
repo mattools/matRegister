@@ -1,4 +1,4 @@
-function [params value] = startOptimization(this)
+function [params value] = startOptimization(this, varargin)
 %STARTOPTIMIZATION  Run the optimizer, and return optimized parameters
 %
 %   PARAMS = startOptimization(OPTIM)
@@ -22,16 +22,23 @@ function [params value] = startOptimization(this)
 % Notify beginning of optimization
 this.notify('OptimizationStarted');
 
+% get initial parameters
 params = this.params;
 if ~isempty(this.initialParameters)
     params = this.initialParameters;
 end
+if ~isempty(varargin)
+    params = varargin{1};
+end
 
+% extract variability
 nParams = length(params);
 variab  = this.parameterVariability;
 
-
-if length(variab)~=nParams
+if isscalar(variab)
+    variab = repmat(variab, 1, nParams);
+end
+if length(variab) ~= nParams
     warning('oolip:NonInitializedParameter',...
         'Variability not specified, use default variability');
     variab = ones(size(params));

@@ -1,13 +1,20 @@
 classdef Optimizer < handle
-%OPTIMIZER Single-value optimizer
+%OPTIMIZER General interface for single-valued function optimizers
 %
-%   output = Optimizer(input)
+%   This class is abstract, and is used to defined the general contract of
+%   optimizers. All Optimizer implementations should implement the
+%   following methods:
+%   * PARAMS = OPTIM.startOptimization
+%   * [PARAMS VALUE] = OPTIM.startOptimization
 %
-%   Example
-%   Optimizer
+%   It would be nice to also support following syntax:
+%   * PARAMS = OPTIM.startOptimization(PARAMS0)
 %
 %   See also
-%   NelderMeadSimplexOptimizer, MultiLinearSearchOptimizer
+%   optimizers, NelderMeadSimplexOptimizer, MultiLinearSearchOptimizer, 
+%   GaussianLinearSearchOtpimizer, GradientDescentOptimizer, 
+%   BoundedMultiLinearOptimizer, NelderMeadSimplexOptimizer
+%   MatlabSimplexOptimizer, MatlabFminuncWrapper
 %
 % ------
 % Author: David Legland

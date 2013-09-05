@@ -1,5 +1,5 @@
 classdef OptimizationListener < handle
-%OPTIMIZERLISTENER Base class for listening to Optimization events
+%OPTIMIZATIONLISTENER Base class for listening to Optimization events
 %
 %   output = OptimizationListener(input)
 %

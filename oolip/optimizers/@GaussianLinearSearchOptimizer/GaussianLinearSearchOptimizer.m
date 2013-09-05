@@ -4,7 +4,14 @@ classdef GaussianLinearSearchOptimizer < Optimizer
 %   output = GaussianLinearSearchOptimizer(input)
 %
 %   Example
-%   GaussianLinearSearchOptimizer
+%     x0 = [0 0];
+%     optim = GaussianLinearSearchOptimizer(@rosenbrock, x0);
+%     optim.nValues = 50;
+%     optim.nIter = 100;
+%     optim.parameterVariability = .2;
+%     xHat = optim.startOptimization([0 0])
+%     xHat =
+%         0.5469    0.2951
 %
 %   See also
 %
