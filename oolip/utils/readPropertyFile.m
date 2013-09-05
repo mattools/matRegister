@@ -1,10 +1,10 @@
-function map = readPropertyFile(fileName)
+function map = readPropertyFile(fileName, varargin)
 %READPROPERTYFILE Read a set of properties from a file
 %
 %   PROPS = readPropertyFile(FILENAME)
 %   Reads the set of properties stored in file FILENAME. Properties are
 %   given in one line each, with a key, the equal signe, and the value of
-%   the property. Comment in #-style are supported when they are aloe on
+%   the property. Comment in #-style are supported when they are alone on
 %   the line. The result is a Map object (implemented in containers.Map),
 %   with each key being a property.
 %   All properties are given as string.
@@ -28,9 +28,27 @@ function map = readPropertyFile(fileName)
 % Created: 2011-08-29,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
+nSkipLines = 0;
+while length(varargin) > 1
+    paramName = varargin{1};
+    switch lower(paramName)
+        case 'header'
+            nSkipLines = varargin{2};
+        otherwise
+            error('Could not interpret optional argument: ' + paramName);
+    end
+    varargin(1:2) = [];
+end
+
 file = FileReader(fileName);
 
 map = containers.Map();
+
+
+for i = 1:nSkipLines
+    file.readLine();
+end
+
 
 % Prints only the non-empty text lines
 while true
@@ -51,14 +69,14 @@ while true
     end
     
     % split each part of the line around the '=' sign
-    tokens = regexp(line, '=', 'split');
-    if length(tokens) ~= 2
+    indEqual = find(line == '=', 1, 'first');
+    if isempty(indEqual)
         error('readPropertyFile:ParseError', ...
             ['Could not parse following line in file <' fileName '>:\n' line]);
     end
     
-    key = strtrim(tokens{1});
-    value = strtrim(tokens{2});
+    key = line(1:indEqual-1);
+    value = line(indEqual+1:end);
     
     if isKey(map, key)
         error('readPropertyFile:DuplicateKey', ...
