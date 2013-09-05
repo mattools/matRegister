@@ -1,14 +1,27 @@
 classdef GradientDescentOptimizer < Optimizer
-%@GRADIENTDESCENTOPTIMIZER Gradient descent optimizer
+%GRADIENTDESCENTOPTIMIZER Gradient descent optimizer
 %
-%   output = @GradientDescentOptimizer(input)
+%   OPTIM = GradientDescentOptimizer();
+%   Initializes an empty optimizer.
+%
+%   OPTIM = GradientDescentOptimizer(FUN, X0);
+%   Initializes gradient desczent optimizer with a cost function FUN (given
+%   as a function handle) and a starting point X0 (given as a 1-by-P row
+%   vector).
 %
 %   Example
-%   @GradientDescentOptimizer
+%     x0 = [0 0];
+%     optim = GradientDescentOptimizer(@rosenbrock, x0);
+%     setDecayFunction(optim, ExponentialDecay(200));
+%     optim.nIter = 1000;
+%     xHat = optim.startOptimization([0 0])
+%     xHat =
+%         [1.0000 0.9999]
 %
-%   See also
 %
-%
+%   See Also
+%     Optimizer, rosenbrock
+
 % ------
 % Author: David Legland
 % e-mail: david.legland@grignon.inra.fr
@@ -43,6 +56,11 @@ methods
         %   Example
         %   OPTIM = GradientDescentOptimizer();
         %   setDecayFunction(OPTIM, ExponentialDecay(50));
+        %
+        %   fun = @(x) (x(1)-4)^2 + (x(2)-3)^2;
+        %   x0 = [1 1];
+        %   optim = GradientDescentOptimizer(fun, x0);
+        %   xHat = optim.startOptimization();
         %
         
         % call the parent constructor

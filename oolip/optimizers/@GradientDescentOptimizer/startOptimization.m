@@ -1,7 +1,8 @@
-function [params value] = startOptimization(this)
+function [params value] = startOptimization(this, varargin)
 %STARTOPTIMIZATION Start the gradient descent optimization algorithm
 %
-%   output = startOptimization(input)
+%   xHat = startOptimization(OPTIM)
+%   xHat = startOptimization(OPTIM, X0)
 %
 %   Example
 %   startOptimization
@@ -27,6 +28,9 @@ step = zeros(nIter, 1);
 % setup parameters to initial value
 if ~isempty(this.initialParameters)
     this.params = this.initialParameters;
+end
+if ~isempty(varargin)
+    this.params = varargin{1};
 end
 
 % initialize optimization result
