@@ -1,4 +1,4 @@
-function [params value converged output] = startOptimization(this)
+function [params, value, converged, output] = startOptimization(this)
 %STARTOPTIMIZATION Run the optimizer, and return optimized parameters
 %
 %   PARAMS = startOptimization(OPTIM)
@@ -25,7 +25,7 @@ function [params value converged output] = startOptimization(this)
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
 % e-mail: david.legland@grignon.inra.fr
@@ -57,7 +57,7 @@ iter = 1;
 while true
     % first, determines the indices of points with the highest (i.e.
     % worst), next highest, and lowest (i.e. best) values. 
-    [dummy indices] = sort(this.evals); %#ok<ASGLU>
+    [dummy, indices] = sort(this.evals); %#ok<ASGLU>
     indLow  = indices(1);
     indHigh = indices(end);
     indNext = indices(end-1);
@@ -82,7 +82,7 @@ while true
     
     % first extrapolate by a factor -1 through the face of the simplex
     % opposite to the highest point.
-    [xTry fTry] = this.evaluateReflection(indHigh, -1);
+    [xTry, fTry] = this.evaluateReflection(indHigh, -1);
     
     % if the value at the evaluated position is better than current
     % highest value, then replace the highest value
@@ -97,7 +97,7 @@ while true
     
     if fTry <= this.evals(indLow)
         % if new evaluation is better than current minimum, try to expand
-        [xTry fTry] = this.evaluateReflection(indHigh, 2);
+        [xTry, fTry] = this.evaluateReflection(indHigh, 2);
         
         if fTry < this.evals(indHigh)
             % expansion was successful
@@ -111,7 +111,7 @@ while true
     elseif fTry >= this.evals(indNext)
         % if new evaluation is worse than the second-highest point, look
         % for an intermediate point (i.e. do a one-dimensional contraction)
-        [xTry fTry] = this.evaluateReflection(indHigh, .5);
+        [xTry, fTry] = this.evaluateReflection(indHigh, .5);
         
         if fTry < this.evals(indHigh)
             % contraction was successful
@@ -146,11 +146,11 @@ end % main iteration loop
 %% Terminates
 
 if converged
-    if strmatch(this.displayMode, {'iter', 'final'})
+    if strcmp(this.displayMode, {'iter', 'final'})
         disp(exitMessage);
     end
 else
-    if strmatch(this.displayMode, {'iter', 'final', 'notify'})
+    if strcmp(this.displayMode, {'iter', 'final', 'notify'})
         disp(exitMessage);
     end
 end

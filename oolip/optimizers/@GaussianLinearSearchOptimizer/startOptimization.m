@@ -1,4 +1,4 @@
-function [params value] = startOptimization(this, varargin)
+function [params, value] = startOptimization(this, varargin)
 %STARTOPTIMIZATION  Run the optimizer, and return optimized parameters
 %
 %   PARAMS = startOptimization(OPTIM)
@@ -50,6 +50,10 @@ pv = linspace(0, 1, this.nValues+2);
 pv = pv(2:end-1);
 
 for i = 1:this.nIter
+    if strcmp(this.displayMode, 'iter')
+        disp(sprintf('iter %d/%d', i, this.nIter)); %#ok<DSPS>
+    end
+
     for p = 1:nParams
         % choose a set of values distributed around the current value
         % with a gaussian distribution
@@ -62,7 +66,7 @@ for i = 1:this.nIter
             res(k) = this.costFunction(params);
         end
         
-        [value bestK] = min(res);
+        [value, bestK] = min(res);
         params(p) = paramValues(bestK);
         
         % update optimizer internal state

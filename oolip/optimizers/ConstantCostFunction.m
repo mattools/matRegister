@@ -20,7 +20,7 @@ classdef ConstantCostFunction < CostFunction
 
 
 methods 
-    function varargout = evaluate(this, params) %#ok<MANU>
+    function varargout = evaluate(this, params) %#ok<INUSL>
         % Returns the same value (here, 1), whatever the param vector
         fval = 1;
         if nargout<=1

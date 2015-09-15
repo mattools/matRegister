@@ -1,4 +1,4 @@
-function [params value] = startOptimization(this)
+function [params, value] = startOptimization(this)
 %STARTOPTIMIZATION Run the optimization algorithm
 
 
@@ -35,10 +35,10 @@ for i = 1:this.nIter
     % guess initial bounds of the function
     ax = 0;
     bx = 1;
-    [ax bx cx] = fMinBracket(fun1, ax, bx);
+    [ax, bx, cx] = fMinBracket(fun1, ax, bx);
     
     % search minimum along dimension DIR
-    [tmin value] = brentLineSearch(fun1, ax, bx, cx, tol);
+    [tmin, value] = brentLineSearch(fun1, ax, bx, cx, tol);
     
     % construct new optimal point
     this.params = this.params + tmin*dir;

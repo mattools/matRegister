@@ -45,7 +45,7 @@ end % construction function
 %% General methods
 methods
  
-    function [res grad] = evaluate(this, params)
+    function [res, grad] = evaluate(this, params)
         % Update transform parameters, and compute function value (and grad)
         
         % update params
@@ -55,7 +55,7 @@ methods
         if nargout<=1
             res = computeValue(this.baseFunction);
         else
-            [res grad] = computeValueAndGradient(this.baseFunction);
+            [res, grad] = computeValueAndGradient(this.baseFunction);
         end
     end
 end % general methods

@@ -1,4 +1,4 @@
-function [params value] = startOptimization(this)
+function [params, value] = startOptimization(this)
 %STARTOPTIMIZATION  Run the optimizer, and return optimized parameters
 %
 %   PARAMS = startOptimization(OPTIM)
@@ -12,7 +12,7 @@ function [params value] = startOptimization(this)
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
 % e-mail: david.legland@grignon.inra.fr
@@ -41,7 +41,7 @@ if ~isempty(this.initialParameters)
 end
 
 % run the simplex optimizer, by calling Matlab optimisation function
-[params value] = fminsearch(this.costFunction, this.params, options);
+[params, value] = fminsearch(this.costFunction, this.params, options);
 
 % update inner data
 this.params = params;

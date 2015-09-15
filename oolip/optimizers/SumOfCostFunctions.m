@@ -68,7 +68,7 @@ methods
             
             % iterate over cost functions
             for i=1:nf
-                [fi gi] = evaluate(this.costFunction{i}, params);
+                [fi, gi] = evaluate(this.costFunction{i}, params);
                 f = f + fi;
                 g = g + gi;
             end

@@ -1,4 +1,4 @@
-function [params value] = startOptimization(this)
+function [params, value] = startOptimization(this)
 %STARTOPTIMIZATION  Run the optimizer, and return optimized parameters
 %
 %   PARAMS = startOptimization(OPTIM)
@@ -12,7 +12,7 @@ function [params value] = startOptimization(this)
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
 % e-mail: david.legland@grignon.inra.fr
@@ -52,7 +52,7 @@ for i = 1:this.nIter
             res(k) = this.costFunction(params);
         end
         
-        [value bestK] = min(res);
+        [value, bestK] = min(res);
         params(p) = paramValues(bestK);
         
         % update optimizer internal state

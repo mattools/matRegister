@@ -1,4 +1,4 @@
-function [params value] = startOptimization(this, varargin)
+function [params, value] = startOptimization(this, varargin)
 %STARTOPTIMIZATION Start the gradient descent optimization algorithm
 %
 %   xHat = startOptimization(OPTIM)
@@ -9,7 +9,7 @@ function [params value] = startOptimization(this, varargin)
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
 % e-mail: david.legland@grignon.inra.fr
@@ -57,7 +57,7 @@ for i = 1:nIter
     this.params = this.params + direction * step(i);
 
     % update metric
-    [this.value this.gradient] = this.costFunction(this.params);
+    [this.value, this.gradient] = this.costFunction(this.params);
     
     % if value is better than before, update best value
     if this.value < this.bestValue

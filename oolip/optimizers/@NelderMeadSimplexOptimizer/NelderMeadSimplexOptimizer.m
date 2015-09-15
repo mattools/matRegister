@@ -17,7 +17,7 @@ classdef NelderMeadSimplexOptimizer < Optimizer
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
 % e-mail: david.legland@grignon.inra.fr
@@ -73,7 +73,7 @@ methods
             return;
         end
         
-        if nargin>=2
+        if nargin >= 2
             % setup cost function
             this.setCostFunction(varargin{1});
 
@@ -85,13 +85,13 @@ methods
         end
 
         % setup vector of variation amounts in each direction
-        if nargin>2
+        if nargin > 2
             del = varargin{3};
         else
             del = 1e-5;
         end
         
-        if length(del)==1
+        if length(del) == 1
             this.deltas = del * ones(size(params));
         else
             this.deltas = del;
@@ -141,7 +141,7 @@ methods (Access = private)
 
    end
     
-    function [ptry ytry] = evaluateReflection(this, ihi, fac)
+    function [ptry, ytry] = evaluateReflection(this, ihi, fac)
         % helper function that evaluates the value of the function at the
         % reflection of point with index ihi
         %
