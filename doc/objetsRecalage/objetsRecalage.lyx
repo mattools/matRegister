@@ -1,34 +1,102 @@
-#LyX 2.0 created this file. For more info see http://www.lyx.org/
-\lyxformat 413
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
 \begin_document
 \begin_header
 \textclass scrreprt
 \begin_preamble
 
+\usepackage{textcomp}
+
+
 \usepackage{fullpage}
 
-\usepackage{textcomp}
+%\usepackage{sfmath}
+\usepackage{xcolor}
+\definecolor{bl}{rgb}{0.0,0.2,0.6} 
+
+
+% package that modifies style of section headers
+%\usepackage{sectsty}
+
+\addtokomafont{chapter}{\color{bl}\scshape \selectfont}
+\addtokomafont{section}{\color{bl}\scshape \selectfont}
+\addtokomafont{subsection}{\color{bl}\scshape \selectfont}
+\addtokomafont{subsubsection}{\color{bl}\scshape \selectfont}
+%\allsectionsfont{\color{bl}\scshape \selectfont }
+
+% setup font style for different title elements
+\setkomafont{title}{\color{bl} \bfseries \scshape}
+\setkomafont{author}{\centering \small}
+\setkomafont{date}{\centering \small}
+
+
+% Change the abstract environment
+\usepackage[runin]{abstract}			% runin option for a run-in title
+\setlength\absleftindent{30pt}		% left margin
+\setlength\absrightindent{30pt}		% right margin
+\abslabeldelim{\quad }						% 
+\setlength{\abstitleskip}{-10pt}
+\renewcommand{\abstractname}{}
+\renewcommand{\abstracttextfont}{\color{bl} \small \slshape }	% slanted text
+
+
+% Custom headers and footers
+\usepackage{fancyhdr}
+% Enabling the custom headers/footers
+\pagestyle{fancy}
+\usepackage{lastpage}	
+% Header (empty)
+% Haut a gauche - page g : chapitre (sl), page d : page (bf) - plain : rien
+\lhead[\fancyplain{}{\slshape\leftmark}]{\fancyplain{}{}}
+% rien au centre
+\chead{}
+% Haut a droite - page g : page (bf), page d : section (sl) - plain : rien
+\rhead[\fancyplain{}{}]{\fancyplain{}{\slshape\rightmark}}
+
+% Footer (you may change this to your own needs)
+\lfoot{\footnotesize \jobname.lyx}
+\cfoot{}
+\rfoot{\footnotesize page \thepage\ sur \pageref{LastPage}}	% "Page 1 of 2"
+\renewcommand{\headrulewidth}{0.0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% chap a gauche sans numero, rien a droite
+%\renewcommand{\chaptermark}[1]{\markboth{\textit{#1}}{}}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+% section à droite avec numero
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+
+
+% 
+\usepackage[format=plain,labelfont=bf]{caption}
+\captionsetup[figure]{name=Figure}
+\DeclareCaptionLabelSeparator{colon}{: }
+
+
 
 \usepackage[numbered, framed]{mcode}
 \end_preamble
 \use_default_options true
+\begin_modules
+customHeadersFooters
+\end_modules
 \maintain_unincluded_children false
 \language french
 \language_package default
 \inputencoding utf8x
 \fontencoding global
-\font_roman default
+\font_roman md-charter
 \font_sans default
 \font_typewriter lmtt
+\font_math auto
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
-
 \graphics default
-\default_output_format default
+\default_output_format pdf2
 \output_sync 0
 \bibtex_command default
 \index_command default
@@ -47,15 +115,24 @@
 \pdf_pdfusetitle true
 \papersize a4paper
 \use_geometry false
-\use_amsmath 1
-\use_esint 1
-\use_mhchem 1
-\use_mathdots 1
-\cite_engine natbib_authoryear
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
 \suppress_date false
+\justification true
 \use_refstyle 0
 \index Index
 \shortcut idx
@@ -67,8 +144,8 @@
 \paragraph_indentation default
 \quotes_language french
 \papercolumns 1
-\papersides 1
-\paperpagestyle default
+\papersides 2
+\paperpagestyle fancy
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -459,7 +536,7 @@ LinearInterpolator2D
 \end_layout
 
 \begin_layout Standard
-Interpolation linéaire pour des images 2D, marche sur des images scalaires.
+Interpolation linéaire pour des images 2D, fonctionne sur des images scalaires.
 \end_layout
 
 \begin_layout Subsection
@@ -467,7 +544,7 @@ LinearInterpolator3D
 \end_layout
 
 \begin_layout Standard
-Interpolation linéaire pour des images 3D, marche sur des images scalaires.
+Interpolation linéaire pour des images 3D, fonctionne sur des images scalaires.
 \end_layout
 
 \begin_layout Subsection
@@ -917,8 +994,9 @@ computeValue Cette méthode itère sur tous les points tests, évalue la valeur
 \begin_layout Description
 computeValueAndGradient cette méthode prend en entrée une transformation
  paramétrée ainsi que les composantes d'une image gradient, et renvoie la
- valeur du vecteur gradient calculée en moyennant, pour les points de test,
- le produit du jacobien de la transformation par l'image gradient.
+ valeur du vecteur gradient (dérivée selon les composantes du vecteur de
+ paramètres) calculée en moyennant, pour les points de test, le produit
+ du jacobien de la transformation par l'image gradient.
  L'image gradient est interpolée selon les plus proches voisins.
 \end_layout
 
