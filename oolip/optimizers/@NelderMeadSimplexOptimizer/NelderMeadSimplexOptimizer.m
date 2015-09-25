@@ -4,9 +4,8 @@ classdef NelderMeadSimplexOptimizer < Optimizer
 %   OPT = NelderMeadSimplexOptimizer()
 %
 %   Example
-%   % Run the simplex otpimizer on the Rosenbrock function
-%     optimizer = NelderMeadSimplexOptimizer([0 0], [.01 .01]);
-%     optimizer.setCostFunction(@rosenbrock);
+%     % Run the simplex optimizer on the Rosenbrock function
+%     optimizer = NelderMeadSimplexOptimizer(@rosenbrock, [0 0], [.01 .01]);
 %     [xOpt value] = optimizer.startOptimization();
 %     xOpt
 %       xOpt =
@@ -16,7 +15,7 @@ classdef NelderMeadSimplexOptimizer < Optimizer
 %           5.5924e-006
 %
 %   See also
-%
+%   Optimizer, MatlabSimplexOptimizer
 
 % ------
 % Author: David Legland

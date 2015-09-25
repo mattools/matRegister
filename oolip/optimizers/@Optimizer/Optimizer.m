@@ -13,12 +13,12 @@ classdef Optimizer < handle
 %   See also
 %   optimizers, NelderMeadSimplexOptimizer, MultiLinearSearchOptimizer, 
 %   GaussianLinearSearchOtpimizer, GradientDescentOptimizer, 
-%   BoundedMultiLinearOptimizer, NelderMeadSimplexOptimizer
-%   MatlabSimplexOptimizer, MatlabFminuncWrapper
+%   BoundedMultiLinearOptimizer, MatlabSimplexOptimizer, MatlabFminuncWrapper
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@nantes.inra.fr
 % Created: 2010-10-06,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
