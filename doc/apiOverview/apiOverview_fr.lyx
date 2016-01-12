@@ -4,12 +4,6 @@
 \begin_header
 \textclass scrreprt
 \begin_preamble
-
-\usepackage{textcomp}
-
-
-\usepackage{fullpage}
-
 %\usepackage{sfmath}
 \usepackage{xcolor}
 \definecolor{bl}{rgb}{0.0,0.2,0.6} 
@@ -38,6 +32,18 @@
 \setlength{\abstitleskip}{-10pt}
 \renewcommand{\abstractname}{}
 \renewcommand{\abstracttextfont}{\color{bl} \small \slshape }	% slanted text
+
+
+%% Haut a gauche - page g : page (bf), page d : section (sl) - plain : rien
+%\lhead[\fancyplain{}{\bf\thepage}]{\fancyplain{}{\sl\rightmark}}
+%% Haut a droite - page g : chapitre (sl), page d : page (bf) - plain : rien
+%\rhead[\fancyplain{}{\sl\leftmark}]{\fancyplain{}{\bf\thepage}}
+%% Bas centré - plain : page (bf) - sinon rien
+%\cfoot[\fancyplain{\bf\thepage}{}]{\fancyplain{\bf\thepage}{}}
+%\chead{}\lfoot{}\rfoot{}
+%% Header depasse cote ext (nb page)
+%\addtolength{\headwidth}{7mm}
+
 
 
 % Custom headers and footers
@@ -74,7 +80,12 @@
 
 
 
-\usepackage[numbered, framed]{mcode}
+%\usepackage[numbered, framed]{mcode}
+%\usepackage{matlab-prettifier}
+
+\usepackage{textcomp}
+
+%\usepackage{fullpage}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -83,7 +94,7 @@ customHeadersFooters
 \maintain_unincluded_children false
 \language french
 \language_package default
-\inputencoding utf8x
+\inputencoding auto
 \fontencoding global
 \font_roman md-charter
 \font_sans default
@@ -138,7 +149,7 @@ customHeadersFooters
 \shortcut idx
 \color #008000
 \end_index
-\secnumdepth 3
+\secnumdepth 2
 \tocdepth 1
 \paragraph_separation indent
 \paragraph_indentation default
