@@ -1,4 +1,4 @@
-function [res grad isInside] = computeValueAndGradient(this, varargin)
+function [res, grad, isInside] = computeValueAndGradient(this, varargin)
 % Compute metric value and gradient
 %
 %   [RES DERIV] = this.computeValueAndGradient();
@@ -28,19 +28,19 @@ if useClassFields
     % If the gradient image is an image function, it is assumed to be a 
     % gradient interpolator or a gradient evaluator
     if isa(this.gradientImage, 'ImageFunction')
-        [res grad isInside] = ...
+        [res, grad, isInside] = ...
             computeValueAndGradientFromGradientFunction(this);
         return;
     end
     
     % if gradient image is a standard image, use specific methods that
     % perform dimension-specific nearest-neighbor interpolation
-    if nd==2
-        [res grad isInside] = computeValueAndGradientLocal2d(this);
-    elseif nd==3
-        [res grad isInside] = computeValueAndGradientLocal3d(this);
+    if nd == 2
+        [res, grad, isInside] = computeValueAndGradientLocal2d(this);
+    elseif nd == 3
+        [res, grad, isInside] = computeValueAndGradientLocal3d(this);
     else
-        [res grad isInside] = computeValueAndGradientLocal(this);
+        [res, grad, isInside] = computeValueAndGradientLocal(this);
     end
     
 else
@@ -48,28 +48,28 @@ else
     warning('oolip:deprecated', ...
         'Deprecated syntax. Please initialize metric fields instead');
   
-    if length(varargin)<nd
+    if length(varargin) < nd
         error('Requires as many gradient components as the number of dimensions');
     end
     
     % assumes transfor and gradient components are given as arguments
     if nd == 2
-        [res grad isInside] = computeValueAndGradient2d(this, varargin{:});
+        [res, grad, isInside] = computeValueAndGradient2d(this, varargin{:});
     else
-        [res grad isInside] = computeValueAndGradient3d(this, varargin{:});
+        [res, grad, isInside] = computeValueAndGradient3d(this, varargin{:});
     end
 end
 
 % end of main function
 
 
-function [res grad isInside] = computeValueAndGradientLocal(this)
+function [res, grad, isInside] = computeValueAndGradientLocal(this)
 
 % compute values in image 1
-[values1 inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(this.img1, this.points);
 
 % compute values in image 2
-[values2 inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(this.img2, this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -94,7 +94,7 @@ gd = zeros(nInds, nParams);
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
 points2 = transformPoint(transfo, this.points);
-indices = round(points2(inds, :))+1;
+indices = round(points2(inds, :)) + 1;
 
 for i=1:length(inds)
     iInd = inds(i);
@@ -107,7 +107,7 @@ for i=1:length(inds)
     grad = getPixel(this.gradientImage, subs{:});
     
     % local contribution to metric gradient
-    gd(i, :) = grad*jac;
+    gd(i, :) = grad * jac;
 end
 
 % compute gradient vectors weighted by local differences
@@ -120,14 +120,14 @@ grad = mean(gd, 1);
 
 
 
-function [res grad isInside] = computeValueAndGradientLocal2d(this)
+function [res, grad, isInside] = computeValueAndGradientLocal2d(this)
 %Assumes gradient image is 2D
 
 % compute values in image 1
-[values1 inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(this.img1, this.points);
 
 % compute values in image 2
-[values2 inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(this.img2, this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -159,6 +159,7 @@ indices = pointToIndex(this.gradientImage, points2(inds,:));
 
 gradImg = this.gradientImage.data;
 
+% iterate over sampling points within bounds
 for i = 1:nInds
     iInd = inds(i);
     
@@ -170,10 +171,10 @@ for i = 1:nInds
     ind1 = indices(i,1);
     ind2 = indices(i,2);
     
-    grad = [gradImg(ind1, ind2, 1) gradImg(ind1, ind2, 2)];
+    grad = [gradImg(ind1, ind2, 1, 1) gradImg(ind1, ind2, 1, 2)];
     
     % local contribution to metric gradient
-    gd(i, :) = grad*jac;
+    gd(i, :) = grad * jac;
 end
 
 % compute gradient vectors weighted by local differences
@@ -184,15 +185,15 @@ grad = mean(gd, 1);
 
 
 
-function [res grad isInside] = computeValueAndGradientLocal3d(this)
+function [res, grad, isInside] = computeValueAndGradientLocal3d(this)
 %Assumes gradient image is 3D
 
 
 % compute values in image 1
-[values1 inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(this.img1, this.points);
 
 % compute values in image 2
-[values2 inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(this.img2, this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -227,7 +228,7 @@ points2 = transformPoint(transfo, this.points);
 gradImg = this.gradientImage.data;
 indices = pointToIndex(gradImg, points2(inds,:));
 
-
+% iterate over sampling points within bounds
 for i = 1:length(inds)
     iInd = inds(i);
     
@@ -257,17 +258,17 @@ gd = gd .* diff(:, ones(1, nParams));
 grad = mean(gd, 1);
 
 
-function [res grad isInside] = computeValueAndGradientFromGradientFunction(this)
+function [res, grad, isInside] = computeValueAndGradientFromGradientFunction(this)
 % Assumes gradient image is an ImageFunction that evaluates or interpolates
 % gradient of another image
 % the interpolated/evaluated gradient is not transformed, this operation is
 % left to this function
 
 % compute values in image 1
-[values1 inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(this.img1, this.points);
 
 % compute values in image 2
-[values2 inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(this.img2, this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -294,7 +295,7 @@ points2 = transformPoint(transfo, this.points);
 
 % evaluate gradient, and re-compute points within image frame, as gradient
 % evaluator can have different behaviour at image borders.
-[gradVals gradInside] = evaluate(this.gradientImage, points2);
+[gradVals, gradInside] = evaluate(this.gradientImage, points2);
 
 % convert to indices
 inds    = find(gradInside);
@@ -327,14 +328,14 @@ grad = mean(gd, 1);
 
 
 
-function [res grad isInside] = computeValueAndGradient2d(this, transfo, gx, gy)
+function [res, grad, isInside] = computeValueAndGradient2d(this, transfo, gx, gy)
 % Old function to compute metric and gradient of a 2D image using 2 args
 
 % compute values in image 1
-[values1 inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(this.img1, this.points);
 
 % compute values in image 2
-[values2 inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(this.img2, this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -383,14 +384,14 @@ gd = gd .* diff(:, ones(1, nParams));
 grad = mean(gd, 1);
 
 
-function [res grad isInside] = computeValueAndGradient3d(this, transfo, gx, gy, gz)
+function [res, grad, isInside] = computeValueAndGradient3d(this, transfo, gx, gy, gz)
 % Old function to compute metric and gradient of a 3D image using 3 args
 
 % compute values in image 1
-[values1 inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(this.img1, this.points);
 
 % compute values in image 2
-[values2 inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(this.img2, this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
