@@ -1,4 +1,4 @@
-function [val isInside] = evaluate(this, varargin)
+function [val, isInside] = evaluate(this, varargin)
 % Evaluate intensity of image at a given physical position
 %
 %   VAL = INTERP.evaluate(POS);
@@ -18,14 +18,14 @@ function [val isInside] = evaluate(this, varargin)
 %
 
 % number of dimensions of base image
-nd = this.image.getDimension();
+nd = ndims(this.image);
 
 % size of elements: number of channels by number of frames
-elSize = this.image.getElementSize();
+elSize = elementSize(this.image);
 
 
 % eventually convert inputs to a single nPoints-by-ndims array
-[point dim] = ImageFunction.mergeCoordinates(varargin{:});
+[point, dim] = ImageFunction.mergeCoordinates(varargin{:});
 
 if size(point, 2) ~= nd
     error('Dimension of input positions should be the same as image');
@@ -58,7 +58,7 @@ N = size(coord, 1);
 
 % select points located inside interpolation area
 % (smaller than image physical size)
-siz = this.image.getSize();
+siz = size(this.image);
 isBefore    = sum(coord < .5, 2)>0;
 isAfter     = sum(coord >= (siz(ones(N,1), :))+.5, 2)>0;
 isInside    = ~(isBefore | isAfter);
