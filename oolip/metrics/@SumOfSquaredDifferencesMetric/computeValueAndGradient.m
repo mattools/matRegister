@@ -1,4 +1,4 @@
-function [res grad isInside] = computeValueAndGradient(this, varargin)
+function [res, grad, isInside] = computeValueAndGradient(this, varargin)
 % Compute metric value and gradient
 %
 %   [RES DERIV] = this.computeValueAndGradient();
@@ -17,32 +17,32 @@ function [res grad isInside] = computeValueAndGradient(this, varargin)
 %
 
 if ~isempty(this.transform) && ~isempty(this.gradientImage)
-    nd = this.img1.getDimension();
-    if nd==2
-        [res grad isInside] = computeValueAndGradientLocal2d(this);
-    elseif nd==3
-        [res grad isInside] = computeValueAndGradientLocal3d(this);
+    nd = ndims(this.img1);
+    if nd == 2
+        [res, grad, isInside] = computeValueAndGradientLocal2d(this);
+    elseif nd == 3
+        [res, grad, isInside] = computeValueAndGradientLocal3d(this);
     else
-        [res grad isInside] = computeValueAndGradientLocal(this);
+        [res, grad, isInside] = computeValueAndGradientLocal(this);
     end
 else
     % deprecation warning
     warning('oolip:deprecated', ...
         'Deprecated syntax. Please initialize metric fields instead');
     
-    % assumes transfor and gradient components are given as arguments
-    nd = this.img1.getDimension();
+    % assumes transform and gradient components are given as arguments
+    nd = ndims(this.img1);
     if nd == 2
-        [res grad isInside] = computeValueAndGradient2d(this, varargin{:});
+        [res, grad, isInside] = computeValueAndGradient2d(this, varargin{:});
     else
-        [res grad isInside] = computeValueAndGradient3d(this, varargin{:});
+        [res, grad, isInside] = computeValueAndGradient3d(this, varargin{:});
     end
 end
 
 % end of main function
 
 
-function [res grad isInside] = computeValueAndGradientLocal(this)
+function [res, grad, isInside] = computeValueAndGradientLocal(this)
 
 % error checking
 if isempty(this.transform)
@@ -53,10 +53,10 @@ if isempty(this.gradientImage)
 end
 
 % compute values in image 1
-[values1 inside1] = this.img1.evaluate(this.points);
+[values1, inside1] = this.img1.evaluate(this.points);
 
 % compute values in image 2
-[values2 inside2] = this.img2.evaluate(this.points);
+[values2, inside2] = this.img2.evaluate(this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -91,11 +91,11 @@ for i=1:length(inds)
     grad = this.gradientImage.getPixel(subs{:});
     
     % local contribution to metric gradient
-    g(iInd,:) = grad*jac;
+    g(iInd,:) = grad * jac;
 end
 
 % calcul du vecteur gradient pondere par difference locale
-gd = g(inds,:).*diff(:, ones(1, nParams));
+gd = g(inds,:) .* diff(:, ones(1, nParams));
 
 % somme des vecteurs gradient valides
 grad = sum(gd, 1);
@@ -104,7 +104,7 @@ grad = sum(gd, 1);
 
 
 
-function [res grad isInside] = computeValueAndGradientLocal2d(this)
+function [res, grad, isInside] = computeValueAndGradientLocal2d(this)
 %Assumes gradient image is 2D
 
 
@@ -117,10 +117,10 @@ if isempty(this.gradientImage)
 end
 
 % compute values in image 1
-[values1 inside1] = this.img1.evaluate(this.points);
+[values1, inside1] = this.img1.evaluate(this.points);
 
 % compute values in image 2
-[values2 inside2] = this.img2.evaluate(this.points);
+[values2, inside2] = this.img2.evaluate(this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -173,7 +173,7 @@ grad = sum(gd, 1);
 
 
 
-function [res grad isInside] = computeValueAndGradientLocal3d(this)
+function [res, grad, isInside] = computeValueAndGradientLocal3d(this)
 %Assumes gradient image is 3D
 
 
@@ -186,10 +186,10 @@ if isempty(this.gradientImage)
 end
 
 % compute values in image 1
-[values1 inside1] = this.img1.evaluate(this.points);
+[values1, inside1] = this.img1.evaluate(this.points);
 
 % compute values in image 2
-[values2 inside2] = this.img2.evaluate(this.points);
+[values2, inside2] = this.img2.evaluate(this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -246,20 +246,20 @@ grad = sum(gd, 1);
 
 
 
-function [res grad isInside] = computeValueAndGradient2d(this, transfo, gx, gy)
+function [res, grad, isInside] = computeValueAndGradient2d(this, transfo, gx, gy)
 
 % compute values in image 1
-[values1 inside1] = this.img1.evaluate(this.points);
+[values1, inside1] = this.img1.evaluate(this.points);
 
 % compute values in image 2
-[values2 inside2] = this.img2.evaluate(this.points);
+[values2, inside2] = this.img2.evaluate(this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
 
 % compute result
 diff = values2(isInside) - values1(isInside);
-res = sum(diff.^2);
+res = sum(diff .^ 2);
 
 %fprintf('Initial SSD: %f\n', res);
 
@@ -280,7 +280,7 @@ g = zeros(nbInds, nParams);
 points2 = transfo.transformPoint(this.points);
 index = round(points2(inds, [2 1]))+1;
 
-for i=1:length(inds)
+for i = 1:length(inds)
     % calcule jacobien pour points valides (repere image fixe)
     jac = transfo.getParametricJacobian(this.points(inds(i),:));
     
@@ -294,21 +294,21 @@ for i=1:length(inds)
 end
 
 % calcul du vecteur gradient pondere par difference locale
-gd = g(inds,:).*diff(:, ones(1, nParams));
+gd = g(inds,:) .* diff(:, ones(1, nParams));
 
 % somme des vecteurs gradient valides
 grad = sum(gd, 1);
 
 
-function [res grad isInside] = computeValueAndGradient3d(this, transfo, gx, gy, gz)
+function [res, grad, isInside] = computeValueAndGradient3d(this, transfo, gx, gy, gz)
 
 %% Compute metric value
 
 % compute values in image 1
-[values1 inside1] = this.img1.evaluate(this.points);
+[values1, inside1] = this.img1.evaluate(this.points);
 
 % compute values in image 2
-[values2 inside2] = this.img2.evaluate(this.points);
+[values2, inside2] = this.img2.evaluate(this.points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -334,7 +334,7 @@ g = zeros(nbInds, nParams);
 points2 = transfo.transformPoint(this.points);
 index = round(points2(inds, [2 1 3]))+1;
 
-for i=1:length(inds)
+for i = 1:length(inds)
     % calcule jacobien pour points valides (repere image fixe)
     jac = transfo.getParametricJacobian(this.points(inds(i),:));
     
@@ -345,11 +345,11 @@ for i=1:length(inds)
     grad = [gx(i1,i2,i3) gy(i1,i2,i3) gz(i1,i2,i3)];
     
     % local contribution to metric gradient
-    g(inds(i),:) = grad*jac;
+    g(inds(i),:) = grad * jac;
 end
 
 % calcul du vecteur gradient pondere par difference locale
-gd = g(inds,:).*diff(:, ones(1, nParams));
+gd = g(inds,:) .* diff(:, ones(1, nParams));
 
 % somme des vecteurs gradient valides
 grad = sum(gd, 1);

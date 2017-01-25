@@ -1,18 +1,28 @@
 classdef Optimizer < handle
 %OPTIMIZER General interface for single-valued function optimizers
 %
-%   This class is abstract, and is used to defined the general contract of
-%   optimizers. All Optimizer implementations should implement the
-%   following methods:
+%   This abstract class is used to define the general contract of
+%   optimization algorithms. All implementations of Optimizer abstraction
+%   should implement the "startOptimization" method, with two syntaxes:
 %   * PARAMS = OPTIM.startOptimization
-%   * [PARAMS VALUE] = OPTIM.startOptimization
+%   * [PARAMS, VALUE] = OPTIM.startOptimization
 %
 %   It would be nice to also support following syntax:
 %   * PARAMS = OPTIM.startOptimization(PARAMS0)
 %
+%   The Optimizer class implements a list of listeners. 
+%   Example of use:
+%     fun = @rosenbrock;
+%     t0 = [0 0]; deltas = [.01 .01];
+%     optimizer = NelderMeadSimplexOptimizer(fun, [0 0], [.01 .01]);
+%     listener = OptimizedValueEvolutionDisplay(gca);
+%     addOptimizationListener(optimizer, listener);
+%     [xOpt value] = optimizer.startOptimization();
+%     
+%
 %   See also
 %   optimizers, NelderMeadSimplexOptimizer, MultiLinearSearchOptimizer, 
-%   GaussianLinearSearchOtpimizer, GradientDescentOptimizer, 
+%   GaussianLinearSearchOptimizer, GradientDescentOptimizer, 
 %   BoundedMultiLinearOptimizer, MatlabSimplexOptimizer, MatlabFminuncWrapper
 %
 
@@ -93,7 +103,7 @@ end % Constructors
 %% Abstract methods
 methods (Abstract)
     varargout = startOptimization(varargin)
-    %STARTOPTIMIZATION Start the optimizer until an end condition is reached
+    %STARTOPTIMIZATION Start the optimizer and iterate until an end condition is reached
 end
 
 %% General methods

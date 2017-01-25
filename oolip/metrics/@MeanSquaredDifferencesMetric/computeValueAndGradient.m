@@ -79,7 +79,7 @@ diff = values2(isInside) - values1(isInside);
 
 % average over all points
 np = length(isInside);
-res = sum(diff.^2)/np;
+res = sum(diff .^ 2) / np;
 
 %fprintf('Initial SSD: %f\n', res);
 
@@ -96,7 +96,7 @@ gd = zeros(nInds, nParams);
 points2 = transformPoint(transfo, this.points);
 indices = round(points2(inds, :)) + 1;
 
-for i=1:length(inds)
+for i = 1:length(inds)
     iInd = inds(i);
     
     % compute jacobian for valid points (in fixed image reference system)
@@ -168,8 +168,8 @@ for i = 1:nInds
     jac = getParametricJacobian(transfo, p0);
     
     % local gradient in moving image
-    ind1 = indices(i,1);
-    ind2 = indices(i,2);
+    ind1 = indices(iInd,1);
+    ind2 = indices(iInd,2);
     
     grad = [gradImg(ind1, ind2, 1, 1) gradImg(ind1, ind2, 1, 2)];
     
