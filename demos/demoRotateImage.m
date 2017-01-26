@@ -37,10 +37,10 @@ transfo.setCenter([128 128]);
 % create an object for transforming image
 tim = BackwardTransformedImage(interp, transfo);
 
-% create resampler, initialized with corodinates of input image
+% create resampler, initialized with coordinates of input image
 resampler = ImageResampler(img);
 
-% compute and showthe resampled image
+% compute and show the resampled image
 res = resampler.resample(tim);
 show(res);
 
