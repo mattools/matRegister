@@ -1,4 +1,4 @@
-function [val isInside] = evaluate(this, varargin)
+function [val, isInside] = evaluate(this, varargin)
 % Evaluate intensity of image at a given physical position
 %
 % VAL = INTERP.evaluate(POS);
@@ -18,7 +18,7 @@ function [val isInside] = evaluate(this, varargin)
 
 
 % eventually convert inputs to a single nPoints-by-ndims array
-[point dim] = ImageFunction.mergeCoordinates(varargin{:});
+[point, dim] = ImageFunction.mergeCoordinates(varargin{:});
 
 % Evaluates image value for a given position
 coord = this.image.pointToContinuousIndex(point);
@@ -38,28 +38,24 @@ dim2 = [dim0 elSize];
 val = ones(dim2) * this.fillValue;
 
 % extract x and y
-xt = coord(:, 1);
-yt = coord(:, 2);
+xt = round(coord(:, 1));
+yt = round(coord(:, 2));
 
 % select points located inside interpolation area
 % (smaller than image physical size)
 siz = size(this.image);
-isInside = ~(xt<-.5 | yt<-.5 | xt>=siz(1)-.5 | yt>=siz(2)-.5);
+isInside = ~(xt < 1 | yt < 1 | xt > siz(1) | yt > siz(2));
 xt = xt(isInside);
 yt = yt(isInside);
-
-% indices of pixels before and after in each direction
-i1 = round(xt);
-j1 = round(yt);
 
 % values of the nearest neighbor
 if prod(elSize) == 1
     % case of scalar image, no movie
-    val(isInside) = double(this.image.getPixels(i1, j1));
+    val(isInside) = double(this.image.getPixels(xt, yt));
     
 else
     % compute interpolated values
-    res = double(this.image.getPixels(i1, j1));
+    res = double(this.image.getPixels(xt, yt));
     
     % compute spatial index of each inerpolated point
     subs = cell(1, nd);
