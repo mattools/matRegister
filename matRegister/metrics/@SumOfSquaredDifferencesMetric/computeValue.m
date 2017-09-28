@@ -16,5 +16,7 @@ function [res, isInside] = computeValue(this)
 isInside = inside1 & inside2;
 
 % compute result
-diff = (values1(isInside) - values2(isInside)).^2;
+% diff = (values1(isInside) - values2(isInside)).^2;
+% res = sum(diff);
+diff = (values1 - values2).^2;
 res = sum(diff);
