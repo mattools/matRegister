@@ -62,8 +62,8 @@ methods
             img = varargin{1};
             this.outputSize = size(img);
             this.outputType = img.getDataType();
-            this.origin     = img.getOrigin();
-            this.spacing    = img.getSpacing();
+            this.origin     = img.origin;
+            this.spacing    = img.spacing;
             
         elseif isnumeric(varargin{1})
             % Gives lx and ly
@@ -148,7 +148,7 @@ methods
         if outputDim==2
             % Process 2D images
             
-            [x y] = meshgrid(lx, ly);
+            [x, y] = meshgrid(lx, ly);
 
             vals = zeros(size(x), this.outputType);
         
@@ -158,7 +158,7 @@ methods
             % Process 3D images
             
             lz = (0:this.outputSize(3)-1)*this.spacing(3) + this.origin(3);
-            [x y z] = meshgrid(lx, ly, lz);
+            [x, y, z] = meshgrid(lx, ly, lz);
             
             vals = zeros(size(x), this.outputType);
         
@@ -173,8 +173,8 @@ methods
         img2 = Image.create(vals);
         
         % copy spatial calibration info to image
-        img2.setOrigin(this.origin);
-        img2.setSpacing(this.spacing);
+        img2.origin = this.origin;
+        img2.spacing = this.spacing;
     end
 
 end % abstract methods
