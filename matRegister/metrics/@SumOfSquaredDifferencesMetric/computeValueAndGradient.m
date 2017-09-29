@@ -13,8 +13,8 @@ function [res, grad, isInside] = computeValueAndGradient(this, varargin)
 % Example:
 %   transfo = Translation2DModel([1.2 2.3]);
 %   metric = SumOfSquaredDifferencesMetric(img1, img2, points);
-%   setTransform(metric, transfo);
-%   setGradientImage(metric, gradImg);
+%   metric.transform = transfo;
+%   metric.gradientImage = gradient(img2);
 %   ssd = metric.computeValueAndGradient();
 %
 
@@ -30,7 +30,7 @@ if ~isempty(this.transform) && ~isempty(this.gradientImage)
 else
     % deprecation warning
     warning('matRegister:deprecated', ...
-        'Deprecated syntax. Please initialize metric fields instead');
+        'Deprecated syntax. Please initialize metric "transform" and "gradientImage" fields instead');
     
     % assumes transform and gradient components are given as arguments
     nd = ndims(this.img1);
@@ -81,9 +81,9 @@ nParams = length(transfo.getParameters());
 g = zeros(nbInds, nParams);
 
 % convert from physical coordinates to index coordinates
-% (assumes spacing is 1 and origin is 0)
 points2 = transfo.transformPoint(this.points);
-indices = round(points2(inds, :))+1;
+points2 = pointToIndex(this.gradientImage, points2);
+indices = round(points2(inds, :));
 
 for i=1:length(inds)
     iInd = inds(i);
@@ -149,10 +149,13 @@ g = zeros(nbInds, nParams);
 points2 = transfo.transformPoint(this.points);
 
 % convert from physical coordinates to index coordinates
+points2 = pointToIndex(this.gradientImage, points2);
+indices = round(points2(inds, :));
 % (assumes spacing is 1 and origin is 0)
-indices = round(points2(inds, :)) + 1;
+% indices = round(points2(inds, :)) + 1;
 
-gradImg = this.gradientImage.data;
+% gradImg = squeeze(this.gradientImage.data);
+gradImg = this.gradientImage;
 
 for i = 1:length(inds)
     iInd = inds(i);
@@ -165,7 +168,7 @@ for i = 1:length(inds)
     ind1 = indices(i,1);
     ind2 = indices(i,2);
 
-    grad = [gradImg(ind1, ind2, 1) gradImg(ind1, ind2, 2)];
+    grad = [gradImg(ind1, ind2, 1, 1) gradImg(ind1, ind2, 1, 2)];
 
     % local contribution to metric gradient
     g(iInd,:) = grad * jac;
@@ -219,8 +222,10 @@ g = zeros(nbInds, nParams);
 points2 = transfo.transformPoint(this.points);
 
 % convert from physical coordinates to index coordinates
+points2 = pointToIndex(this.gradientImage, points2);
+indices = round(points2(inds, :));
 % (assumes spacing is 1 and origin is 0)
-indices = round(points2(inds, :)) + 1;
+% indices = round(points2(inds, :)) + 1;
 
 gradImg = this.gradientImage.data;
 

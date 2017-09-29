@@ -9,11 +9,11 @@ classdef MetricEvaluator < handle
 %   MetricEvaluator
 %
 %   See also
-%
-%
+%     ParametricTransform, ImageToImageMetric
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-29,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -47,7 +47,7 @@ end % construction function
 %% General methods
 methods
  
-    function [res grad] = evaluate(this, params)
+    function [res, grad] = evaluate(this, params)
         % Update transform parameters, and compute metric value (and grad)
         
         % uupdate params
@@ -57,7 +57,7 @@ methods
         if nargout <= 1
             res = computeValue(this.metric);
         else
-            [res grad] = computeValueAndGradient(this.metric);
+            [res, grad] = computeValueAndGradient(this.metric);
         end
     end
 end % general methods

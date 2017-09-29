@@ -8,10 +8,10 @@ classdef SumOfSquaredDifferencesMetric < ImageToImageMetric
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-08-12,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -20,7 +20,7 @@ properties
     % the transform model (necessary to compute the metric gradient)
     transform;
     
-    % The gradient image
+    % The gradient image of the moving image (necessary to compute the metric gradient)
     gradientImage;
 end
 
