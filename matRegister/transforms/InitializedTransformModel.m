@@ -1,5 +1,5 @@
 classdef InitializedTransformModel < ParametricTransform
-%InitializedTransformModel Encapsulate a parametric and an initial transform
+% Encapsulation of a parametric and an initial transform
 %
 %   TC = InitializedTransformModel(T0, T1)
 %   T0 is the initial transform, T1 is the transform to optimize. The
@@ -10,10 +10,10 @@ classdef InitializedTransformModel < ParametricTransform
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -21,7 +21,7 @@ properties
     % the initial transform
     initial;
     
-    % the transform to optimize
+    % the parametric transform to optimize
     transform;
 end
 
@@ -138,7 +138,7 @@ methods
     function names = getParameterNames(this)
         % Return the names of all parameters in a cell array of strings
         %
-        % NAMES = Transfo.getParameterNames();
+        % NAMES = transfo.getParameterNames();
         % 
         % Example:
         % T = TranslationModel([10 20]);

@@ -2,23 +2,28 @@
 %
 % A collection of classes for representing parametric transforms.
 %
-% Simple (affine) models
+% Non-Parametric Affine transforms (for validation purpose)
+%   Transform                      - Abstract class for transform
 %   Translation                    - Defines a translation in ND space
 %   Motion2D                       - Composition of a rotation (around origin) and a translation
 %   AffineTransform                - Abstract class for AffineTransform
+%   MatrixAffineTransform          - An affine transform defined by its matrix
+%   ComposedTransform              - Compose several transforms to create a new transform
+%
+% Affine Transform models
+%   ParametricTransform            - Abstract class for parametric transform ND->ND
+%   MotionModel2D                  - Transformation model for a centered rotation followed by a translation
+%   SimilarityModel2D              - Transformation model for a similarity: rotation+scaling followed by a translation
+%   AffineTransformModel2D         - Transformation model for a 2D affine transform
 %   TranslationModel               - Transformation model for a translation defined by ND parameters
 %   CenteredAffineTransformModel3D - Transformation model for a centered 3D affine transform followed by a translation
 %   CenteredEulerTransform3D       - Transformation model for a centered 3D rotation followed by a translation
 %   CenteredMotionTransform2D      - Transformation model for a centered rotation followed by a translation
-%   MatrixAffineTransform          - An affine transform defined by its matrix
 %
-% Basic hierarchy
-%   Transform                      - Abstract class for transform
-%   ParametricTransform            - Abstract class for parametric transform ND->ND
-%   ComposedTransform              - Compose several transforms to create a new transform
+% Utility classes for parametric transforms
 %   ComposedTransformModel         - Compose several transforms, the last one being parametric 
 %   CenteredTransformAbstract      - Add center management to a transform
-%   InitializedTransformModel      - InitializedTransformModel Encapsulate a parametric and an initial transform
+%   InitializedTransformModel      - Encapsulation of a parametric and an initial transform
 %
 % Polynomial and spline models
 %   BSplines                       - Contains several static functions for manipulation of cubic splines
