@@ -1,4 +1,4 @@
-function test_suite = testLinearInterpolator3D(varargin) %#ok<STOUT>
+function test_suite = testLinearInterpolator3D(varargin)
 % Test function for class LinearInterpolator3D
 %   output = testImArea(input)
 %
@@ -13,9 +13,8 @@ function test_suite = testLinearInterpolator3D(varargin) %#ok<STOUT>
 % e-mail: david.legland@grignon.inra.fr
 % Created: 2009-04-22,    using Matlab 7.7.0.471 (R2008b)
 % Copyright 2009 INRA - Cepia Software Platform.
-% Licensed under the terms of the LGPL, see the file "license.txt"
 
-initTestSuite;
+test_suite = buildFunctionHandleTestSuite(localfunctions);
 
 function testCreateInterpolator %#ok<*DEFNU>
 
@@ -45,7 +44,7 @@ REF = 200;
 interp = createInterpolator();
 x = 8; y = 5; z = 6;
 val = interp.evaluate(x, y, z);
-assertAlmostEqual(REF, val);
+assertElementsAlmostEqual(REF, val, 'absolute', .1);
 
 function testEvaluateSinglePoint
 
@@ -54,37 +53,37 @@ interp = createInterpolator();
 x = 8; y = 5; z = 6;
 point = [x y z];
 val = interp.evaluate(point);
-assertAlmostEqual(REF, val);
+assertElementsAlmostEqual(REF, val, 'absolute', .1);
 
 function testEvaluateCoordArray
 
 lx = [6 7 8 9];
 ly = [4 5];
 lz = [4 5 6];
-[x y z] = meshgrid(lx, ly, lz);
+[x, y, z] = meshgrid(lx, ly, lz);
 
 interp = createInterpolator();
 val = interp.evaluate(x, y, z);
-assertElementsAlmostEqual(size(x), size(val));
+assertEqual(size(x), size(val));
 
-[val inside] = interp.evaluate(x, y, z);
-assertElementsAlmostEqual(size(x), size(val));
-assertElementsAlmostEqual(size(x), size(inside));
+[val, inside] = interp.evaluate(x, y, z);
+assertEqual(size(x), size(val));
+assertEqual(size(x), size(inside));
 
 function testEvaluatePointArray
 
 lx = [6 7 8 9];
 ly = [4 5];
 lz = [4 5 6];
-[x y z] = meshgrid(lx, ly, lz);
+[x, y, z] = meshgrid(lx, ly, lz);
 points = [x(:) y(:) z(:)];
 n = size(points, 1);
 
 interp = createInterpolator();
-[val inside] = interp.evaluate(points);
+[val, inside] = interp.evaluate(points);
 
-assertElementsAlmostEqual(n, length(val));
-assertElementsAlmostEqual(n, length(inside));
+assertEqual(n, length(val));
+assertEqual(n, length(inside));
 
 
 function testIsAnImageInterpolator3D

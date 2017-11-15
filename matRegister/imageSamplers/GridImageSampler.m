@@ -8,10 +8,10 @@ classdef GridImageSampler < ImageSampler
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-07-20,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
@@ -74,14 +74,14 @@ methods
         
         nd = this.image.dimension;
         if nd == 2
-            [x y] = meshgrid(lx, ly);
+            [x, y] = meshgrid(lx, ly);
             points = [x(:) y(:)];
             
         elseif nd == 3
             lz = zData(this.image);
             lz = lz(1:this.steps(3):end);
 
-            [x y z] = meshgrid(lx, ly, lz);
+            [x, y, z] = meshgrid(lx, ly, lz);
             points = [x(:) y(:) z(:)];
             
         else

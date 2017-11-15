@@ -1,4 +1,4 @@
-function test_suite = test_Transform(varargin) %#ok<STOUT>
+function test_suite = test_Transform(varargin)
 %testTransform  One-line description here, please.
 %   output = testTransform(input)
 %
@@ -14,15 +14,13 @@ function test_suite = test_Transform(varargin) %#ok<STOUT>
 % Created: 2010-06-17,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
-
-initTestSuite;
+test_suite = buildFunctionHandleTestSuite(localfunctions);
 
 function test_compose %#ok<*DEFNU>
 
 % transform parameters
 center = [6 8];
 angle = deg2rad(30);
-
 
 % create transform objects
 T1 = Translation(-center);
@@ -47,5 +45,5 @@ pts2 = Res2.transformPoint(pts0);
 pts3 = Res3.transformPoint(pts0);
 
 % transformed points should be the same
-assertElementsAlmostEqual(pts1, pts2);
-assertElementsAlmostEqual(pts1, pts3);
+assertElementsAlmostEqual(pts1, pts2, 'absolute', .1);
+assertElementsAlmostEqual(pts1, pts3, 'absolute', .1);

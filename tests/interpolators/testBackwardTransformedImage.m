@@ -1,4 +1,4 @@
-function test_suite = testBackwardTransformedImage(varargin) %#ok<STOUT>
+function test_suite = testBackwardTransformedImage(varargin) 
 %TESTBACKWARDTRANSFORMEDIMAGE  One-line description here, please.
 %   output = testBackwardTransformedImage(input)
 %
@@ -14,7 +14,7 @@ function test_suite = testBackwardTransformedImage(varargin) %#ok<STOUT>
 % Created: 2010-04-08,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
-initTestSuite;
+test_suite = buildFunctionHandleTestSuite(localfunctions);
 
 function testCreationImageTransform %#ok<*DEFNU>
 

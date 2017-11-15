@@ -1,4 +1,4 @@
-function test_suite = testImageResampler(varargin) %#ok<STOUT>
+function test_suite = testImageResampler(varargin)
 % Test function for class ImageResampler2D
 %   output = testImageResampler()
 %
@@ -13,9 +13,8 @@ function test_suite = testImageResampler(varargin) %#ok<STOUT>
 % e-mail: david.legland@grignon.inra.fr
 % Created: 2009-04-22,    using Matlab 7.7.0.471 (R2008b)
 % Copyright 2009 INRA - Cepia Software Platform.
-% Licensed under the terms of the LGPL, see the file "license.txt"
 
-initTestSuite;
+test_suite = buildFunctionHandleTestSuite(localfunctions);
 
 function testResampler2D %#ok<*DEFNU>
 
@@ -29,8 +28,8 @@ lin = .5:.5:300;
 res = ImageResampler(lin, lin);
 img2 = res.resample(img, 'linear');
 assertEqual([600 600], size(img2));
-assertEqual([.5 .5], img2.getOrigin());
-assertEqual([.5 .5], img2.getSpacing());
+assertElementsAlmostEqual([.5 .5], img2.origin, 'absolute', .1);
+assertElementsAlmostEqual([.5 .5], img2.spacing, 'absolute', .1);
 
 
 

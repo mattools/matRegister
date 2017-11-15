@@ -1,4 +1,4 @@
-function test_suite = test_CenteredMotionTransform2D(varargin) %#ok<STOUT>
+function test_suite = test_CenteredMotionTransform2D(varargin)
 %TEST_CENTEREDMOTIONTRANSFORM2D  Test file for class CenteredMotionTransform2D
 %   output = test_CenteredMotionTransform2D(input)
 %
@@ -14,8 +14,7 @@ function test_suite = test_CenteredMotionTransform2D(varargin) %#ok<STOUT>
 % Created: 2010-06-17,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
-
-initTestSuite;
+test_suite = buildFunctionHandleTestSuite(localfunctions);
 
 function test_getAffineMatrix %#ok<*DEFNU>
 
@@ -31,7 +30,7 @@ T = CenteredMotionTransform2D([30 0 0], 'center', center);
 
 matTh = res.getAffineMatrix();
 mat = T.getAffineMatrix();
-assertElementsAlmostEqual(matTh, mat);
+assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
 
 
 function test_getDimension
@@ -64,7 +63,7 @@ writeToFile(T, fileName);
 T2 = CenteredMotionTransform2D.readFromFile(fileName);
 mat2 = getAffineMatrix(T2);
 
-assertElementsAlmostEqual(mat0, mat2);
+assertElementsAlmostEqual(mat0, mat2, 'absolute', .1);
 
 % clean up
 delete(fileName);

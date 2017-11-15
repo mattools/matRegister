@@ -1,4 +1,4 @@
-function test_suite = test_Translation(varargin) %#ok<STOUT>
+function test_suite = test_Translation(varargin)
 %TEST_TRANSLATION  Test function for class Translation
 %   output = test_Translation(input)
 %
@@ -14,8 +14,7 @@ function test_suite = test_Translation(varargin) %#ok<STOUT>
 % Created: 2010-06-03,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
-
-initTestSuite;
+test_suite = buildFunctionHandleTestSuite(localfunctions);
 
 function testEmptyConstructor %#ok<*DEFNU>
 

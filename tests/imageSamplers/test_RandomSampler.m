@@ -1,4 +1,4 @@
-function test_suite = test_RandomSampler(varargin) %#ok<STOUT>
+function test_suite = test_RandomSampler(varargin)
 %TEST_RANDOMSAMPLER  One-line description here, please.
 %
 %   output = test_RandomSampler(input)
@@ -15,7 +15,7 @@ function test_suite = test_RandomSampler(varargin) %#ok<STOUT>
 % Created: 2011-07-20,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
-initTestSuite;
+test_suite = buildFunctionHandleTestSuite(localfunctions);
 
 function test_2d_grayscale %#ok<*DEFNU>
 

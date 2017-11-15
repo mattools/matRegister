@@ -1,4 +1,4 @@
-function test_suite = testLinearInterpolator2D(varargin) %#ok<STOUT>
+function test_suite = testLinearInterpolator2D
 % Test function for class LinearInterpolator2D
 %   output = testImArea(input)
 %
@@ -7,15 +7,14 @@ function test_suite = testLinearInterpolator2D(varargin) %#ok<STOUT>
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2009-04-22,    using Matlab 7.7.0.471 (R2008b)
 % Copyright 2009 INRA - Cepia Software Platform.
-% Licensed under the terms of the LGPL, see the file "license.txt"
 
-initTestSuite;
+test_suite = buildFunctionHandleTestSuite(localfunctions);
 
 function testCreateInterpolator %#ok<*DEFNU>
 
@@ -45,7 +44,7 @@ REF = 200;
 interp = createInterpolator();
 x = 8; y = 5;
 val = interp.evaluate(x, y);
-assertAlmostEqual(REF, val);
+assertElementsAlmostEqual(REF, val, 'absolute', .1);
 
 function testEvaluateSinglePoint
 
@@ -54,19 +53,19 @@ interp = createInterpolator();
 x = 8; y = 5;
 point = [x y];
 val = interp.evaluate(point);
-assertAlmostEqual(REF, val);
+assertElementsAlmostEqual(REF, val, 'absolute', .1);
 
 function testEvaluateCoordArray
 
 lx = [6 7 8 9];
 ly = [4 5];
-[x y] = meshgrid(lx, ly);
+[x, y] = meshgrid(lx, ly);
 
 interp = createInterpolator();
 val = interp.evaluate(x, y);
-assertElementsAlmostEqual(size(x), size(val));
+assertEqual(size(x), size(val));
 
-[val inside] = interp.evaluate(x, y);
+[val, inside] = interp.evaluate(x, y);
 assertElementsAlmostEqual(size(x), size(val));
 assertElementsAlmostEqual(size(x), size(inside));
 
@@ -74,12 +73,12 @@ function testEvaluatePointArray
 
 lx = [6 7 8 9];
 ly = [4 5];
-[x y] = meshgrid(lx, ly);
+[x, y] = meshgrid(lx, ly);
 points = [x(:) y(:)];
 n = size(points, 1);
 
 interp = createInterpolator();
-[val inside] = interp.evaluate(points);
+[val, inside] = interp.evaluate(points);
 
 assertElementsAlmostEqual(n, length(val));
 assertElementsAlmostEqual(n, length(inside));

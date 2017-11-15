@@ -75,8 +75,8 @@ while true
             ['Could not parse following line in file <' fileName '>:\n' line]);
     end
     
-    key = line(1:indEqual-1);
-    value = line(indEqual+1:end);
+    key = strtrim(line(1:indEqual-1));
+    value = strtrim(line(indEqual+1:end));
     
     if isKey(map, key)
         error('readPropertyFile:DuplicateKey', ...
