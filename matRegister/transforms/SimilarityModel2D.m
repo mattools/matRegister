@@ -122,8 +122,8 @@ methods
         
         % compute parametric jacobian
         jacobian = [...
-            1 0 k*(-sit*x - cot*y) (cot*x-sit*y)*dk ;
-            0 1 k*( cot*x - sit*y) (sit*x+cot*y)*dk];
+            1 0 k*(-sit*x - cot*y)*pi/180 (cot*x-sit*y)*dk ;
+            0 1 k*( cot*x - sit*y)*pi/180 (sit*x+cot*y)*dk];
     end
 
 end % methods
