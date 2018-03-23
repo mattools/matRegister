@@ -131,8 +131,7 @@ end
 isInside = inside1 & inside2;
 
 % compute result
-% diff = values2(isInside) - values1(isInside);
-diff = (values1 - values2);
+diff = (values2 - values1);
 res = sum(diff.^2);
 
 %fprintf('Initial SSD: %f\n', res);
@@ -142,7 +141,7 @@ inds = find(isInside);
 nbInds = length(inds);
 
 transfo = this.transform;
-nParams = length(transfo.getParameters());
+nParams = length(getParameters(transfo));
 g = zeros(nbInds, nParams);
 
 % compute transformed coordinates
@@ -175,9 +174,9 @@ for i = 1:length(inds)
 end
 
 % compute gradient vector weighted by local difference between image values
-gd = g(inds,:) .* diff(inds, ones(1, nParams));
+gd = bsxfun(@times, g(inds,:), diff(inds));
 
-% compute the sum of gradient vectors
+% compute the sum of valid gradient vectors
 grad = sum(gd, 1);
 
 
@@ -205,7 +204,7 @@ isInside = inside1 & inside2;
 
 % compute result
 % diff = values2(isInside) - values1(isInside);
-diff = (values1 - values2);
+diff = (values2 - values1);
 res = sum(diff.^2);
 
 %fprintf('Initial SSD: %f\n', res);
