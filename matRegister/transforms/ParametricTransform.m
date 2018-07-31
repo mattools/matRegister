@@ -4,9 +4,10 @@ classdef ParametricTransform < Transform & ParametricObject
 %   Superclass for transformation model that can be represented by a vector
 %   of parameters, and used as input in optimization procedures.
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -15,7 +16,8 @@ properties
     % the set of inner parameters of the transform
     params;
     
-    % the name of each parameter, stored to facilitate automatic plotting
+    % the name of each parameter, stored to facilitate automatic plotting.
+    % Given as row vector of char arrays.
     paramNames = {};
 end
 
@@ -89,7 +91,7 @@ methods
         
         % return a parameter name if it was initialized
         name = '';
-        if paramIndex<=length(this.paramNames)
+        if paramIndex <= length(this.paramNames)
             name = this.paramNames{paramIndex};
         end
     end
