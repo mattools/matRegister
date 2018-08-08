@@ -63,7 +63,7 @@ methods
         dim = 3;
     end
 
-    function [point2 isInside] = transformPoint(this, point)
+    function [point2, isInside] = transformPoint(this, point)
         % Compute coordinates of transformed point
         
         % compute centered coords.
@@ -228,7 +228,7 @@ methods
         lz = (0:this.gridSize(3) - 1) * this.gridSpacing(3) + this.gridOrigin(3);
         
         % create base mesh
-        [y x z] = meshgrid(ly, lx, lz);
+        [y, x, z] = meshgrid(ly, lx, lz);
               
         % number of vertices 
         nv = numel(x);
@@ -242,8 +242,8 @@ methods
         vertices = [x(:) y(:) z(:)];
     end
     
-    function transformVector(this, varargin) %#ok<MANU>
-        error('oolip:UnimplementedMethod', ...
+    function transformVector(this, varargin)
+        error('MatRegister:UnimplementedMethod', ...
             'Method "%s" is not implemented for class "%s"', ...
             'transformVector', mfilename);
     end

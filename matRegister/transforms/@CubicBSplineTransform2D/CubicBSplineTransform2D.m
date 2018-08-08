@@ -80,7 +80,7 @@ methods
         dim = 2;
     end
 
-    function [point2 isInside] = transformPoint(this, point)
+    function [point2, isInside] = transformPoint(this, point)
         % Compute corodinates of transformed point
         
         % compute position wrt to the grid vertices
@@ -199,7 +199,7 @@ methods
         ly = (0:this.gridSize(2) - 1) * this.gridSpacing(2) + this.gridOrigin(2);
         
         % create base mesh
-        [x y] = meshgrid(lx, ly);
+        [x, y] = meshgrid(lx, ly);
         
         % add grid shifts
         x = x' + reshape(this.params(1:end/2), this.gridSize);
@@ -209,8 +209,8 @@ methods
         vertices = [x(:) y(:)];
     end
     
-    function transformVector(this, varargin) %#ok<MANU>
-        error('oolip:UnimplementedMethod', ...
+    function transformVector(this, varargin)
+        error('MatRegister:UnimplementedMethod', ...
             'Method "%s" is not implemented for class "%s"', ...
             'transformVector', mfilename);
     end
