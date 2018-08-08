@@ -5,17 +5,17 @@ classdef SimilarityModel2D < AffineTransform & ParametricTransform
 %   params[1] = tx
 %   params[2] = ty
 %   params[3] = theta, in degrees
-%   params[4] = the binary logarithm of the scaling 
+%   params[4] = logk, the binary logarithm of the scaling factor
 %       ( 0 -> no scaling)
 %       (+1 -> uniform scaling by a factor of 2)
 %       (-1 -> uniform scaling by a factor of 1/2)
 % 
-%   TRANS = MotionModel2D();
+%   TRANS = SimilarityModel2D();
 %   Create using default parameters (all zero).
 %
-%   TRANS = MotionModel2D(PARAMS);
+%   TRANS = SimilarityModel2D(PARAMS);
 %   Create a new transform model by initializing parameters. PARAMS is a
-%   1-by-3 row vector containing TX, TY, and THETA parameters.
+%   1-by-4 row vector containing TX, TY, THETA and LOGK parameters.
 %
 %
 

@@ -186,7 +186,7 @@ methods
         point2 = [x2 y2 z2];
     end
     
-    function vect2 = transformVector(this, vector, position)
+    function vect2 = transformVector(this, vector, position) %#ok<STOUT>
         % TRANSFORMVECTOR Computes coordinates of transformed vector
         % VEC2 = this.transformPoint(VEC, PT);
         % TODO: to be done later

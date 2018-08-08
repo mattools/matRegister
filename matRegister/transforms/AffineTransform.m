@@ -120,6 +120,7 @@ methods
         if nargout <= 1
             varargout = {res};
         else
+            varargout = cell(1, nargout);
             for i = 1:nargout
                 varargout{i} = reshape(res(:,i), baseSize);
             end

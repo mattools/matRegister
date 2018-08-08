@@ -43,8 +43,8 @@ methods
         % T = Translation(T0)
         % copy constructor from another Translation object/
         
-        if nargin==0
-            % empty constructor, initialize to (0,0) 2D translation
+        if nargin == 0
+            % empty constructor, initialized to (0,0) 2D translation
             this.u = [0 0];
             return;
         end

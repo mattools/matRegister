@@ -7,10 +7,10 @@ classdef ComposedTransform < Transform
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -31,9 +31,9 @@ methods
             this.transforms = var.transforms;
         elseif isa(varargin{1}, 'Transform')
             % initialize tranform array
-            nbTrans = length(varargin);
-            this.transforms = cell(nbTrans, 1);
-            for i=1:nbTrans
+            nTransfos = length(varargin);
+            this.transforms = cell(nTransfos, 1);
+            for i = 1:nTransfos
                 this.transforms{i} = varargin{i};
             end
         else
@@ -50,13 +50,13 @@ methods
     end
 
     function point = transformPoint(this, point)
-        for i=1:length(this.transforms)
+        for i = 1:length(this.transforms)
             point = this.transforms{i}.transformPoint(point);
         end
     end
     
     function vector = transformVector(this, vector, position)
-        for i=1:length(this.transforms)
+        for i = 1:length(this.transforms)
             vector = this.transforms{i}.transformVector(vector, position);
         end
     end
@@ -65,7 +65,7 @@ methods
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
         jacobian = this.transforms{1}.getJacobian(point);
-        for i=2:length(this.transforms)
+        for i = 2:length(this.transforms)
             jacobian = this.transforms{i}.getJacobian(point)*jacobian;
         end
     end
