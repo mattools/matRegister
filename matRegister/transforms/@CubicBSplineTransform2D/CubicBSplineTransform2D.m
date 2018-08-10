@@ -104,7 +104,7 @@ methods
         xu = xg - floor(xg);
         yu = yg - floor(yg);
        
-       % initialize zeros translation vector
+        % initialize zeros translation vector
         dx = zeros(length(xg), 1);
         dy = zeros(length(xg), 1);
         
