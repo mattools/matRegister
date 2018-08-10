@@ -124,7 +124,7 @@ methods
             % Process 2D images
             
             % sample grid
-            [x y] = meshgrid(lx, ly);
+            [x, y] = meshgrid(lx, ly);
 
             % initialize result array
             vals = zeros(size(x), this.outputType);
@@ -140,7 +140,7 @@ methods
             
             % sample grid
             lz = (0:this.outputSize(3)-1)*this.spacing(3) + this.origin(3);
-            [x y z] = meshgrid(lx, ly, lz);
+            [x, y, z] = meshgrid(lx, ly, lz);
             
             % initialize result array
             vals = zeros(size(x), this.outputType);
@@ -172,8 +172,8 @@ methods
         img2 = Image.create(vals);
         
         % copy spatial calibration info to image
-        img2.setOrigin(this.origin);
-        img2.setSpacing(this.spacing);
+        img2.origin = this.origin;
+        img2.spacing = this.spacing;
     end
 
 end % methods
