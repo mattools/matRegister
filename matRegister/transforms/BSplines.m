@@ -55,6 +55,25 @@ methods (Static)
     end
     
     
+    %% Second Derivatives
+    
+    function res = beta3_0s(u)
+        res = 1 - u;
+    end
+    
+    function res = beta3_1s(u)
+        res = 3 * u - 2;
+    end
+    
+    function res = beta3_2s(u)
+        res = 1 - 3 * u ;
+    end
+    
+    function res = beta3_3s(u)
+        res = u;
+    end
+    
+    
 end % static methods
 
 end % classdef
