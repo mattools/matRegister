@@ -26,7 +26,12 @@
 %   InitializedTransformModel      - Encapsulation of a parametric and an initial transform
 %
 % Polynomial and spline models
-%   BSplines                       - Contains several static functions for manipulation of cubic splines
+%   BSplineTransformModel2D        - Cubic B-Spline Transform model in 2D
+%   QuadPolynomialTransformModel2D - One-line description here, please.
 %   CenteredQuadTransformModel3D   - Polynomial 3D transform up to degree 2 (3*10=30 parameters)
 %   CenteredQuadTransformModel2D   - Polynomial 2D transform up to degree 2 (2*6=12 parameters)
+%   BSplines                       - Contains several static functions for manipulation of cubic splines
 %
+% Utility methods
+%   drawTransformedGrid            - Draw the result of a transform applied to a grid
+

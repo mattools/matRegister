@@ -58,3 +58,38 @@ assertTrue(isa(trans, 'Transform'));
 assertTrue(isa(trans, 'AffineTransform'));
 
 
+function test_ToStruct(testCase) %#ok<*DEFNU>
+% Test call of function without argument
+
+transfo = Translation([2 3]);
+str = toStruct(transfo);
+transfo2 = Translation.fromStruct(str);
+
+assertTrue(isa(transfo2, 'Translation'));
+assertElementsAlmostEqual(transfo2.u, transfo.u, 'absolute', .01);
+
+
+function test_readWrite(testCase) %#ok<*DEFNU>
+% Test call of function without argument
+
+% prepare
+fileName = 'translation.transfo';
+if exist(fileName, 'file')
+    delete(fileName);
+end
+
+% arrange
+transfo = Translation([2 3]);
+
+% act
+write(transfo, fileName);
+transfo2 = Transform.read(fileName);
+
+% assert
+assertTrue(isa(transfo2, 'Translation'));
+assertElementsAlmostEqual(transfo2.u, transfo.u, 'absolute', .01);
+
+% clean up
+delete(fileName);
+
+

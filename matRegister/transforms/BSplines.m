@@ -1,17 +1,15 @@
 classdef BSplines < handle
-%BSPLINES Contains several static functions for manipulation of cubic splines
-%
-%   output = BSplines(input)
+%BSPLINES Static functions for the manipulation of cubic B-splines
 %
 %   Example
-%   BSplines
+%   coef = BSplines.beta3_0(u);
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-03-15,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 

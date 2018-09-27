@@ -12,11 +12,12 @@ classdef Translation < AffineTransform
 %   T = Translation([3 4 5]);
 %
 %   See also
-%   AffineTransform, TranslationModel
+%     AffineTransform, TranslationModel
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -69,14 +70,35 @@ methods
             error('Wrong parameter when constructing a Composed transform');
         end
     end
+end
+
+methods
+    function d = getDimension(this)
+        d = length(this.u);
+    end
     
     function mat = getAffineMatrix(this)
-        % Returns the (ND+1)*(nd+1) affine matrix representing translation
+        % Returns the (ND+1)*(ND+1) affine matrix representing translation
         nd = length(this.u);
         mat = eye(nd+1);
         mat(1:end-1, end) = this.u(:);
     end
     
 end % end methods
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'Translation', ...
+            'vector', this.u);
+    end
+end
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new instance from a structure
+        transfo = Translation(str.vector);
+    end
+end
 
 end % end classdef

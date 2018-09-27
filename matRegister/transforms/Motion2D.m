@@ -77,4 +77,23 @@ methods
     
 end % methods
 
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'Motion2D', ...
+            'translation', this.translation, ...
+            'rotationAngle', this.theta);
+    end
+end
+methods (Static)
+    function motion = fromStruct(str)
+        % Creates a new instance from a structure
+        trans = str.translation;
+        theta = str.rotationAngle;
+        motion = Motion2D(theta, trans);
+    end
+end
+
+
 end % classdef

@@ -70,4 +70,45 @@ methods
     
 end % methods
 
+%% Serialization methods
+methods
+    function write(this, fileName, varargin)
+        % Writes transform into a JSON file
+        % 
+        % Requires implementation of the "toStruct" method.
+        
+        if exist('savejson', 'file') == 0
+            error('Requires the ''jsonlab'' library');
+        end
+        savejson('', toStruct(this), 'FileName', fileName, varargin{:});
+    end
+end
+
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new transform instance from a structure
+        
+        % check existence of 'type' field
+        if ~isfield(str, 'type')
+            error('Requires a field with name "type"');
+        end
+        type = str.type;
+
+        % parse transform
+        try
+            transfo = eval([type '.fromStruct(str)']);
+        catch ME
+            error(['Unable to parse transform with type: ' type]);
+        end
+    end
+    
+    function transfo = read(fileName)
+        % Reads a transform from a file in JSON format
+        if exist('loadjson', 'file') == 0
+            error('Requires the ''jsonlab'' library');
+        end
+        transfo = Transform.fromStruct(loadjson(fileName));
+    end
+end
+
 end% classdef
