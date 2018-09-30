@@ -17,6 +17,15 @@ classdef SimilarityModel2D < AffineTransform & ParametricTransform
 %   Create a new transform model by initializing parameters. PARAMS is a
 %   1-by-4 row vector containing TX, TY, THETA and LOGK parameters.
 %
+%   Example
+%     % Apply 2D translation on cameraman image   
+%     img = imread('cameraman.tif');
+%     transfo = SimilarityModel2D([30 20 10 -0.4]);
+%     [x, y] = meshgrid(1:256, 1:256);
+%     pts2 = transfo.transformPoint([x(:) y(:)]);
+%     res = zeros(size(img), 'uint8');
+%     res(:) = imEvaluate(img, pts2);
+%     figure; imshow(res);
 %
 
 % ------
@@ -162,5 +171,23 @@ end % methods
 %         transfo.center = center;
 %     end
 % end
+
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'SimilarityModel2D', ...
+            'parameters', this.params);
+    end
+end
+methods (Static)
+    function motion = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        motion = SimilarityModel2D(params);
+    end
+end
+
 
 end % classdef

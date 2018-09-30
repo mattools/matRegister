@@ -38,6 +38,7 @@ methods
             % extract first argument, and try to interpret
             var = varargin{1};
             if isa(var, 'MotionModel2D')
+                % copy constructor
                 this.params = var.params;
                 
             elseif isnumeric(var)
@@ -150,5 +151,21 @@ end % methods
 %         transfo.center = center;
 %     end
 % end
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'MotionModel2D', ...
+            'parameters', this.params);
+    end
+end
+methods (Static)
+    function motion = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        motion = MotionModel2D(params);
+    end
+end
 
 end % classdef

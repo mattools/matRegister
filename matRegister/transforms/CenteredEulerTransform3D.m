@@ -12,9 +12,10 @@ classdef CenteredEulerTransform3D < AffineTransform & ParametricTransform & Cent
 %   Creation:
 %   Trans = CenteredEulerTransform3D();
 %   
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-07-27,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -208,6 +209,25 @@ methods (Static)
         center = map('TransformCenter');
         center = cellfun(@str2double, regexp(center, '\s*', 'split'));
         transfo.center = center;
+    end
+end
+
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'CenteredEulerTransform3D', ...
+            'center', this.center, ...
+            'parameters', this.params);
+        
+    end
+end
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        transfo = CenteredEulerTransform3D(params, 'center', str.center);
     end
 end
 

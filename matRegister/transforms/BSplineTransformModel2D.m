@@ -444,9 +444,109 @@ methods
                 jac(2, 2, inds) = jac(2, 2, inds) + bx(inds)  .* byd .* dyv / deltaY;
             end
         end
-
     end
-    
+
+    function lap = getLaplacian(this, point)
+        % Jacobian matrix of the given point
+        %
+        %   JAC = getJacobian(TRANS, PT)
+        %   where PT is a N-by-2 array of points, returns the spatial
+        %   jacobian matrix of each point in the form of a 2-by-2-by-N
+        %   array.
+        %
+        
+        %% Constants
+        
+        % bspline basis functions and derivative functions
+        baseFuns = {...
+            @BSplines.beta3_0, ...
+            @BSplines.beta3_1, ...
+            @BSplines.beta3_2, ...
+            @BSplines.beta3_3};
+        
+        derivFuns = {...
+            @BSplines.beta3_0d, ...
+            @BSplines.beta3_1d, ...
+            @BSplines.beta3_2d, ...
+            @BSplines.beta3_3d};
+
+        deriv2Funs = {...
+            @BSplines.beta3_0s, ...
+            @BSplines.beta3_1s, ...
+            @BSplines.beta3_2s, ...
+            @BSplines.beta3_3s};
+
+        
+        %% Initializations
+       
+        % extract grid spacing for normalization
+        deltaX = this.gridSpacing(1);
+        deltaY = this.gridSpacing(2);
+        
+        % compute position of points wrt to grid vertices
+        xg = (point(:, 1) - this.gridOrigin(1)) / deltaX + 1;
+        yg = (point(:, 2) - this.gridOrigin(2)) / deltaY + 1;
+        
+        % initialize zeros translation vector
+        nPts = length(xg);
+
+        % coordinates within the unit tile
+        xu = reshape(xg - floor(xg), [nPts 1]);
+        yu = reshape(yg - floor(yg), [nPts 1]);       
+
+        % compute indices in linear indexing
+        dimXY = prod(this.gridSize);
+        
+        % allocate memory for storing result
+        lap = zeros(size(point, 1), 1);
+        
+        % pre-allocate weights for vertex grids
+        bx  = zeros(size(xu));
+%         bxd = zeros(size(xu));
+        bxs = zeros(size(xu));
+        
+        %% Iteration on neighbor tiles 
+        for i = -1:2
+            % x-coordinate of neighbor vertex
+            xv  = floor(xg) + i;
+            indOkX = xv >= 1 & xv <= this.gridSize(1);
+            
+            % compute x-coefficients of bezier function and derivative
+            bx(indOkX)  = baseFuns{i+2}(xu(indOkX));
+%             bxd(indOkX) = derivFuns{i+2}(xu(indOkX));
+            bxs(indOkX) = deriv2Funs{i+2}(xu(indOkX));
+            
+            for j = -1:2
+                % y-coordinate of neighbor vertex
+                yv = floor(yg) + j;
+                indOkY = yv >= 1 & yv <= this.gridSize(2);
+                
+                % indices of points whose grid vertex is defined
+                inds = indOkX & indOkY;
+                if all(~inds)
+                    continue;
+                end
+
+                % linear index of translation components
+                indX = sub2ind([this.gridSize], xv(inds), yv(inds));
+                indY = sub2ind([this.gridSize], xv(inds), yv(inds)) + dimXY;
+                
+                % translation vector of the current vertex
+                dxv = reshape(this.params(indX), [length(indX) 1]);
+                dyv = reshape(this.params(indY), [length(indX) 1]);
+                
+                % compute y-coefficients of spline function and derivative
+                by  = baseFuns{j+2}(yu(inds));
+                bys = deriv2Funs{j+2}(yu(inds));
+
+                % update laplacian elements
+                d2x = (bxs(inds) .* by  .* dxv) / (deltaX^2);
+                d2y = (bx(inds) .* bys  .* dyv) / (deltaY^2);
+                lap(inds) = lap(inds) + d2x.^2 + d2y.^2;
+            end
+        end
+    end % getLaplacian
+
     function dim = getDimension(this) %#ok<MANU>
         dim = 2;
     end

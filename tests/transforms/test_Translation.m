@@ -58,7 +58,7 @@ assertTrue(isa(trans, 'Transform'));
 assertTrue(isa(trans, 'AffineTransform'));
 
 
-function test_ToStruct(testCase) %#ok<*DEFNU>
+function test_ToStruct
 % Test call of function without argument
 
 transfo = Translation([2 3]);
@@ -69,7 +69,7 @@ assertTrue(isa(transfo2, 'Translation'));
 assertElementsAlmostEqual(transfo2.u, transfo.u, 'absolute', .01);
 
 
-function test_readWrite(testCase) %#ok<*DEFNU>
+function test_readWrite
 % Test call of function without argument
 
 % prepare

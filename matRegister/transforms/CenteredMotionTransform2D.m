@@ -174,4 +174,23 @@ methods (Static)
     end
 end
 
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'CenteredMotionTransform2D', ...
+            'center', this.center, ...
+            'parameters', this.params);
+        
+    end
+end
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        transfo = CenteredMotionTransform2D(params, 'center', str.center);
+    end
+end
+
 end % classdef

@@ -44,7 +44,7 @@ dim = getDimension(T);
 assertEqual(3, dim);
 
 
-function test_readWrite
+function test_writeToFile
 
 % prepare
 fileName = 'transfoFile.txt';
@@ -65,6 +65,43 @@ T2 = CenteredEulerTransform3D.readFromFile(fileName);
 mat2 = getAffineMatrix(T2);
 
 assertElementsAlmostEqual(mat0, mat2, 'absolute', .1);
+
+% clean up
+delete(fileName);
+
+
+
+function test_ToStruct
+% Test call of function without argument
+
+transfo = CenteredEulerTransform3D([10 20 30 10 20 30], 'center', [50 50 50]);
+str = toStruct(transfo);
+transfo2 = CenteredEulerTransform3D.fromStruct(str);
+
+assertTrue(isa(transfo2, 'CenteredEulerTransform3D'));
+assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+
+
+function test_readWrite
+% Test call of function without argument
+
+% prepare
+fileName = 'CenteredEulerTransform3D.transfo';
+if exist(fileName, 'file')
+    delete(fileName);
+end
+
+% arrange
+transfo = CenteredEulerTransform3D([10 20 30 10 20 30], 'center', [50 50 50]);
+
+% act
+write(transfo, fileName);
+transfo2 = Transform.read(fileName);
+
+% assert
+assertTrue(isa(transfo2, 'CenteredEulerTransform3D'));
+assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.center, transfo.center, 'absolute', .01);
 
 % clean up
 delete(fileName);

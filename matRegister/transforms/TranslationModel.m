@@ -78,4 +78,22 @@ methods
     
 end % methods
 
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'TranslationModel', ...
+            'parameters', this.params);
+    end
+end
+methods (Static)
+    function motion = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        motion = TranslationModel(params);
+    end
+end
+
+
 end % classdef

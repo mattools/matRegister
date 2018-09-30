@@ -72,3 +72,39 @@ trans = TranslationModel();
 trans.setParameters([2 3]);
 mat = trans.getAffineMatrix();
 assertElementsAlmostEqual(refMat, mat);
+
+
+function test_ToStruct
+% Test call of function without argument
+
+transfo = TranslationModel([30 20 10]);
+str = toStruct(transfo);
+transfo2 = TranslationModel.fromStruct(str);
+
+assertTrue(isa(transfo2, 'TranslationModel'));
+assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+
+
+function test_readWrite
+% Test call of function without argument
+
+% prepare
+fileName = 'TranslationModel.transfo';
+if exist(fileName, 'file')
+    delete(fileName);
+end
+
+% arrange
+transfo = TranslationModel([30 20 10]);
+
+% act
+write(transfo, fileName);
+transfo2 = Transform.read(fileName);
+
+% assert
+assertTrue(isa(transfo2, 'TranslationModel'));
+assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+
+% clean up
+delete(fileName);
+

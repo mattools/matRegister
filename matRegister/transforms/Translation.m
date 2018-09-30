@@ -8,8 +8,17 @@ classdef Translation < AffineTransform
 %   For a parameterized translation, see TranslationModel class.
 %
 %   Example
+%     % Apply 2D translation on cameraman image   
+%     img = imread('cameraman.tif');
+%     transfo = Translation([50 30]);
+%     [x, y] = meshgrid(1:256, 1:256);
+%     pts2 = transfo.transformPoint([x(:) y(:)]);
+%     res = zeros(size(img), 'uint8');
+%     res(:) = imEvaluate(img, pts2);
+%     figure; imshow(res);
+
 %   % Creates a 3D translation 
-%   T = Translation([3 4 5]);
+%     T = Translation([3 4 5]);
 %
 %   See also
 %     AffineTransform, TranslationModel
