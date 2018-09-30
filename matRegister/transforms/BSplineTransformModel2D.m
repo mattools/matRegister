@@ -552,5 +552,26 @@ methods
     end
 end
 
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'BSplineTransformModel2D', ...
+            'gridSize', this.gridSize, ...
+            'gridSpacing', this.gridSpacing, ...
+            'gridOrigin', this.gridOrigin, ...
+            'parameters', this.params);
+        
+    end
+end
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        transfo = BSplineTransformModel2D(str.gridSize, str.gridSpacing, str.gridOrigin, params);
+    end
+end
+
 end % end classdef
 

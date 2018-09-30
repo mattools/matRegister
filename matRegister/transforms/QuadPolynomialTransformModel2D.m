@@ -2,8 +2,9 @@ classdef QuadPolynomialTransformModel2D < ParametricTransform
 %QUADPOLYNOMIALTRANSFORMMODEL2D  One-line description here, please.
 %
 %   Class QuadPolynomialTransformModel2D
-%   Creates a new 2D quadratic transform model.
+%   Creates a new 2D quadratic transform model, with 12 parameters.
 %
+%   Parameters are ordered with increasing degrees in x and in y:
 %   x' = P1 + P3 * x + P5 * y + P7 * x^2 +  P9 * x*y + P11 * y^2
 %   y' = P2 + P4 * x + P6 * y + P8 * x^2 + P10 * x*y + P12 * y^2
 %
@@ -150,6 +151,24 @@ methods
     end
     
 end % end methods
+
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'QuadPolynomialTransformModel2D', ...
+            'parameters', this.params);
+        
+    end
+end
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        transfo = QuadPolynomialTransformModel2D(params);
+    end
+end
 
 end % end classdef
 
