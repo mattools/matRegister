@@ -7,11 +7,11 @@ classdef CenteredQuadTransformModel3D < CenteredTransformAbstract & ParametricTr
 %   CenteredQuadTransformModel3D
 %
 %   See also
-%
-%
+%     CenteredQuadTransformModel2D
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-11-18,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -256,5 +256,25 @@ methods
     end
     
 end % parametric transform methods 
+
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'CenteredQuadTransformModel3D', ...
+            'center', this.center, ...
+            'parameters', this.params);
+        
+    end
+end
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        transfo = CenteredQuadTransformModel3D(params, 'center', str.center);
+    end
+end
+
 
 end

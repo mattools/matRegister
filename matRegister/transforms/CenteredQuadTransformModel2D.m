@@ -18,11 +18,12 @@ classdef CenteredQuadTransformModel2D < CenteredTransformAbstract & ParametricTr
 %     drawPoint(pts2, 'g.')
 %
 %   See also
-%     CenteredQuadTransformModel3D
+%     CenteredQuadTransformModel3D, QuadPolynomialTransformModel2D
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2013-03-18,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -230,5 +231,24 @@ methods
     end
     
 end % parametric transform methods 
+
+
+%% Serialization methods
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'CenteredQuadTransformModel2D', ...
+            'center', this.center, ...
+            'parameters', this.params);
+        
+    end
+end
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new instance from a structure
+        params = str.parameters;
+        transfo = CenteredQuadTransformModel2D(params, 'center', str.center);
+    end
+end
 
 end
