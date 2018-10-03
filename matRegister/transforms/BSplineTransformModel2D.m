@@ -131,7 +131,7 @@ methods
     end
     
     function vertices = getGridVertices(this)
-        % get coordinates of grid vertices
+        % Returns coordinates of grid vertices
         
         % base coordinates of grid vertices
         lx = (0:this.gridSize(1) - 1) * this.gridSpacing(1) + this.gridOrigin(1);
@@ -148,9 +148,9 @@ methods
     end
     
     function shifts = getVertexShifts(this)
-
-        dx = reshape(this.params(1:end/2), this.gridSize);
-        dy = reshape(this.params(end/2+1:end), this.gridSize);
+        % Returns shifts associated to each vertex as a N-by-2 array
+        dx = reshape(this.params(1:2:end), this.gridSize);
+        dy = reshape(this.params(2:2:end), this.gridSize);
         shifts = [dx(:) dy(:)];
     end
 end
@@ -160,22 +160,22 @@ end
 % the ix and iy parameters are the indices of the transform grid.
 methods
     function ux = getUx(this, ix, iy)
-        ind = sub2ind([this.gridSize 2], ix, iy, 1);
+        ind = sub2ind(this.gridSize, ix, iy) * 2 - 1;
         ux = this.params(ind);
     end
     
     function setUx(this, ix, iy, ux)
-        ind = sub2ind([this.gridSize 2], ix, iy, 1);
+        ind = sub2ind(this.gridSize, ix, iy) * 2 - 1;
         this.params(ind) = ux;
     end
     
     function uy = getUy(this, ix, iy)
-        ind = sub2ind([this.gridSize 2], ix, iy, 2);
+        ind = sub2ind(this.gridSize, ix, iy) * 2;
         uy = this.params(ind);
     end
     
     function setUy(this, ix, iy, uy)
-        ind = sub2ind([this.gridSize 2], ix, iy, 2);
+        ind = sub2ind(this.gridSize, ix, iy) * 2;
         this.params(ind) = uy;
     end
 end % end methods
@@ -262,8 +262,8 @@ methods
                 yv = floor(yg) + j;
                 
                 % linear index of translation components
-                indX = (yv - 1) * dimX + xv;
-                indY = indX + dimXY;
+                indX = sub2ind(this.gridSize, xv, yv) * 2 - 1;
+                indY = indX + 1;
                                 
                 % update total translation component
                 b = evals_i(:,i+2) .* evals_j(:,j+2);
@@ -295,9 +295,6 @@ methods
         xg = (point(:, 1) - this.gridOrigin(1)) / this.gridSpacing(1) + 1;
         yg = (point(:, 2) - this.gridOrigin(2)) / this.gridSpacing(2) + 1;
         
-        % number of elements for each coordinate
-        dimXY = prod(this.gridSize);
-
         % coordinates within the unit tile
         xu = xg - floor(xg);
         yu = yg - floor(yg);
@@ -327,8 +324,7 @@ methods
                 inds = indOkX & indOkY;
                 
                 % linear index of translation components
-                indX = sub2ind([this.gridSize], xv(inds), yv(inds));
-                indY = sub2ind([this.gridSize], xv(inds), yv(inds)) + dimXY;
+                indX = sub2ind(this.gridSize, xv(inds), yv(inds)) * 2 - 1;
                 
                 % spline basis for y vertex
                 fun_j = baseFuns{j+2};
@@ -338,7 +334,7 @@ methods
                 
                 % update coordinates of transformed points
                 point2(inds,1) = point2(inds,1) + b .* this.params(indX)';
-                point2(inds,2) = point2(inds,2) + b .* this.params(indY)';
+                point2(inds,2) = point2(inds,2) + b .* this.params(indX+1)';
             end
         end
     end
@@ -390,9 +386,6 @@ methods
         % coordinates within the unit tile
         xu = reshape(xg - floor(xg), [1 1 nPts]);
         yu = reshape(yg - floor(yg), [1 1 nPts]);       
-
-        % compute indices in linear indexing
-        dimXY = prod(this.gridSize);
         
         % allocate memory for storing result, and initialize to identity
         % matrix
@@ -426,12 +419,11 @@ methods
                 end
 
                 % linear index of translation components
-                indX = sub2ind([this.gridSize], xv(inds), yv(inds));
-                indY = sub2ind([this.gridSize], xv(inds), yv(inds)) + dimXY;
+                indX = sub2ind(this.gridSize, xv(inds), yv(inds)) * 2 - 1;
                 
                 % translation vector of the current vertex
                 dxv = reshape(this.params(indX), [1 1 length(indX)]);
-                dyv = reshape(this.params(indY), [1 1 length(indX)]);
+                dyv = reshape(this.params(indX+1), [1 1 length(indX)]);
                 
                 % compute y-coefficients of bezier function and derivative
                 by  = baseFuns{j+2}(yu(inds));
@@ -464,12 +456,6 @@ methods
             @BSplines.beta3_2, ...
             @BSplines.beta3_3};
         
-        derivFuns = {...
-            @BSplines.beta3_0d, ...
-            @BSplines.beta3_1d, ...
-            @BSplines.beta3_2d, ...
-            @BSplines.beta3_3d};
-
         deriv2Funs = {...
             @BSplines.beta3_0s, ...
             @BSplines.beta3_1s, ...
@@ -493,16 +479,12 @@ methods
         % coordinates within the unit tile
         xu = reshape(xg - floor(xg), [nPts 1]);
         yu = reshape(yg - floor(yg), [nPts 1]);       
-
-        % compute indices in linear indexing
-        dimXY = prod(this.gridSize);
         
         % allocate memory for storing result
         lap = zeros(size(point, 1), 1);
         
         % pre-allocate weights for vertex grids
         bx  = zeros(size(xu));
-%         bxd = zeros(size(xu));
         bxs = zeros(size(xu));
         
         %% Iteration on neighbor tiles 
@@ -513,7 +495,6 @@ methods
             
             % compute x-coefficients of bezier function and derivative
             bx(indOkX)  = baseFuns{i+2}(xu(indOkX));
-%             bxd(indOkX) = derivFuns{i+2}(xu(indOkX));
             bxs(indOkX) = deriv2Funs{i+2}(xu(indOkX));
             
             for j = -1:2
@@ -528,12 +509,11 @@ methods
                 end
 
                 % linear index of translation components
-                indX = sub2ind([this.gridSize], xv(inds), yv(inds));
-                indY = sub2ind([this.gridSize], xv(inds), yv(inds)) + dimXY;
+                indX = sub2ind([this.gridSize], xv(inds), yv(inds)) * 2 - 1;
                 
                 % translation vector of the current vertex
                 dxv = reshape(this.params(indX), [length(indX) 1]);
-                dyv = reshape(this.params(indY), [length(indX) 1]);
+                dyv = reshape(this.params(indX+1), [length(indX) 1]);
                 
                 % compute y-coefficients of spline function and derivative
                 by  = baseFuns{j+2}(yu(inds));
