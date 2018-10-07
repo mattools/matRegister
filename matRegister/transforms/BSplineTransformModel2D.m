@@ -188,9 +188,9 @@ methods
         % The result is a ND-by-NP array, where ND is the number of
         % dimension, and NP is the number of parameters.
         
-        error('MatRegister:UnimplementedMethod', ...
-            'Method "%s" is not implemented for class "%s"', ...
-            'getParametricJacobian', mfilename);
+%         error('MatRegister:UnimplementedMethod', ...
+%             'Method "%s" is not implemented for class "%s"', ...
+%             'getParametricJacobian', mfilename);
         
         % extract coordinate of input point
         if isempty(varargin)
@@ -200,86 +200,133 @@ methods
             y = varargin{1};
         end
         
-        % compute position wrt to the grid vertices
-        deltaX = this.gridSpacing(1);
-        deltaY = this.gridSpacing(2);
-        xg = (x - this.gridOrigin(1)) / deltaX + 1;
-        yg = (y - this.gridOrigin(2)) / deltaY + 1;
-        
-        % compute indices of values within interpolation area
-        isInsideX = xg >= 2 & xg < this.gridSize(1)-1;
-        isInsideY = yg >= 2 & yg < this.gridSize(2)-1;
-        isInside = isInsideX & isInsideY;
-        inds = find(isInside);
-        
-        % keep only valid positions
-        xg = xg(isInside);
-        yg = yg(isInside);
-        
-        % initialize zeros translation vector
-        nValid = length(xg);
-
-        % pre-allocate result array
-        nd = length(this.gridSize);
-        np = length(this.params);
-        jac = zeros(nd, np, length(x));
-
-        % if point is outside, return zeros matrix
-        if ~isInside
-            return;
-        end
+        % compute position wrt to the grid vertices (1-indexed)
+        xg = (x - this.gridOrigin(1)) / this.gridSpacing(1) + 1;
+        yg = (y - this.gridOrigin(2)) / this.gridSpacing(2) + 1;
         
         % coordinates within the unit tile
-        xu = reshape(xg - floor(xg), [1 1 nValid]);
-        yu = reshape(yg - floor(yg), [1 1 nValid]);       
-        
-        dimGrid = this.gridSize;
-        dimX    = dimGrid(1);
-        dimXY   = dimX * dimGrid(2);
-        
+        xu = xg - floor(xg);
+        yu = yg - floor(yg);
+       
         baseFuns = {...
             @BSplines.beta3_0, ...
             @BSplines.beta3_1, ...
             @BSplines.beta3_2, ...
             @BSplines.beta3_3};
         
-        
-        % pre-compute values of b-splines functions
-        evals_i = zeros(nValid, 4);
-        evals_j = zeros(nValid, 4);
-        for i = 1:4
-            fun_i = baseFuns{i};
-            evals_i(:,i) = fun_i(xu);
-            evals_j(:,i) = fun_i(yu);
-        end
-        
-        % iteration on each tile of the grid
+        % iteration on neighbor tiles 
+        eval_i = zeros(size(xu));
         for i = -1:2
+            % coordinates of neighbor grid vertex
             xv = floor(xg) + i;
+            indOkX = xv >= 1 & xv <= this.gridSize(1);
+
+            % evaluate weight associated to grid vertex
+            fun_i = baseFuns{i+2};
+            eval_i(indOkX) = fun_i(xu(indOkX));
             
             for j = -1:2
-                % coordinates of neighbor vertex
                 yv = floor(yg) + j;
+                indOkY = yv >= 1 & yv <= this.gridSize(2);
+
+                % indices of points whose grid vertex is defined
+                inds = indOkX & indOkY;
                 
                 % linear index of translation components
-                indX = sub2ind(this.gridSize, xv, yv) * 2 - 1;
-                indY = indX + 1;
-                                
-                % update total translation component
-                b = evals_i(:,i+2) .* evals_j(:,j+2);
+                indX = sub2ind(this.gridSize, xv(inds), yv(inds)) * 2 - 1;
                 
-                % update jacobian matrix (of size nd * np * nPts)
-                jacInds = (indX - 1 + (inds - 1) * np) * 2 + 1;
-                jac(jacInds) = b;
-                jacInds = (indY - 1 + (inds - 1) * np) * 2 + 1;
-                jac(jacInds + 1) = b;
-%                 % equivalent to:
-%                 iValid = ones(nValid, 1);
-%                 jac(sub2ind(size(jac), 1*iValid, indX, inds)) = b;
-%                 jac(sub2ind(size(jac), 2*iValid, indY, inds)) = b;
+                % spline basis for y vertex
+                fun_j = baseFuns{j+2};
+                
+                % evaluate weight associated to current grid vertex
+                b = eval_i(inds) .* fun_j(yu(inds));
+                
+%                 % update coordinates of transformed points
+%                 point2(inds,1) = point2(inds,1) + b .* this.params(indX)';
+%                 point2(inds,2) = point2(inds,2) + b .* this.params(indX+1)';
             end
         end
         
+%         % compute position wrt to the grid vertices
+%         deltaX = this.gridSpacing(1);
+%         deltaY = this.gridSpacing(2);
+%         xg = (x - this.gridOrigin(1)) / deltaX + 1;
+%         yg = (y - this.gridOrigin(2)) / deltaY + 1;
+%         
+%         % compute indices of values within interpolation area
+%         isInsideX = xg >= 2 & xg < this.gridSize(1)-1;
+%         isInsideY = yg >= 2 & yg < this.gridSize(2)-1;
+%         isInside = isInsideX & isInsideY;
+%         inds = find(isInside);
+%         
+%         % keep only valid positions
+%         xg = xg(isInside);
+%         yg = yg(isInside);
+%         
+%         % initialize zeros translation vector
+%         nValid = length(xg);
+% 
+%         % pre-allocate result array
+%         nd = length(this.gridSize);
+%         np = length(this.params);
+%         jac = zeros(nd, np, length(x));
+% 
+%         % if point is outside, return zeros matrix
+%         if ~isInside
+%             return;
+%         end
+%         
+%         % coordinates within the unit tile
+%         xu = reshape(xg - floor(xg), [1 1 nValid]);
+%         yu = reshape(yg - floor(yg), [1 1 nValid]);       
+%         
+%         dimGrid = this.gridSize;
+%         dimX    = dimGrid(1);
+%         dimXY   = dimX * dimGrid(2);
+%         
+%         baseFuns = {...
+%             @BSplines.beta3_0, ...
+%             @BSplines.beta3_1, ...
+%             @BSplines.beta3_2, ...
+%             @BSplines.beta3_3};
+%         
+%         
+%         % pre-compute values of b-splines functions
+%         evals_i = zeros(nValid, 4);
+%         evals_j = zeros(nValid, 4);
+%         for i = 1:4
+%             fun_i = baseFuns{i};
+%             evals_i(:,i) = fun_i(xu);
+%             evals_j(:,i) = fun_i(yu);
+%         end
+%         
+%         % iteration on each tile of the grid
+%         for i = -1:2
+%             xv = floor(xg) + i;
+%             
+%             for j = -1:2
+%                 % coordinates of neighbor vertex
+%                 yv = floor(yg) + j;
+%                 
+%                 % linear index of translation components
+%                 indX = sub2ind(this.gridSize, xv, yv) * 2 - 1;
+%                 indY = indX + 1;
+%                                 
+%                 % update total translation component
+%                 b = evals_i(:,i+2) .* evals_j(:,j+2);
+%                 
+%                 % update jacobian matrix (of size nd * np * nPts)
+%                 jacInds = (indX - 1 + (inds - 1) * np) * 2 + 1;
+%                 jac(jacInds) = b;
+%                 jacInds = (indY - 1 + (inds - 1) * np) * 2 + 1;
+%                 jac(jacInds + 1) = b;
+% %                 % equivalent to:
+% %                 iValid = ones(nValid, 1);
+% %                 jac(sub2ind(size(jac), 1*iValid, indX, inds)) = b;
+% %                 jac(sub2ind(size(jac), 2*iValid, indY, inds)) = b;
+%             end
+%         end
+%         
     end
 end
 
@@ -548,8 +595,8 @@ end
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
-        params = str.parameters;
-        transfo = BSplineTransformModel2D(str.gridSize, str.gridSpacing, str.gridOrigin, params);
+        transfo = BSplineTransformModel2D(str.gridSize, str.gridSpacing, str.gridOrigin);
+        transfo.params = str.parameters;
     end
 end
 
