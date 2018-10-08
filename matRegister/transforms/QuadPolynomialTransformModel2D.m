@@ -123,7 +123,7 @@ methods
         % Compute jacobian matrix, i.e. derivatives for each parameter
     end
     
-    function jacobian = getJacobian(this, point)
+    function jacMat = jacobianMatrix(this, point)
         % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
         % jacob(i,j) = d x_i / d x_j
         
@@ -138,7 +138,7 @@ methods
         dxy = p(5)  + 2*y*p(11) + x*p(9);
         dyy = p(6)  + 2*y*p(12) + x*p(10);
         
-        jacobian = [dxx dxy ; dyx dyy];
+        jacMat = [dxx dxy ; dyx dyy];
     end
     
     function transformVector (this, x, varargin)

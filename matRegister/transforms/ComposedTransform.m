@@ -61,12 +61,12 @@ methods
         end
     end
     
-    function jacobian = getJacobian(this, point)
+    function jacMat = jacobianMatrix(this, point)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
-        jacobian = this.transforms{1}.getJacobian(point);
+        jacMat = this.transforms{1}.jacobianMatrix(point);
         for i = 2:length(this.transforms)
-            jacobian = this.transforms{i}.getJacobian(point)*jacobian;
+            jacMat = this.transforms{i}.jacobianMatrix(point) * jacMat;
         end
     end
 end % methods

@@ -3,6 +3,11 @@ classdef BSplineTransformModel2D < ParametricTransform
 %
 %   Class BSplineTransformModel2D
 %
+%   Grid is composed of M-by-N vertices, with M number of rows and N number
+%   of columns. Iteration along x direction first.
+%   Parameters correspond to shift vector associated to each vertex:
+%   [vx11 vy11 vx12 vy12 ... vxIJ vyIJ ... vxMN vyMN]
+%
 %   Example
 %   BSplineTransformModel2D
 %
@@ -392,7 +397,7 @@ methods
             'transformVector', mfilename);
     end
     
-    function jac = getJacobian(this, point)
+    function jac = jacobianMatrix(this, point)
         % Jacobian matrix of the given point
         %
         %   JAC = getJacobian(TRANS, PT)

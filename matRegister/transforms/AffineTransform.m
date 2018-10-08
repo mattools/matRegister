@@ -52,8 +52,8 @@ methods
         % the result is an instance of MatrixAffineTransform.
         
         % extract matrices
-        mat1 = this.getAffineMatrix;
-        mat2 = that.getAffineMatrix;
+        mat1 = getAffineMatrix(this);
+        mat2 = getAffineMatrix(that);
         
         % check sizes are equal
         if sum(size(mat1) ~= size(mat2)) > 0
@@ -71,7 +71,7 @@ methods
         % or 
         % TINV = getInverse(T);
         %
-        mat = this.getAffineMatrix();
+        mat = getAffineMatrix(this);
         res = MatrixAffineTransform(inv(mat));
     end
 end
@@ -132,18 +132,18 @@ methods
         % 
         % VEC2 = transfo.transformVector(VEC, POINT);
 
-        mat = this.getAffineMatrix();
+        mat = getAffineMatrix(this);
         res = zeros(size(point));
         for i = 1:size(point, 2)
             res(:,i) = point * mat(i, 1:end-1)';
         end
     end
 
-    function jacobian = getJacobian(this)
+    function jacMat = jacobianMatrix(this)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
-        mat = this.getAffineMatrix();
-        jacobian = mat(1:end-1, 1:end-1);
+        mat = getAffineMatrix(this);
+        jacMat = mat(1:end-1, 1:end-1);
     end
 
 end % methods

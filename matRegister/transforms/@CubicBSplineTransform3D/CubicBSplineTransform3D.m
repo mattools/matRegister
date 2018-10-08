@@ -248,7 +248,7 @@ methods
             'transformVector', mfilename);
     end
     
-    function jac = getJacobian(this, point)
+    function jac = jacobianMatrix(this, point)
         % Jacobian matrix of the given point
         %
         

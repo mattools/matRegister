@@ -12,10 +12,10 @@ classdef TransformJacobianResampler < handle
 %   See also
 %     ImageResampler
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-03-15,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
@@ -130,7 +130,7 @@ methods
             vals = zeros(size(x), this.outputType);
         
             % compute all jacobians (result stored in a 2*2*N array)
-            jac = getJacobian(transform, [x(:) y(:)]);
+            jac = jacobianMatrix(transform, [x(:) y(:)]);
             for i = 1:numel(x)
                 vals(i) = det(jac(:,:,i));
             end
@@ -148,7 +148,7 @@ methods
             % compute result values
             try
                 % try first with full call
-                jac = transform.getJacobian([x(:) y(:) z(:)]);
+                jac = jacobianMatrix(transform, [x(:) y(:) z(:)]);
                 for i = 1:numel(x)
                     vals(i) = det(jac(:,:,i));
                 end
@@ -156,9 +156,9 @@ methods
             catch 
                 % if memory limit is reached, performs element by element
                 warning([mfilename ':MemoryLimit'], ...
-                    'Memory limit reached - switched to elementwise computation');
+                    'Memory limit reached - switched to element-wise computation');
                 for i = 1:numel(x)
-                    jac = transform.getJacobian([x(i) y(i) z(i)]);
+                    jac = jacobianMatrix(transform, [x(i) y(i) z(i)]);
                     vals(i) = det(jac);
                 end
             end

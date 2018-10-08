@@ -48,11 +48,18 @@ methods (Abstract)
     % TRANSFORMVECTOR Computes coordinates of transformed vector
     % VEC2 = this.transformPoint(VEC, PT);
     
-    jacobian = getJacobian(this, position)
+    jacMat = jacobianMatrix(this, position)
     % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
     % jacob(i,j) = d x_i / d x_j
        
 end % abstract methods
+
+methods
+    function jacMat = getJacobian(this, position)
+        warning('deprecated: use method jacobianMatrix instead');
+        jacMat = jacobianMatrix(this, position);
+    end
+end
 
 %% General methods
 methods
