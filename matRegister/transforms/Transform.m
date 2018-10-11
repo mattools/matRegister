@@ -41,13 +41,9 @@ methods (Abstract)
     % points.
     
     transformPoint(this, point)
-    % TRANSFORMPOINT Computes coordinates of transformed point
-    % PT2 = this.transformPoint(PT);
-    
-    transformVector(this, vector, position)
-    % TRANSFORMVECTOR Computes coordinates of transformed vector
-    % VEC2 = this.transformPoint(VEC, PT);
-    
+    % Computes coordinates of transformed point
+    % pt2 = transformPoint(transfo, pt);
+        
     jacMat = jacobianMatrix(this, position)
     % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
     % jacob(i,j) = d x_i / d x_j
@@ -63,6 +59,19 @@ end
 
 %% General methods
 methods
+    function res = transformVector(this, vector, position)
+        % Computes coordinates of transformed vector at a given position
+        %
+        % vec2 = transformVector(transfo, vec, pos);
+        %
+        
+        jac = jacobianMatrix(this, position); % 2-by-2-by-N
+        nv = size(vector, 1);
+        res = zeros(nv, 2);
+        for i = 1:nv
+            res(i, :) = vector(i,:) * jac(:,:,i)';
+        end
+    end
     
     function res = compose(this, that)
         % Computes the composition of the two transforms
