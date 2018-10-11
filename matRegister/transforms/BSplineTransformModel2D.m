@@ -79,6 +79,18 @@ methods
             dim = this.gridSize();
             np  = prod(dim) * length(dim);
             this.params = zeros(1, np);
+
+            % initialize parameter names
+            this.paramNames = cell(1, np);
+            ind = 1;
+            for iy = 1:this.gridSize(2)
+                for ix = 1:this.gridSize(1)
+                    this.paramNames{ind} = sprintf('vx_%d_%d', iy, ix);
+                    ind = ind + 1;
+                    this.paramNames{ind} = sprintf('vy_%d_%d', iy, ix);
+                    ind = ind + 1;
+                end
+            end
         end
 
     end
