@@ -333,12 +333,6 @@ methods
         end
     end
     
-%    function transformVector(this, varargin)
-%         error('MatRegister:UnimplementedMethod', ...
-%             'Method "%s" is not implemented for class "%s"', ...
-%             'transformVector', mfilename);
-%     end
-    
     function jac = jacobianMatrix(this, point)
         % Jacobian matrix of the given point
         %
@@ -432,14 +426,14 @@ methods
         end
     end
 
-    function lap = getLaplacian(this, point)
-        % Jacobian matrix of the given point
+    function deriv = secondDerivatives(this, point, indI, indJ)
+        % Second derivatives for the given point(s)
         %
-        %   JAC = getJacobian(TRANS, PT)
-        %   where PT is a N-by-2 array of points, returns the spatial
-        %   jacobian matrix of each point in the form of a 2-by-2-by-N
-        %   array.
-        %
+        % D2 = secondDerivatives(T, POINT, INDI, INDJ)
+        % Return a M-by-2 array, with as many rows as the number of points.
+        % First columns is the second derivative of the x-transform part,
+        % and second column is the second derivative of the y-transform
+        % part.
         
         %% Constants
         
@@ -449,6 +443,12 @@ methods
             @BSplines.beta3_1, ...
             @BSplines.beta3_2, ...
             @BSplines.beta3_3};
+        
+        derivFuns = {...
+            @BSplines.beta3_0d, ...
+            @BSplines.beta3_1d, ...
+            @BSplines.beta3_2d, ...
+            @BSplines.beta3_3d};
         
         deriv2Funs = {...
             @BSplines.beta3_0s, ...
@@ -475,10 +475,11 @@ methods
         yu = reshape(yg - floor(yg), [nPts 1]);       
         
         % allocate memory for storing result
-        lap = zeros(size(point, 1), 1);
+        deriv = zeros(size(point, 1), 2);
         
         % pre-allocate weights for vertex grids
         bx  = zeros(size(xu));
+        bxd = zeros(size(xu));
         bxs = zeros(size(xu));
         
         %% Iteration on neighbor tiles 
@@ -489,6 +490,7 @@ methods
             
             % compute x-coefficients of bezier function and derivative
             bx(indOkX)  = baseFuns{i+2}(xu(indOkX));
+            bxd(indOkX) = derivFuns{i+2}(xu(indOkX));
             bxs(indOkX) = deriv2Funs{i+2}(xu(indOkX));
             
             for j = -1:2
@@ -511,15 +513,45 @@ methods
                 
                 % compute y-coefficients of spline function and derivative
                 by  = baseFuns{j+2}(yu(inds));
+                byd = derivFuns{j+2}(yu(inds));
                 bys = deriv2Funs{j+2}(yu(inds));
 
-                % update laplacian elements
-                d2x = (bxs(inds) .* by  .* dxv) / (deltaX^2);
-                d2y = (bx(inds) .* bys  .* dyv) / (deltaY^2);
-                lap(inds) = lap(inds) + d2x.^2 + d2y.^2;
+                % update second derivatives elements
+                if indI == 1 && indJ == 1
+                    deriv(inds,1) = deriv(inds,1) + (bxs(inds) .* by  .* dxv) / (deltaX^2);
+                    deriv(inds,2) = deriv(inds,2) + (bxs(inds) .* by  .* dyv) / (deltaX^2);
+                    
+                elseif indI == 2 && indJ == 2
+                    deriv(inds,1) = deriv(inds,1) + (bx(inds)  .* bys .* dxv) / (deltaY^2);
+                    deriv(inds,2) = deriv(inds,2) + (bx(inds)  .* bys .* dyv) / (deltaY^2);
+                    
+                elseif (indI == 1 && indJ == 2) || (indI == 2 && indJ == 1)
+                    deriv(inds,1) = deriv(inds,1) + (bxd(inds) .* byd .* dxv) / (deltaX*deltaY);
+                    deriv(inds,2) = deriv(inds,2) + (bxd(inds) .* byd .* dyv) / (deltaX*deltaY);
+
+                else
+                    error('indI and indJ should be between 1 and 2');
+                end
             end
         end
-    end % getLaplacian
+        
+    end % secondDerivatives
+
+    function lap = curvatureOperator(this, point)
+        % Compute curvature operator at given position(s)
+        %
+        %   LAP = getLaplacian(TRANS, PT)
+        %   where PT is a N-by-2 array of points, returns the laplacian of
+        %   each point in the form of a 2-by-2-by-N array.
+        %
+        
+        % compute second derivatives (each array is Npts-by-2
+        dx2 = secondDerivatives(this, point, 1, 1);
+        dy2 = secondDerivatives(this, point, 2, 2);
+        
+        % compute curvature operator
+        lap = sum(dx2, 2).^2 + sum(dy2, 2).^2;
+    end
 
     function dim = getDimension(this) %#ok<MANU>
         dim = 2;
