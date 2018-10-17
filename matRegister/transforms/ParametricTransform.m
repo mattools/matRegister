@@ -112,6 +112,7 @@ methods
     end
     
     function jac = getParametricJacobian(this, x, varargin)
+        % deprecated: use parametricJacobian instead
         warning('deprecated: use parametricJacobian method instead');
         jac = parametricJacobian(this, x, varargin{:});
     end

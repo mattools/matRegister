@@ -51,6 +51,7 @@ end % abstract methods
 
 methods
     function jacMat = getJacobian(this, position)
+        % deprecated: use jacobianMatrix instead
         warning('deprecated: use method jacobianMatrix instead');
         jacMat = jacobianMatrix(this, position);
     end
