@@ -8,10 +8,10 @@ classdef TranslationModel < ParametricTransform & AffineTransform
 %   params(2): ty       (in user spatial unit)
 %
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-02-17,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -63,7 +63,7 @@ end
 
 %% Standard methods
 methods
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Returns the affine matrix that represents this transform
         nd = length(this.params);
         mat = eye(nd+1);

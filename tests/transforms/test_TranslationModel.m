@@ -55,7 +55,7 @@ function testGetAffineMatrix
 
 refMat = [1 0 2;0 1 3;0 0 1];
 trans = TranslationModel([2 3]);
-mat = trans.getAffineMatrix();
+mat = affineMatrix(trans);
 assertElementsAlmostEqual(refMat, mat);
 
 
@@ -70,7 +70,7 @@ function testSetParameters
 refMat = [1 0 2;0 1 3;0 0 1];
 trans = TranslationModel();
 trans.setParameters([2 3]);
-mat = trans.getAffineMatrix();
+mat = affineMatrix(trans);
 assertElementsAlmostEqual(refMat, mat);
 
 

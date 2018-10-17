@@ -7,11 +7,11 @@ classdef CenteredAffineTransformModel3D < AffineTransform & ParametricTransform 
 %   CenteredAffineTransformModel3D
 %
 %   See also
-%
-%
+%     AffineTransform, ParametricTransform
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-11-18,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -59,7 +59,7 @@ methods
         end
         
         % eventually parse additional arguments
-        if nargin>2
+        if nargin > 2
             if strcmp(varargin{2}, 'center')
                 % setup rotation center
                 this.center = varargin{3};
@@ -90,7 +90,7 @@ methods
         
         % if the first argument is a Transform, extract its affine matrix
         if isa(transform, 'AffineTransform')
-            transform = getAffineMatrix(transform);
+            transform = affineMatrix(transform);
         end
         
         % format matrix to have a row vector of 12 elements
@@ -107,7 +107,7 @@ methods
         dim = 3;
     end
 
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Compute affine matrix associated with this transform
         
         % convert parameters to a 4-by-4 affine matrix

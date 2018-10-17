@@ -69,7 +69,7 @@ methods
         dim = 2;
     end
 
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Compute affine matrix associated with this transform
         
         % translation vector

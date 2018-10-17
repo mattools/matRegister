@@ -33,7 +33,7 @@ end
 
 %% Abstract methods
 methods(Abstract)
-    getAffineMatrix(this)
+    affineMatrix(this)
     % Returns the (d+1)*(d+1) affine matrix that represents this transform
     %
     % usage:
@@ -43,6 +43,11 @@ end
 
 %% General methods specific to Affine transforms
 methods
+    function mat = getAffineMatrix(this)
+        warning('deprecated: use method affineMatrix instead');
+        mat = affineMatrix(this);
+    end
+    
     function res = mtimes(this, that)
         % Multiplies two affine transforms
         % RES = THIS * THAT
@@ -52,8 +57,8 @@ methods
         % the result is an instance of MatrixAffineTransform.
         
         % extract matrices
-        mat1 = getAffineMatrix(this);
-        mat2 = getAffineMatrix(that);
+        mat1 = affineMatrix(this);
+        mat2 = affineMatrix(that);
         
         % check sizes are equal
         if sum(size(mat1) ~= size(mat2)) > 0
@@ -71,7 +76,7 @@ methods
         % or 
         % TINV = getInverse(T);
         %
-        mat = getAffineMatrix(this);
+        mat = affineMatrix(this);
         res = MatrixAffineTransform(inv(mat));
     end
 end
@@ -81,7 +86,7 @@ methods
     function dim = getDimension(this)
 
         % extract affine coefficients
-        mat = getAffineMatrix(this);
+        mat = affineMatrix(this);
         dim = size(mat, 1) - 1;
     end
 
@@ -93,7 +98,7 @@ methods
         % transfo.transformPoint(X, Y, Z);
         
         % extract affine coefficients
-        mat = getAffineMatrix(this);
+        mat = affineMatrix(this);
         
         % format to process a single array
         baseSize = size(point);
@@ -132,7 +137,7 @@ methods
         % 
         % VEC2 = transfo.transformVector(VEC, POINT);
 
-        mat = getAffineMatrix(this);
+        mat = affineMatrix(this);
         res = zeros(size(point));
         for i = 1:size(point, 2)
             res(:,i) = point * mat(i, 1:end-1)';
@@ -142,7 +147,7 @@ methods
     function jacMat = jacobianMatrix(this)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
-        mat = getAffineMatrix(this);
+        mat = affineMatrix(this);
         jacMat = mat(1:end-1, 1:end-1);
     end
 

@@ -16,7 +16,7 @@ function test_suite = test_CenteredMotionTransform2D(varargin)
 
 test_suite = buildFunctionHandleTestSuite(localfunctions);
 
-function test_getAffineMatrix %#ok<*DEFNU>
+function test_affineMatrix %#ok<*DEFNU>
 
 center = [6 8];
 T1 = Translation(-center);
@@ -28,8 +28,8 @@ res = T2 * R * T1;
 
 T = CenteredMotionTransform2D([30 0 0], 'center', center);
 
-matTh = res.getAffineMatrix();
-mat = T.getAffineMatrix();
+matTh = affineMatrix(res);
+mat = affineMatrix(T);
 assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
 
 
@@ -54,14 +54,14 @@ end
 % create transfo
 center = [6 8];
 T = CenteredMotionTransform2D([30 0 0], 'center', center);
-mat0 = getAffineMatrix(T);
+mat0 = affineMatrix(T);
 
 % save the transfo
 writeToFile(T, fileName);
 
 % read a new transfo
 T2 = CenteredMotionTransform2D.readFromFile(fileName);
-mat2 = getAffineMatrix(T2);
+mat2 = affineMatrix(T2);
 
 assertElementsAlmostEqual(mat0, mat2, 'absolute', .1);
 

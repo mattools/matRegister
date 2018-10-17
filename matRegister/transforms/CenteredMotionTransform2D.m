@@ -17,10 +17,10 @@ classdef CenteredMotionTransform2D < AffineTransform & ParametricTransform & Cen
 %   Initialize the center of the transform. CENTER must be a 1-by-2 row
 %   vector containing coordinates of the transform center.
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-02-17,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -83,7 +83,7 @@ methods
         dim = 2;
     end
 
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Compute affine matrix associated with this transform
         
         % converts to radians

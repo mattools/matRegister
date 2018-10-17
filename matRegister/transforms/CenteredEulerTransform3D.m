@@ -94,7 +94,7 @@ methods
         this.parameters = [0 0 0 vector];
     end
     
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Compute affine matrix associated with this transform
         
         % extract angles and convert to radians

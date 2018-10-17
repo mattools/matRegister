@@ -23,7 +23,7 @@ T1 = Translation([2 3]);
 T2 = Translation([4 5]);
 
 res = T1*T2;
-mat = res.getAffineMatrix();
+mat = affineMatrix(res);
 
 matTh = [1 0 6;0 1 8;0 0 1];
 assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
@@ -39,4 +39,4 @@ res = T2*R*T1;
 
 T = CenteredMotionTransform2D([30 0 0], 'center', center);
 
-assertElementsAlmostEqual(getAffineMatrix(res), getAffineMatrix(T), 'absolute', .1);
+assertElementsAlmostEqual(affineMatrix(res), affineMatrix(T), 'absolute', .1);

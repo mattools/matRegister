@@ -8,7 +8,7 @@ classdef Transform < handle
 %   Abstract classes:
 %   transformPoint  - Computes coordinates of transformed point
 %   transformVector - Computes coordinates of transformed vector
-%   getJacobian     - Computes jacobian matrix 
+%   jacobianMatrix  - Computes jacobian matrix 
 %
 %   Example
 %   trans = (...); % define a transform by using a derived class 
