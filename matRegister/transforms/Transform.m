@@ -11,16 +11,18 @@ classdef Transform < handle
 %   jacobianMatrix  - Computes jacobian matrix 
 %
 %   Example
-%   trans = (...); % define a transform by using a derived class 
-%   pt = (...);    % create a point corresponding to transform input
-%   pt2 = trans.transformPoint(pt);
+%     % apply a tranlation transform to the point [10 10]
+%     transfo = Translation([2 3]);
+%     transformPoint(transfo, [10 10])
+%     ans =
+%         12    13
 %
 %   See also
-%
-%
+%     AffineTransform, ParametricTransform
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -28,25 +30,22 @@ properties
     % the set of inner parameters of the transform
 end
 
-%% Static methods
-methods (Static)
-end
 
 %% Abstract methods
 methods (Abstract)
     
-    getDimension(this)
-    % GETDIMENSION Return the dimension of this transform
+    % Return the dimension of this transform
     % In case of a projection transform, returns the dimension of input
     % points.
+    getDimension(this)
     
-    transformPoint(this, point)
     % Computes coordinates of transformed point
     % pt2 = transformPoint(transfo, pt);
+    transformPoint(this, point)
         
-    jacMat = jacobianMatrix(this, position)
     % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
     % jacob(i,j) = d x_i / d x_j
+    jacMat = jacobianMatrix(this, position)
        
 end % abstract methods
 
