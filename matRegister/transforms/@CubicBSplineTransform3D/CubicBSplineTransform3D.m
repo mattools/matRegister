@@ -8,10 +8,10 @@ classdef CubicBSplineTransform3D < ParametricTransform
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-02-16,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
@@ -379,7 +379,7 @@ methods
 
     end
     
-    function jac = getParametricJacobian(this, x, varargin)
+    function jac = parametricJacobian(this, x, varargin)
         % Compute parametric jacobian for a specific position
         % The result is a ND-by-NP array, where ND is the number of
         % dimension, and NP is the number of parameters.

@@ -70,7 +70,7 @@ methods
         mat(1:end-1, end) = this.params(:);
     end
     
-    function jac = getParametricJacobian(this, x, varargin) %#ok<INUSD>
+    function jac = parametricJacobian(this, x, varargin) %#ok<INUSD>
         % Compute jacobian matrix, i.e. derivatives for each parameter
         nd = length(this.params);
         jac = eye(nd);

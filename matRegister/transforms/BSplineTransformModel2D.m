@@ -200,7 +200,7 @@ end % end methods
 
 %% Methods implementing the ParametricTransform interface
 methods
-    function jac = getParametricJacobian(this, x, varargin)
+    function jac = parametricJacobian(this, x, varargin)
         % Computes parametric jacobian for a specific position
         % 
         % jac = getParametricJacobian(this, x)

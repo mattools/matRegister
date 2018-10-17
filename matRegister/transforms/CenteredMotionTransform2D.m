@@ -109,7 +109,7 @@ methods
 
     end
   
-    function jacobian = getParametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(this, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
        
         % extract coordinate of input point(s)

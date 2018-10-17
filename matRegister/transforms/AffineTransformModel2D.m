@@ -113,7 +113,7 @@ end
 
 %% Implementation of methods inherited from ParametricTransform
 methods
-    function jacobian = getParametricJacobian(this, x, varargin) %#ok<INUSL>
+    function jacobian = parametricJacobian(this, x, varargin) %#ok<INUSL>
         % Compute jacobian matrix, i.e. derivatives for each parameter
         % Result is a 2-by-6 matrix
         

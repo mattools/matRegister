@@ -81,7 +81,7 @@ methods
         end
     end
     
-    function jacobian = getParametricJacobian(this, point, varargin)
+    function jacobian = parametricJacobian(this, point, varargin)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
 

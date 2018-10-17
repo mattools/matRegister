@@ -110,11 +110,16 @@ methods
         
         name = this.paramNames;
     end
+    
+    function jac = getParametricJacobian(this, x, varargin)
+        warning('deprecated: use parametricJacobian method instead');
+        jac = parametricJacobian(this, x, varargin{:});
+    end
 end % methods
 
 %% Abstract methods
 methods (Abstract)
-    getParametricJacobian(this, x, varargin)
+    parametricJacobian(this, x, varargin)
     % Compute jacobian matrix, i.e. derivatives for each parameter
     
 end % abstract methods 

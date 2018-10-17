@@ -119,7 +119,7 @@ methods
         pointT = [x2 y2];
     end
     
-    function getParametricJacobian(this, x, varargin)
+    function parametricJacobian(this, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
     end
     
