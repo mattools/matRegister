@@ -568,7 +568,6 @@ methods
             'gridSpacing', this.gridSpacing, ...
             'gridOrigin', this.gridOrigin, ...
             'parameters', this.params);
-        
     end
 end
 methods (Static)

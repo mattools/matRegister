@@ -9,7 +9,7 @@ classdef InitializedTransformModel < ParametricTransform
 %   InitializedTransformModel
 %
 %   See also
-%
+%     ParametricTransform, ComposedTransform
 
 % ------
 % Author: David Legland
@@ -34,7 +34,8 @@ methods
         if isa(varargin{1}, 'ComposedTransform') && nargin == 1
             % copy constructor
             var = varargin{1};
-            this.transforms = var.transforms;
+            this.initial = var.initial;
+            this.transform = var.transform;
             
         elseif nargin == 2
             % initialization constructor
@@ -42,51 +43,19 @@ methods
             this.transform = varargin{2};
             
         else
-            error('Wrong parameter when constructing a Composed transform');
+            error('Wrong parameter when constructing an initialized transform model');
         end
         
+        % check validity of arguments
+        if ~isa(this.initial, 'Transform')
+            error('initial transform must be an instance of Transform');
+        end
         if ~isa(this.transform, 'ParametricTransform')
             error('Last transform must be a ParametricTransform');
         end
         
     end % constructor
 end
-
-
-%% Methods implementing Transform interface
-methods
-    function dim = getDimension(this)
-        dim = getDimension(this.initial);
-    end
-
-    function point = transformPoint(this, point)
-        point = transformPoint(this.transform, transformPoint(this.initial, point));
-    end
-    
-    function vector = transformVector(this, vector, position)
-        error('Unimplemened method');
-    end
-    
-    function jacobian = getJacobian(this, point, varargin)
-        % Compute jacobian matrix, i.e. derivatives for coordinate
-        % jacob(i,j) = d x_i / d x_j
-        
-        jacobian = this.initial.getJacobian(point);
-        jacobian = this.transform.getJacobian(point) * jacobian;
-    end
-    
-    function jacobian = getParametricJacobian(this, point, varargin)
-        % Compute jacobian matrix, i.e. derivatives for coordinate
-        % jacob(i,j) = d x_i / d x_j
-
-        % first, transform points
-        point = transformPoint(this.initial, point, varargin{:});
-        
-        % then, compute parametric jacobian of the last transform
-        jacobian = getParametricJacobian(this.transform, point, varargin{:});
-        
-    end
-end % methods
 
 
 %% Overrides several methods from ParametricTransform 
@@ -149,6 +118,59 @@ methods
         
         names = this.transform.paramNames;
     end
-end % overridden methods
+    
+    function jacobian = getParametricJacobian(this, point, varargin)
+        % Compute jacobian matrix, i.e. derivatives for coordinate
+        % jacob(i,j) = d x_i / d x_j
+
+        % first, transform points
+        point = transformPoint(this.initial, point, varargin{:});
+        
+        % then, compute parametric jacobian of the last transform
+        jacobian = getParametricJacobian(this.transform, point, varargin{:});
+        
+    end
+end % methods implementing ParametricTransform interface
+
+%% Methods implementing Transform interface
+methods
+    function point = transformPoint(this, point)
+        point = transformPoint(this.transform, transformPoint(this.initial, point));
+    end
+    
+    function jacobian = jacobianMatrix(this, point, varargin)
+        % Compute jacobian matrix, i.e. derivatives for coordinate
+        % jacob(i,j) = d x_i / d x_j
+        
+        jacobian = this.initial.getJacobian(point);
+        jacobian = this.transform.getJacobian(point) * jacobian;
+    end
+    
+    function dim = getDimension(this)
+        dim = getDimension(this.initial);
+    end
+
+end % methods implementing Transform interface
+
+
+%% Serialization methods
+
+methods
+    function str = toStruct(this)
+        % Converts to a structure to facilitate serialization
+        str = struct('type', 'InitializedTransformModel', ...
+            'initial', toStruct(this.initial), ...
+            'transform', toStruct(this.transform));
+    end
+end
+
+methods (Static)
+    function transfo = fromStruct(str)
+        % Creates a new instance from a structure
+        init = Transform.fromStruct(str.initial);
+        transform = Transform.fromStruct(str.transform);
+        transfo = InitializedTransformModel(init, transform);
+    end
+end
 
 end % classdef
