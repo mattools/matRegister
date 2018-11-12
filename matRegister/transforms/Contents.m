@@ -20,17 +20,18 @@
 %   CenteredEulerTransform3D       - Transformation model for a centered 3D rotation followed by a translation
 %   CenteredMotionTransform2D      - Transformation model for a centered rotation followed by a translation
 %
-% Utility classes for parametric transforms
-%   ComposedTransformModel         - Compose several transforms, the last one being parametric 
-%   CenteredTransformAbstract      - Add center management to a transform
-%   InitializedTransformModel      - Encapsulation of a parametric and an initial transform
-%
 % Polynomial and spline models
 %   BSplineTransformModel2D        - Cubic B-Spline Transform model in 2D
 %   QuadPolynomialTransformModel2D - One-line description here, please.
 %   CenteredQuadTransformModel3D   - Polynomial 3D transform up to degree 2 (3*10=30 parameters)
 %   CenteredQuadTransformModel2D   - Polynomial 2D transform up to degree 2 (2*6=12 parameters)
 %   BSplines                       - Contains several static functions for manipulation of cubic splines
+%   RadialScalingTransform2D       - Radial scaling transform in 2D
+%
+% Utility classes for parametric transforms
+%   ComposedTransformModel         - Compose several transforms, the last one being parametric 
+%   CenteredTransformAbstract      - Add center management to a transform
+%   InitializedTransformModel      - Encapsulation of a parametric and an initial transform
 %
 % Utility methods
 %   drawTransformedGrid            - Draw the result of a transform applied to a grid
