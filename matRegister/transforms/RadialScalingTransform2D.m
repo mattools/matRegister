@@ -18,7 +18,10 @@ classdef RadialScalingTransform2D < Transform
 
 %% Properties
 properties
-    % the anglesfor which sclaing is defined, in degrees, as 1-by-N array
+    % the center 
+    center = [0 0];
+    
+    % the angles for which sclaing is defined, in degrees, as 1-by-N array
     % default: 0:359
     angles;
     
@@ -44,12 +47,13 @@ methods
         % T = RadialScalingTransform2D(ANGLES, SCALINGS);
         
         if nargin == 0
-            this.angles = 0:259;
+            this.angles = 0:359;
                 
         elseif nargin == 1
             var1 = varargin{1};
             if isa(var1, 'RadialScalingTransform2D')
                 % copy constructor
+                this.center = var1.center;
                 this.angles = var1.angles;
                 this.scalings = var1.scalings;
 
@@ -79,7 +83,7 @@ methods
     function point2 = transformPoint(this, point)
         % Compute coordinates of transformed point
         
-        [theta, rho] = cart2pol(point(:,1), point(:,2));
+        [theta, rho] = cart2pol(point(:,1)-this.center(1), point(:,2)-this.center(2));
         ang = mod(rad2deg(theta) + 360, 360);
         
         inds = zeros(size(ang));
@@ -90,7 +94,7 @@ methods
         rho2 = rho .* (this.scalings(inds))';
         
         [x2, y2] = pol2cart(theta, rho2);
-        point2 = [x2 y2];
+        point2 = [x2+this.center(1) y2+this.center(2)];
     end
     
     function transformVector(this, varargin)
@@ -126,13 +130,18 @@ methods
         str = struct('type', 'RadialScalingTransform2D', ...
             'angles', this.angles, ...
             'scalings', this.scalings);
-        
+        if sum(this.center ~= 0) > 0
+            str.center = this.center;
+        end
     end
 end
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
         transfo = RadialScalingTransform2D(str.angles, str.scalings);
+        if isfield(str, 'center')
+            transfo.center = str.center;
+        end
     end
 end
 
