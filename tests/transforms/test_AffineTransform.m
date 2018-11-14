@@ -16,14 +16,26 @@ function test_suite = test_AffineTransform(varargin)
 
 test_suite = buildFunctionHandleTestSuite(localfunctions);
 
-function test_mtimes %#ok<*DEFNU>
+function test_createTranslation_2d %#ok<*DEFNU>
+
+mat = affineMatrix(AffineTransform.createTranslation([2 3]));
+matTh = [1 0 2 ;0 1 3; 0 0 1];
+assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
+
+function test_createScaling_2d %#ok<*DEFNU>
+
+mat = affineMatrix(AffineTransform.createScaling([3 2]));
+matTh = [3 0 0 ;0 2 0; 0 0 1];
+assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
+
+function test_mtimes
 
 % Compose two translations
 T1 = Translation([2 3]);
 T2 = Translation([4 5]);
 
 res = T1*T2;
-mat = res.getAffineMatrix();
+mat = affineMatrix(res);
 
 matTh = [1 0 6;0 1 8;0 0 1];
 assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
@@ -39,4 +51,4 @@ res = T2*R*T1;
 
 T = CenteredMotionTransform2D([30 0 0], 'center', center);
 
-assertElementsAlmostEqual(getAffineMatrix(res), getAffineMatrix(T), 'absolute', .1);
+assertElementsAlmostEqual(affineMatrix(res), affineMatrix(T), 'absolute', .1);

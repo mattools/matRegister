@@ -8,19 +8,21 @@ classdef Transform < handle
 %   Abstract classes:
 %   transformPoint  - Computes coordinates of transformed point
 %   transformVector - Computes coordinates of transformed vector
-%   getJacobian     - Computes jacobian matrix 
+%   jacobianMatrix  - Computes jacobian matrix 
 %
 %   Example
-%   trans = (...); % define a transform by using a derived class 
-%   pt = (...);    % create a point corresponding to transform input
-%   pt2 = trans.transformPoint(pt);
+%     % apply a tranlation transform to the point [10 10]
+%     transfo = Translation([2 3]);
+%     transformPoint(transfo, [10 10])
+%     ans =
+%         12    13
 %
 %   See also
-%
-%
+%     AffineTransform, ParametricTransform
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -28,34 +30,48 @@ properties
     % the set of inner parameters of the transform
 end
 
-%% Static methods
-methods (Static)
-end
 
 %% Abstract methods
 methods (Abstract)
     
-    getDimension(this)
-    % GETDIMENSION Return the dimension of this transform
+    % Return the dimension of this transform
     % In case of a projection transform, returns the dimension of input
     % points.
+    getDimension(this)
     
+    % Computes coordinates of transformed point
+    % pt2 = transformPoint(transfo, pt);
     transformPoint(this, point)
-    % TRANSFORMPOINT Computes coordinates of transformed point
-    % PT2 = this.transformPoint(PT);
-    
-    transformVector(this, vector, position)
-    % TRANSFORMVECTOR Computes coordinates of transformed vector
-    % VEC2 = this.transformPoint(VEC, PT);
-    
-    jacobian = getJacobian(this, position)
+        
     % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
     % jacob(i,j) = d x_i / d x_j
+    jacMat = jacobianMatrix(this, position)
        
 end % abstract methods
 
+methods
+    function jacMat = getJacobian(this, position)
+        % deprecated: use jacobianMatrix instead
+        warning('deprecated: use method jacobianMatrix instead');
+        jacMat = jacobianMatrix(this, position);
+    end
+end
+
 %% General methods
 methods
+    function res = transformVector(this, vector, position)
+        % Computes coordinates of transformed vector at a given position
+        %
+        % vec2 = transformVector(transfo, vec, pos);
+        %
+        
+        jac = jacobianMatrix(this, position); % 2-by-2-by-N
+        nv = size(vector, 1);
+        res = zeros(nv, 2);
+        for i = 1:nv
+            res(i, :) = vector(i,:) * jac(:,:,i)';
+        end
+    end
     
     function res = compose(this, that)
         % Computes the composition of the two transforms

@@ -61,7 +61,7 @@ methods
     end
 
     
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Returns the 3*3 affine matrix that represents this transform
         
         % pre-computation

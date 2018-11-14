@@ -19,14 +19,14 @@ testSuite = buildFunctionHandleTestSuite(localfunctions);
 
 function test_Simple %#ok<*DEFNU>
 % Test call of function without argument
-BSplineTransformModel2D();
+BSplineTransformModel2D([3 3], [10 10], [0 0]);
 
 
 function test_ToStruct
 % Test call of function without argument
 
-params = [.1 .2  1.1 0.2  0.1 1.2  0.01 0.01 0.01 0.01 0.01 0.01];
-transfo = BSplineTransformModel2D(params);
+transfo = BSplineTransformModel2D([3 3], [10 10], [0 0]);
+transfo.params = zeros(1, 18);
 str = toStruct(transfo);
 transfo2 = BSplineTransformModel2D.fromStruct(str);
 
@@ -44,8 +44,8 @@ if exist(fileName, 'file')
 end
 
 % arrange
-params = [.1 .2  1.1 0.2  0.1 1.2  0.01 0.01 0.01 0.01 0.01 0.01];
-transfo = BSplineTransformModel2D(params);
+transfo = BSplineTransformModel2D([3 3], [10 10], [0 0]);
+transfo.params = zeros(1, 18);
 
 % act
 write(transfo, fileName);

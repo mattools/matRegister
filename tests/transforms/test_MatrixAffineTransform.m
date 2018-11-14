@@ -16,7 +16,7 @@ function test_suite = test_MatrixAffineTransform(varargin)
 
 test_suite = buildFunctionHandleTestSuite(localfunctions);
 
-function testCreateFromArray %#ok<*DEFNU>
+function testCreateFromArray(testCase) %#ok<*DEFNU>
 
 % identity
 mat1 = eye(3);
@@ -28,3 +28,9 @@ mat1 = mat1(1:end-1, :);
 T = MatrixAffineTransform(mat1);
 assertTrue(T.isvalid());
 
+function test_scaling2d(testCase)
+
+mat = [2 0 0;0 2 0;0 0 1];
+transfo = MatrixAffineTransform(mat);
+res = transformPoint(transfo, [1 2]);
+assertElementsAlmostEqual(res, [2 4], 'absolute', .01);

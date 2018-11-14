@@ -81,7 +81,7 @@ methods
         dim = 2;
     end
 
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Compute affine matrix associated with this transform
         
         % translation vector
@@ -106,7 +106,7 @@ methods
 
     end
   
-    function jacobian = getParametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(this, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
        
         % extract coordinate of input point(s)

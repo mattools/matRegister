@@ -175,7 +175,7 @@ methods
         error('Not yet implemented');
     end
     
-    function jacobian = getJacobian(this, point)
+    function jacobian = jacobianMatrix(this, point)
         % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
         % jacob(i,j) = d x_i / d x_j
         
@@ -197,7 +197,7 @@ end % Transform methods
 
 %% Implementation of methods inherited from ParametricTransform
 methods
-    function jacobian = getParametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(this, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
         
         % extract coordinate of input point(s)

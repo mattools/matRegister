@@ -29,8 +29,8 @@ R = MatrixAffineTransform(rotMat);
 T2 = Translation(center);
 
 % get transform matrices
-t1Mat = T1.getAffineMatrix();
-t2Mat = T2.getAffineMatrix();
+t1Mat = affineMatrix(T1);
+t2Mat = affineMatrix(T2);
 resMat = t2Mat*rotMat*t1Mat;
 
 % create composed transforms
@@ -40,9 +40,9 @@ Res3 = CenteredMotionTransform2D([30 0 0], 'center', center);
 
 %% transform a set of points using both transforms
 pts0 = [5 6; 3 4;-1 2];
-pts1 = Res1.transformPoint(pts0);
-pts2 = Res2.transformPoint(pts0);
-pts3 = Res3.transformPoint(pts0);
+pts1 = transformPoint(Res1, pts0);
+pts2 = transformPoint(Res2, pts0);
+pts3 = transformPoint(Res3, pts0);
 
 % transformed points should be the same
 assertElementsAlmostEqual(pts1, pts2, 'absolute', .1);

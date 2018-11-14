@@ -30,7 +30,7 @@ matTh = T0 * T2 * R * T1;
 
 T = CenteredEulerTransform3D([3 4 5 6 7 8], 'center', center);
 
-mat = T.getAffineMatrix();
+mat = affineMatrix(T);
 assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
 
 
@@ -55,14 +55,14 @@ end
 % create transfo
 center = [6 8 9];
 T = CenteredEulerTransform3D([3 4 5 6 7 8], 'center', center);
-mat0 = getAffineMatrix(T);
+mat0 = affineMatrix(T);
 
 % save the transfo
 writeToFile(T, fileName);
 
 % read a new transfo
 T2 = CenteredEulerTransform3D.readFromFile(fileName);
-mat2 = getAffineMatrix(T2);
+mat2 = affineMatrix(T2);
 
 assertElementsAlmostEqual(mat0, mat2, 'absolute', .1);
 

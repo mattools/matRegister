@@ -119,11 +119,30 @@ methods
         pointT = [x2 y2];
     end
     
-    function getParametricJacobian(this, x, varargin)
+    function jac = parametricJacobian(this, x, varargin) %#ok<INUSL>
         % Compute jacobian matrix, i.e. derivatives for each parameter
+        %
+        % jac = parametricJacobian(transfo, pos);
+        % Returns a Jacobian matrix with 2 rows and 12 columns.
+        %
+        jac = [...
+               1    0; ... 
+               0    1; ...
+               x    0; ...
+               0    x; ...
+               y    0; ...
+               0    y; ...
+            x.*x    0; ...
+               0 x.*x; ...
+            x.*y    0; ...
+               0 x.*y; ...
+            y.*y    0; ...
+               0 y.*y; ...
+            ]';
+            
     end
     
-    function jacobian = getJacobian(this, point)
+    function jacMat = jacobianMatrix(this, point)
         % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
         % jacob(i,j) = d x_i / d x_j
         
@@ -138,12 +157,12 @@ methods
         dxy = p(5)  + 2*y*p(11) + x*p(9);
         dyy = p(6)  + 2*y*p(12) + x*p(10);
         
-        jacobian = [dxx dxy ; dyx dyy];
+        jacMat = [dxx dxy ; dyx dyy];
     end
     
-    function transformVector (this, x, varargin)
-        % Compute jacobian matrix, i.e. derivatives for each parameter
-    end
+%     function transformVector (this, x, varargin)
+%         % Compute jacobian matrix, i.e. derivatives for each parameter
+%     end
     
     function dim = getDimension (this) %#ok<MANU>
         % Compute jacobian matrix, i.e. derivatives for each parameter

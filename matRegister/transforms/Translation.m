@@ -86,7 +86,7 @@ methods
         d = length(this.u);
     end
     
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Returns the (ND+1)*(ND+1) affine matrix representing translation
         nd = length(this.u);
         mat = eye(nd+1);

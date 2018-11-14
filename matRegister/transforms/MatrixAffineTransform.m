@@ -2,14 +2,19 @@ classdef MatrixAffineTransform < AffineTransform
 %MATRIXAFFINETRANSFORM  An affine transform defined by its matrix
 %
 %   Example
-%   MatrixAffineTransform
+%     % Creates a 2D transform corresponding to uniform scaling in x and y
+%     mat = [2 0 0;0 2 0;0 0 1];
+%     transfo = MatrixAffineTransform(mat);
+%     transformPoint(transfo, [1 2])
+%     ans =
+%          2     4
 %
 %   See also
 %     AffineTransform
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-06-17,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -56,7 +61,7 @@ end % methods
 
 %% General methods
 methods
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Simply returns the inner matrix stored by this transform.
         %
         mat = this.matrix;

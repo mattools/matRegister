@@ -215,7 +215,7 @@ methods
             'transformVector', mfilename);
     end
     
-    function jac = getJacobian(this, point)
+    function jac = jacobianMatrix(this, point)
         % Jacobian matrix of the given point
         %
         %   JAC = getJacobian(TRANS, PT)
@@ -312,7 +312,7 @@ methods
 
     end
     
-    function jac = getParametricJacobian(this, x, varargin)
+    function jac = parametricJacobian(this, x, varargin)
         % Compute parametric jacobian for a specific position
         % The result is a ND-by-NP array, where ND is the number of
         % dimension, and NP is the number of parameters.

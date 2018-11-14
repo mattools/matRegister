@@ -94,7 +94,7 @@ methods
         this.parameters = [0 0 0 vector];
     end
     
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Compute affine matrix associated with this transform
         
         % extract angles and convert to radians
@@ -103,14 +103,11 @@ methods
         theta   = this.params(2) * deg2rad;
         psi     = this.params(3) * deg2rad;
 
-%         % compute elementary rotation matrices
+%         % compute compound rotation matrix around center
 %         Rx = createRotationOx(phi);
 %         Ry = createRotationOy(theta);
 %         Rz = createRotationOz(psi);
-%         
-%         % compute compound rotation matrix around center
 %         mat = recenterTransform3d(Rz * Ry * Rx, this.center);
-%         
 %         % add translation
 %         mat = createTranslation3d(this.params(4:6)) * mat;
 
@@ -129,7 +126,7 @@ methods
         mat = [mat shift ; 0 0 0 1];
     end
   
-    function jacobian = getParametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(this, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
        
         % extract coordinate of input point(s)

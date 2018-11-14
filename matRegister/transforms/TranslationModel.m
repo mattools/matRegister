@@ -8,10 +8,10 @@ classdef TranslationModel < ParametricTransform & AffineTransform
 %   params(2): ty       (in user spatial unit)
 %
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-02-17,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -63,14 +63,14 @@ end
 
 %% Standard methods
 methods
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Returns the affine matrix that represents this transform
         nd = length(this.params);
         mat = eye(nd+1);
         mat(1:end-1, end) = this.params(:);
     end
     
-    function jac = getParametricJacobian(this, x, varargin) %#ok<INUSD>
+    function jac = parametricJacobian(this, x, varargin) %#ok<INUSD>
         % Compute jacobian matrix, i.e. derivatives for each parameter
         nd = length(this.params);
         jac = eye(nd);

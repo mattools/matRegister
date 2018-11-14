@@ -9,7 +9,7 @@ classdef AffineTransformModel2D < AffineTransform & ParametricTransform
 %   AffineTransformModel2D
 %
 %   See also
-%
+%     AffineTransform
 
 % ------
 % Author: David Legland
@@ -84,7 +84,7 @@ methods
         
         % if the first argument is a Transform, extract its affine matrix
         if isa(transform, 'AffineTransform')
-            transform = getAffineMatrix(transform);
+            transform = affineMatrix(transform);
         end
         
         % format matrix to have a row vector of 12 elements
@@ -102,7 +102,7 @@ methods
         dim = 2;
     end
 
-    function mat = getAffineMatrix(this)
+    function mat = affineMatrix(this)
         % Compute affine matrix associated with this transform
         
         % convert parameters to a 3-by-3 affine matrix
@@ -113,7 +113,7 @@ end
 
 %% Implementation of methods inherited from ParametricTransform
 methods
-    function jacobian = getParametricJacobian(this, x, varargin) %#ok<INUSL>
+    function jacobian = parametricJacobian(this, x, varargin) %#ok<INUSL>
         % Compute jacobian matrix, i.e. derivatives for each parameter
         % Result is a 2-by-6 matrix
         

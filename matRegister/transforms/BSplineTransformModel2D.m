@@ -3,6 +3,11 @@ classdef BSplineTransformModel2D < ParametricTransform
 %
 %   Class BSplineTransformModel2D
 %
+%   Grid is composed of M-by-N vertices, with M number of rows and N number
+%   of columns. Iteration along x direction first.
+%   Parameters correspond to shift vector associated to each vertex:
+%   [vx11 vy11 vx12 vy12 ... vxIJ vyIJ ... vxMN vyMN]
+%
 %   Example
 %   BSplineTransformModel2D
 %
@@ -74,6 +79,18 @@ methods
             dim = this.gridSize();
             np  = prod(dim) * length(dim);
             this.params = zeros(1, np);
+
+            % initialize parameter names
+            this.paramNames = cell(1, np);
+            ind = 1;
+            for iy = 1:this.gridSize(2)
+                for ix = 1:this.gridSize(1)
+                    this.paramNames{ind} = sprintf('vx_%d_%d', iy, ix);
+                    ind = ind + 1;
+                    this.paramNames{ind} = sprintf('vy_%d_%d', iy, ix);
+                    ind = ind + 1;
+                end
+            end
         end
 
     end
@@ -183,15 +200,17 @@ end % end methods
 
 %% Methods implementing the ParametricTransform interface
 methods
-    function jac = getParametricJacobian(this, x, varargin)
-        % Compute parametric jacobian for a specific position
+    function jac = parametricJacobian(this, x, varargin)
+        % Computes parametric jacobian for a specific position
+        % 
+        % jac = getParametricJacobian(this, x)
+        % 
         % The result is a ND-by-NP array, where ND is the number of
         % dimension, and NP is the number of parameters.
-        
-%         error('MatRegister:UnimplementedMethod', ...
-%             'Method "%s" is not implemented for class "%s"', ...
-%             'getParametricJacobian', mfilename);
-        
+        %
+        % If x is a N-by-2 array, return result as a ND-by-NP-by-N array.
+        %
+
         % extract coordinate of input point
         if isempty(varargin)
             y = x(:,2);
@@ -199,7 +218,12 @@ methods
         else
             y = varargin{1};
         end
-        
+
+        % allocate result
+        np = length(this.params);
+        jac = zeros(2, np, length(x));
+        dim = size(jac);
+                
         % compute position wrt to the grid vertices (1-indexed)
         xg = (x - this.gridOrigin(1)) / this.gridSpacing(1) + 1;
         yg = (y - this.gridOrigin(2)) / this.gridSpacing(2) + 1;
@@ -241,92 +265,15 @@ methods
                 % evaluate weight associated to current grid vertex
                 b = eval_i(inds) .* fun_j(yu(inds));
                 
-%                 % update coordinates of transformed points
-%                 point2(inds,1) = point2(inds,1) + b .* this.params(indX)';
-%                 point2(inds,2) = point2(inds,2) + b .* this.params(indX+1)';
+                % index of parameters
+                indP = ones(size(indX));
+                
+                % update jacobian for grid vectors located around current
+                % points
+                jac(sub2ind(dim, indP, indX, find(inds))) = b;
+                jac(sub2ind(dim, indP+1, indX+1, find(inds))) = b;
             end
         end
-        
-%         % compute position wrt to the grid vertices
-%         deltaX = this.gridSpacing(1);
-%         deltaY = this.gridSpacing(2);
-%         xg = (x - this.gridOrigin(1)) / deltaX + 1;
-%         yg = (y - this.gridOrigin(2)) / deltaY + 1;
-%         
-%         % compute indices of values within interpolation area
-%         isInsideX = xg >= 2 & xg < this.gridSize(1)-1;
-%         isInsideY = yg >= 2 & yg < this.gridSize(2)-1;
-%         isInside = isInsideX & isInsideY;
-%         inds = find(isInside);
-%         
-%         % keep only valid positions
-%         xg = xg(isInside);
-%         yg = yg(isInside);
-%         
-%         % initialize zeros translation vector
-%         nValid = length(xg);
-% 
-%         % pre-allocate result array
-%         nd = length(this.gridSize);
-%         np = length(this.params);
-%         jac = zeros(nd, np, length(x));
-% 
-%         % if point is outside, return zeros matrix
-%         if ~isInside
-%             return;
-%         end
-%         
-%         % coordinates within the unit tile
-%         xu = reshape(xg - floor(xg), [1 1 nValid]);
-%         yu = reshape(yg - floor(yg), [1 1 nValid]);       
-%         
-%         dimGrid = this.gridSize;
-%         dimX    = dimGrid(1);
-%         dimXY   = dimX * dimGrid(2);
-%         
-%         baseFuns = {...
-%             @BSplines.beta3_0, ...
-%             @BSplines.beta3_1, ...
-%             @BSplines.beta3_2, ...
-%             @BSplines.beta3_3};
-%         
-%         
-%         % pre-compute values of b-splines functions
-%         evals_i = zeros(nValid, 4);
-%         evals_j = zeros(nValid, 4);
-%         for i = 1:4
-%             fun_i = baseFuns{i};
-%             evals_i(:,i) = fun_i(xu);
-%             evals_j(:,i) = fun_i(yu);
-%         end
-%         
-%         % iteration on each tile of the grid
-%         for i = -1:2
-%             xv = floor(xg) + i;
-%             
-%             for j = -1:2
-%                 % coordinates of neighbor vertex
-%                 yv = floor(yg) + j;
-%                 
-%                 % linear index of translation components
-%                 indX = sub2ind(this.gridSize, xv, yv) * 2 - 1;
-%                 indY = indX + 1;
-%                                 
-%                 % update total translation component
-%                 b = evals_i(:,i+2) .* evals_j(:,j+2);
-%                 
-%                 % update jacobian matrix (of size nd * np * nPts)
-%                 jacInds = (indX - 1 + (inds - 1) * np) * 2 + 1;
-%                 jac(jacInds) = b;
-%                 jacInds = (indY - 1 + (inds - 1) * np) * 2 + 1;
-%                 jac(jacInds + 1) = b;
-% %                 % equivalent to:
-% %                 iValid = ones(nValid, 1);
-% %                 jac(sub2ind(size(jac), 1*iValid, indX, inds)) = b;
-% %                 jac(sub2ind(size(jac), 2*iValid, indY, inds)) = b;
-%             end
-%         end
-%         
     end
 end
 
@@ -386,13 +333,7 @@ methods
         end
     end
     
-   function transformVector(this, varargin)
-        error('MatRegister:UnimplementedMethod', ...
-            'Method "%s" is not implemented for class "%s"', ...
-            'transformVector', mfilename);
-    end
-    
-    function jac = getJacobian(this, point)
+    function jac = jacobianMatrix(this, point)
         % Jacobian matrix of the given point
         %
         %   JAC = getJacobian(TRANS, PT)
@@ -485,14 +426,14 @@ methods
         end
     end
 
-    function lap = getLaplacian(this, point)
-        % Jacobian matrix of the given point
+    function deriv = secondDerivatives(this, point, indI, indJ)
+        % Second derivatives for the given point(s)
         %
-        %   JAC = getJacobian(TRANS, PT)
-        %   where PT is a N-by-2 array of points, returns the spatial
-        %   jacobian matrix of each point in the form of a 2-by-2-by-N
-        %   array.
-        %
+        % D2 = secondDerivatives(T, POINT, INDI, INDJ)
+        % Return a M-by-2 array, with as many rows as the number of points.
+        % First columns is the second derivative of the x-transform part,
+        % and second column is the second derivative of the y-transform
+        % part.
         
         %% Constants
         
@@ -502,6 +443,12 @@ methods
             @BSplines.beta3_1, ...
             @BSplines.beta3_2, ...
             @BSplines.beta3_3};
+        
+        derivFuns = {...
+            @BSplines.beta3_0d, ...
+            @BSplines.beta3_1d, ...
+            @BSplines.beta3_2d, ...
+            @BSplines.beta3_3d};
         
         deriv2Funs = {...
             @BSplines.beta3_0s, ...
@@ -528,10 +475,11 @@ methods
         yu = reshape(yg - floor(yg), [nPts 1]);       
         
         % allocate memory for storing result
-        lap = zeros(size(point, 1), 1);
+        deriv = zeros(size(point, 1), 2);
         
         % pre-allocate weights for vertex grids
         bx  = zeros(size(xu));
+        bxd = zeros(size(xu));
         bxs = zeros(size(xu));
         
         %% Iteration on neighbor tiles 
@@ -542,6 +490,7 @@ methods
             
             % compute x-coefficients of bezier function and derivative
             bx(indOkX)  = baseFuns{i+2}(xu(indOkX));
+            bxd(indOkX) = derivFuns{i+2}(xu(indOkX));
             bxs(indOkX) = deriv2Funs{i+2}(xu(indOkX));
             
             for j = -1:2
@@ -564,15 +513,45 @@ methods
                 
                 % compute y-coefficients of spline function and derivative
                 by  = baseFuns{j+2}(yu(inds));
+                byd = derivFuns{j+2}(yu(inds));
                 bys = deriv2Funs{j+2}(yu(inds));
 
-                % update laplacian elements
-                d2x = (bxs(inds) .* by  .* dxv) / (deltaX^2);
-                d2y = (bx(inds) .* bys  .* dyv) / (deltaY^2);
-                lap(inds) = lap(inds) + d2x.^2 + d2y.^2;
+                % update second derivatives elements
+                if indI == 1 && indJ == 1
+                    deriv(inds,1) = deriv(inds,1) + (bxs(inds) .* by  .* dxv) / (deltaX^2);
+                    deriv(inds,2) = deriv(inds,2) + (bxs(inds) .* by  .* dyv) / (deltaX^2);
+                    
+                elseif indI == 2 && indJ == 2
+                    deriv(inds,1) = deriv(inds,1) + (bx(inds)  .* bys .* dxv) / (deltaY^2);
+                    deriv(inds,2) = deriv(inds,2) + (bx(inds)  .* bys .* dyv) / (deltaY^2);
+                    
+                elseif (indI == 1 && indJ == 2) || (indI == 2 && indJ == 1)
+                    deriv(inds,1) = deriv(inds,1) + (bxd(inds) .* byd .* dxv) / (deltaX*deltaY);
+                    deriv(inds,2) = deriv(inds,2) + (bxd(inds) .* byd .* dyv) / (deltaX*deltaY);
+
+                else
+                    error('indI and indJ should be between 1 and 2');
+                end
             end
         end
-    end % getLaplacian
+        
+    end % secondDerivatives
+
+    function lap = curvatureOperator(this, point)
+        % Compute curvature operator at given position(s)
+        %
+        %   LAP = getLaplacian(TRANS, PT)
+        %   where PT is a N-by-2 array of points, returns the laplacian of
+        %   each point in the form of a 2-by-2-by-N array.
+        %
+        
+        % compute second derivatives (each array is Npts-by-2
+        dx2 = secondDerivatives(this, point, 1, 1);
+        dy2 = secondDerivatives(this, point, 2, 2);
+        
+        % compute curvature operator
+        lap = sum(dx2, 2).^2 + sum(dy2, 2).^2;
+    end
 
     function dim = getDimension(this) %#ok<MANU>
         dim = 2;
@@ -589,7 +568,6 @@ methods
             'gridSpacing', this.gridSpacing, ...
             'gridOrigin', this.gridOrigin, ...
             'parameters', this.params);
-        
     end
 end
 methods (Static)

@@ -110,13 +110,32 @@ methods
         
         name = this.paramNames;
     end
+    
+    function jac = getParametricJacobian(this, x, varargin)
+        % deprecated: use parametricJacobian instead
+        warning('deprecated: use parametricJacobian method instead');
+        jac = parametricJacobian(this, x, varargin{:});
+    end
 end % methods
 
 %% Abstract methods
 methods (Abstract)
-    getParametricJacobian(this, x, varargin)
     % Compute jacobian matrix, i.e. derivatives for each parameter
-    
+    % 
+    % jac = parametricJacobian(transfo, pos);
+    % The Jacobian matrix has as many rows as the number of dimensions of
+    % the transform (usually 2 or 3), and as many columns as the number of
+    % parameters.
+    % 
+    % Example
+    %     % compute parametric jacobian of 2D motion transform model
+    %     transfo = MotionModel2D([10 20 30]);
+    %     parametricJacobian(transfo, [10 10])    
+    %     ans =
+    %         1.0000         0  -13.6603
+    %              0    1.0000    3.6603
+    parametricJacobian(this, x, varargin)
+
 end % abstract methods 
 
 
