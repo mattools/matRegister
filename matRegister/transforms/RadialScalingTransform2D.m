@@ -103,10 +103,10 @@ methods
             'transformVector', mfilename);
     end
     
-    function getJacobian(this, point) %#ok<INUSD>
+    function jacobianMatrix(this, point) %#ok<INUSD>
         % Jacobian matrix of the given point
         %
-        %   JAC = getJacobian(TRANS, PT)
+        %   JAC = jacobianMatrix(TRANS, PT)
         %   where PT is a N-by-2 array of points, returns the spatial
         %   jacobian matrix of each point in the form of a 2-by-2-by-N
         %   array.
