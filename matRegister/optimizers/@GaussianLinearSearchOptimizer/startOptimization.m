@@ -45,7 +45,7 @@ if length(variab) ~= nParams
     this.parameterVariability = variab;
 end
 
-% generate nValues values between 0 and 1, avoiding bouds
+% generate nValues values between 0 and 1, avoiding bounds
 pv = linspace(0, 1, this.nValues+2);
 pv = pv(2:end-1);
 

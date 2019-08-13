@@ -1,5 +1,5 @@
 classdef NelderMeadSimplexOptimizer < Optimizer
-%NELDERMEADSIMPLEXOPTIMIZER Simplex optimizer adapted from Numerical Recipes 3
+% Simplex optimizer adapted from book "Numerical Recipes 3".
 %
 %   OPT = NelderMeadSimplexOptimizer()
 %
@@ -15,11 +15,12 @@ classdef NelderMeadSimplexOptimizer < Optimizer
 %           5.5924e-006
 %
 %   See also
-%   Optimizer, MatlabSimplexOptimizer
+%     Optimizer, MatlabSimplexOptimizer
+%
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@nantes.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-01-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 

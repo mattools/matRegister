@@ -1,4 +1,4 @@
-function [params, value, converged, output] = startOptimization(this)
+function [params, value, converged, output] = startOptimization(this, varargin)
 %STARTOPTIMIZATION Run the optimizer, and return optimized parameters
 %
 %   PARAMS = startOptimization(OPTIM)
@@ -38,6 +38,16 @@ TINY = 1e-10;
 
 
 %% Initialization
+
+% setup initial parameters
+params = this.params;
+if ~isempty(this.initialParameters)
+    params = this.initialParameters;
+end
+if ~isempty(varargin)
+    params = varargin{1};
+end
+this.params = params;
 
 % Notify beginning of optimization
 this.notify('OptimizationStarted');
