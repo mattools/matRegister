@@ -1,5 +1,5 @@
 classdef OptimizationIterationLogger < OptimizationListener
-%OPTIMIZATIONITERATIONLOGGER  One-line description here, please.
+% Write iteration info into a log file.
 %
 %   Class OptimizationIterationLogger
 %
@@ -21,8 +21,9 @@ properties
     % the file to write in (file handle)
     File;
     
-    % time spent last iteration
+    % time spent in last iteration
     Time0;
+    
 end % end properties
 
 

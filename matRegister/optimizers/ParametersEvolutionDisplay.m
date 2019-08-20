@@ -1,5 +1,5 @@
 classdef ParametersEvolutionDisplay < OptimizationListener
-%PARAMETERSEVOLUTIONDISPLAY Displays evolution of optmization parameters
+% Display the evolution of optimization parameters.
 %
 %   output = ParametersEvolutionDisplay(input)
 %
@@ -7,7 +7,8 @@ classdef ParametersEvolutionDisplay < OptimizationListener
 %   ParametersEvolutionDisplay
 %
 %   See also
-%
+%     OptimizationListener, ParametricFunctionEvolutionDisplay
+%     ParametersEvolutionDisplay
 
 % ------
 % Author: David Legland

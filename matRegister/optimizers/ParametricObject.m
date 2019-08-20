@@ -1,13 +1,13 @@
 classdef ParametricObject < handle
-%PARAMETRICOBJECT Base class for all parametric objects
+% Base class for all parametric objects.
 %
 %   output = ParametricObject(input)
 %
 %   Example
-%   ParametricObject
+%     ParametricObject
 %
 %   See also
-%
+%     ParametricFunction
 
 % ------
 % Author: David Legland

@@ -7,7 +7,7 @@ classdef ParametricFunction < handle
 %   ParametricFunction
 %
 %   See also
-%
+%     ParametricObject
 
 % ------
 % Author: David Legland
@@ -31,8 +31,8 @@ end % abstract methods
 
 methods
     function [res, grad] = evaluate(obj, params)
-        % basic implementation of evaluate function
-        % obj make possible the call in an Optimization procedure.
+        % basic implementation of evaluate function.
+        % this make possible the call in an Optimization procedure.
         setParameters(obj, params);
         if nargout <= 1
             res = computeValue(obj);

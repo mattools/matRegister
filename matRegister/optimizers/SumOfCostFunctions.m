@@ -1,5 +1,5 @@
 classdef SumOfCostFunctions < CostFunction
-%SUMOFCOSTFUNCTIONS Compute the sum of several cost functions
+% Compute the sum of several cost functions.
 %
 %   output = SumOfCostFunctions(input)
 %
@@ -53,7 +53,7 @@ methods
         nFuns = length(obj.CostFunctions);
         
         f = 0;
-        if nargout<=1
+        if nargout <= 1
             % iterate over cost functions
             for i = 1:nFuns
                 f = f + evaluate(obj.CostFunction{i}, params);
@@ -62,7 +62,7 @@ methods
             % format output arguments
             varargout = {f};
             
-        elseif nargout==2
+        elseif nargout == 2
             % initialize gradient
             g = zeros(size(params));
             

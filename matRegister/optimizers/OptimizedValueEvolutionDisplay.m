@@ -1,5 +1,5 @@
 classdef OptimizedValueEvolutionDisplay < OptimizationListener
-%OPTIMIZEDVALUEEVOLUTIONDISPLAY Displays evolution of optimized value
+% Display the evolution of optimized value.
 %
 %   output = OptimizedValueEvolutionDisplay(input)
 %
@@ -7,6 +7,8 @@ classdef OptimizedValueEvolutionDisplay < OptimizationListener
 %   OptimizedValueEvolutionDisplay
 %
 %   See also
+%     OptimizationListener, ParametricFunctionEvolutionDisplay
+%     ParametersEvolutionDisplay 
 %
 
 % ------

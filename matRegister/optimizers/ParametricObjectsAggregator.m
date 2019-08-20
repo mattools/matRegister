@@ -1,5 +1,5 @@
 classdef ParametricObjectsAggregator < ParametricObject
-%PARAMETRICOBJECTSAGGREGATOR Concatenates several parametric objects into one
+% Concatenates several parametric objects into a single one.
 %
 %   output = ParametricObjectsAggregator(input)
 %

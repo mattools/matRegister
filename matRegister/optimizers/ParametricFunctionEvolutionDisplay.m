@@ -1,5 +1,5 @@
 classdef ParametricFunctionEvolutionDisplay < OptimizationListener
-%PARAMETRICFUNCTIONEVOLUTIONDISPLAY Displays evolution of a parametric function
+% Display the evolution of a parametric function
 %
 %   output = ParametricFunctionEvolutionDisplay(input)
 %
@@ -7,6 +7,8 @@ classdef ParametricFunctionEvolutionDisplay < OptimizationListener
 %   ParametricFunctionEvolutionDisplay
 %
 %   See also
+%     OptimizationListener, OptimizedValueEvolutionDisplay
+%     ParametersEvolutionDisplay
 %
 
 % ------

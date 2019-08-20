@@ -1,14 +1,14 @@
 classdef Optimizer < handle
-%OPTIMIZER General interface for single-valued function optimizers
+% General interface for single-valued function optimizers.
 %
 %   This abstract class is used to define the general contract of
 %   optimization algorithms. All implementations of Optimizer abstraction
 %   should implement the "startOptimization" method, with two syntaxes:
-%   * PARAMS = OPTIM.startOptimization
-%   * [PARAMS, VALUE] = OPTIM.startOptimization
+%   * PARAMS = startOptimization(OPTIM)
+%   * [PARAMS, VALUE] = startOptimization(OPTIM)
 %
 %   It would be nice to also support following syntax:
-%   * PARAMS = OPTIM.startOptimization(PARAMS0)
+%   * PARAMS = startOptimization((OPTIM, PARAMS0)
 %
 %   The Optimizer class implements a list of listeners. 
 %   Example of use:
@@ -86,7 +86,7 @@ methods (Access = protected)
         % PARAMS is the initial set of parameters
         %
         % See Also
-        % setCostFunction, setInitialParameters
+        %   setCostFunction, setInitialParameters
         
         if nargin == 0
             return;

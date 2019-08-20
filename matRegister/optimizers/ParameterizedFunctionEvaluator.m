@@ -1,5 +1,5 @@
-classdef ParameterizedFunctionEvaluator < SingleValuedCostFunction
-%PARAMETERIZEDFUNCTIONEVALUATOR  One-line description here, please.
+classdef ParameterizedFunctionEvaluator < CostFunction
+% Update parameters of a transform and evaluate it.
 %
 %   output = ParameterizedFunctionEvaluator(input)
 %

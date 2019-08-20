@@ -1,5 +1,5 @@
 classdef BaseFunction < handle
-% Parent class for objects that can compute a scalar value
+% Parent class for objects that can compute a scalar value.
 %
 %   output = BaseFunction(input)
 %
@@ -7,7 +7,7 @@ classdef BaseFunction < handle
 %   BaseFunction
 %
 %   See also
-%
+%     CostFunction
 
 % ------
 % Author: David Legland
