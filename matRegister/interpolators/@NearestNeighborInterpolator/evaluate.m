@@ -1,5 +1,5 @@
-function [val, isInside] = evaluate(this, varargin)
-% Evaluate intensity of image at a given physical position
+function [val, isInside] = evaluate(obj, varargin)
+% Evaluate intensity of image at a given physical position.
 %
 %   VAL = INTERP.evaluate(POS);
 %   where POS is a N-by-2 or N-by-3 array containing values of x-, y-, and
@@ -18,10 +18,10 @@ function [val, isInside] = evaluate(this, varargin)
 %
 
 % number of dimensions of base image
-nd = ndims(this.image);
+nd = ndims(obj.Image);
 
 % size of elements: number of channels by number of frames
-elSize = elementSize(this.image);
+elSize = elementSize(obj.Image);
 
 
 % eventually convert inputs to a single nPoints-by-ndims array
@@ -32,7 +32,7 @@ if size(point, 2) ~= nd
 end
 
 % Evaluates image value for a given position
-coord = this.image.pointToContinuousIndex(point);
+coord = pointToContinuousIndex(obj.Image, point);
 
 
 % size and number of dimension of input coordinates
@@ -44,7 +44,7 @@ resNDim = length(dim0);
 
 % Create default result image
 val = zeros([dim0 elSize]);
-val(:) = this.fillValue;
+val(:) = obj.FillValue;
 
 % extract x and y
 xt = coord(:, 1);
@@ -58,7 +58,7 @@ N = size(coord, 1);
 
 % select points located inside interpolation area
 % (smaller than image physical size)
-siz = size(this.image);
+siz = size(obj.Image);
 isBefore    = sum(coord < .5, 2)>0;
 isAfter     = sum(coord >= (siz(ones(N,1), :))+.5, 2)>0;
 isInside    = ~(isBefore | isAfter);
@@ -79,18 +79,18 @@ end
 if prod(elSize) == 1
     % case of scalar image elements (no vector image, no movie image)
     if nd == 2
-        val(isInside) = double(this.image.getPixels(i1, j1));
+        val(isInside) = double(getPixels(obj.Image, i1, j1));
     else
-        val(isInside) = double(this.image.getPixels(i1, j1, k1));
+        val(isInside) = double(getPixels(obj.Image, i1, j1, k1));
     end
 else
     % If dimension number of elements is >1, need more processing.
     
     % compute interpolated values
     if nd == 2
-        res = double(this.image.getPixels(i1, j1));
+        res = double(getPixels(obj.Image, i1, j1));
     else
-        res = double(this.image.getPixels(i1, j1, k1));
+        res = double(getPixels(obj.Image, i1, j1, k1));
     end
     
     % compute spatial index of each interpolated point

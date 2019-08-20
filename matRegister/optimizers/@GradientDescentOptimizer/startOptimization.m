@@ -1,4 +1,4 @@
-function [params, value] = startOptimization(this, varargin)
+function [params, value] = startOptimization(obj, varargin)
 %STARTOPTIMIZATION Start the gradient descent optimization algorithm
 %
 %   xHat = startOptimization(OPTIM)
@@ -12,7 +12,7 @@ function [params, value] = startOptimization(this, varargin)
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-07,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -20,81 +20,81 @@ function [params, value] = startOptimization(this, varargin)
 %% Initialisation
 
 % optimisation parameters
-nIter   = this.nIter;
+nIter = obj.NIters;
 
 % allocate memory
 step = zeros(nIter, 1);
 
 % setup parameters to initial value
-if ~isempty(this.initialParameters)
-    this.params = this.initialParameters;
+if ~isempty(obj.InitialParameters)
+    obj.Params = obj.InitialParameters;
 end
 if ~isempty(varargin)
-    this.params = varargin{1};
+    obj.Params = varargin{1};
 end
 
 % initialize optimization result
-this.bestValue = inf;
-this.bestParams = this.params;
+obj.BestValue = inf;
+obj.BestParams = obj.Params;
 
 % reset direction vector to null vector
 % -> first iteration will be equal to the initial parameter vector
-direction = zeros(size(this.params));
+direction = zeros(size(obj.Params));
 
 % Notify beginning of optimization
-this.notify('OptimizationStarted');
+notify(obj, 'OptimizationStarted');
 
 
 for i = 1:nIter
     %% Update parameters and dependent parameters
 
-    this.iter = i;
+    obj.Iter = i;
     
     % compute step depending on current iteration
-    step(i) = evaluate(this.decayFunction, i);
+    step(i) = evaluate(obj.DecayFunction, i);
     
     % compute new set of parameters
-    this.params = this.params + direction * step(i);
+    obj.Params = obj.Params + direction * step(i);
 
     % update metric
-    [this.value, this.gradient] = this.costFunction(this.params);
+    [obj.Value, obj.Gradient] = obj.CostFunction(obj.Params);
     
     % if value is better than before, update best value
-    if this.value < this.bestValue
-        this.bestValue = this.value;
-        this.bestParams = this.params;
+    if obj.Value < obj.BestValue
+        obj.BestValue = obj.Value;
+        obj.BestParams = obj.Params;
     end
     
     % if scales are initialized, scales the derivative
-    if ~isempty(this.parameterScales)
+    if ~isempty(obj.ParameterScales)
         % dimension check
-        if length(this.parameterScales) ~= length(this.params)
+        if length(obj.ParameterScales) ~= length(obj.Params)
             error('Scaling parameters should have same size as parameters');
         end
         
-        this.gradient = this.gradient ./ this.parameterScales;
+        obj.Gradient = obj.Gradient ./ obj.ParameterScales;
     end
     
     % search direction (with a minus sign because we are looking for the
     % minimum)
-    direction = -this.gradient / norm(this.gradient);
+    direction = -obj.Gradient / norm(obj.Gradient);
     
     
     %% Notifications   
     
     % Notify the end of iteration to OptimizationListeners
-    this.notify('OptimizationIterated');
+    notify(obj, 'OptimizationIterated');
 
     % Call an output function for processing about current point
     % (for compatibility with Matlab syntax)
-    if ~isempty(this.outputFunction)
+    if ~isempty(obj.OutputFunction)
         % setup optim values
-        optimValues.fval = this.value;
-        optimValues.iteration = i;
+        optimValues.fval = obj.Value;
+        optimValues.Iteration = i;
         optimValues.procedure = 'Gradient descent';
         
         % call output function with appropriate parameters
-        stop = this.outputFunction(this.params, optimValues, 'iter');
+        stop = obj.OutputFunction(obj.Params, optimValues, 'iter');
         if stop
             break;
         end
@@ -105,9 +105,9 @@ end
 %% Finalisation
 
 % Notify termination event
-this.notify('OptimizationTerminated');
+notify(obj, 'OptimizationTerminated');
 
 % returns the current set of parameters
-value = this.bestValue;
-params = this.bestParams;
+value = obj.BestValue;
+params = obj.BestParams;
 

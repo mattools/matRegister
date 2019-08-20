@@ -13,10 +13,10 @@ function value = evaluateSumOfSSDAndMotionDeviationValue(params, tims, points, w
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-09-28,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -34,9 +34,9 @@ nParams = n/nImages;
 %% Update transform parameters
 
 % update each transform
-for i=1:nImages
+for i = 1:nImages
     localParams = params((i-1)*nParams+1:(i-1)*nParams+nParams);
-    tims{i}.transform.setParameters(localParams);
+    setParameters(tims{i}.Transform, localParams);
 end
 
 
@@ -49,7 +49,7 @@ metricValue = computeSumOfSSDValue(tims, points);
 
 regulValue = 0;
 for i = 1:nImages
-    regulImage = computeMotionDeviation(tims{i}.transform);
+    regulImage = computeMotionDeviation(tims{i}.Transform);
     regulValue = regulValue + regulImage^2;
 end
 

@@ -1,5 +1,5 @@
 classdef NearestNeighborInterpolator2D < ImageInterpolator2D
-%NearestNeighborInterpolator2D  Nearest-neighbor interpolator of a 2D image
+% Nearest-neighbor interpolator of a 2D image.
 %   output = NearestNeighborInterpolator2D(IMG)
 %
 %   Example
@@ -10,17 +10,17 @@ classdef NearestNeighborInterpolator2D < ImageInterpolator2D
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-01-07,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 %% Constructors
 methods
-    function this = NearestNeighborInterpolator2D(varargin)
+    function obj = NearestNeighborInterpolator2D(varargin)
         % Constructs a new NearestNeighborInterpolator2D object.
         % interp = LinearInterpolator(IMG);
         % with IMG being a Image2D.
@@ -28,11 +28,11 @@ methods
         if isa(varargin{1}, 'NearestNeighborInterpolator2D')
             % copy constructor
             var = varargin{1};
-            image = var.image;
+            image = var.Image;
         elseif isa(varargin{1}, 'Image')
             % initialisation constructor
             image = varargin{1};
-            if ndims(image)~=2
+            if ndims(image)~=2 %#ok<ISMAT>
                 error('Image dimension should equal 2');
             end
             
@@ -41,7 +41,7 @@ methods
         end
         
         % call superclass constructor
-        this = this@ImageInterpolator2D(image);
+        obj = obj@ImageInterpolator2D(image);
         
     end % constructor declaration
     

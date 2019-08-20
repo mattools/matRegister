@@ -1,5 +1,5 @@
 classdef CenteredQuadTransformModel2D < CenteredTransformAbstract & ParametricTransform
-% Polynomial 2D transform up to degree 2 (2*6=12 parameters)
+% Polynomial 2D transform up to degree 2 (2*6=12 parameters).
 %
 %   TRANSFO = CenteredQuadTransformModel2D(PARAMS)
 %   Creates a new 2D centered quadratic transform model.
@@ -30,10 +30,10 @@ classdef CenteredQuadTransformModel2D < CenteredTransformAbstract & ParametricTr
 
 %% Constructors
 methods
-    function this = CenteredQuadTransformModel2D(varargin)
+    function obj = CenteredQuadTransformModel2D(varargin)
         % Create a new centered affine transform model
         
-        this.params = [ ...
+        obj.Params = [ ...
             0 0 ...   % constant terms for x', y', and z'
             1 0 ...   % x coef 
             0 1 ...   % y coef 
@@ -47,18 +47,18 @@ methods
             var = varargin{1};
             if isa(var, 'CenteredQuadTransformModel3D')
                 % copy constructor
-                this.params = var.params;
+                obj.Params = var.Params;
                 
             elseif isnumeric(var)
                 len = length(var);
                 if len == 12
                     % all parameters are specified as a row vector
-                    this.params = var;
+                    obj.Params = var;
                     
 %                 elseif sum(size(var)~=[4 4])==0 || sum(size(var)~=[3 4])==0
 %                     % the parameter matrix is specified
 %                     var = var(1:3, :)';
-%                     this.params = var(:)';
+%                     obj.Params = var(:)';
                     
                 elseif len == 1
                     % give the possibility to call constructor with the
@@ -79,14 +79,14 @@ methods
         
         % eventually parse additional arguments
         if nargin > 2
-            if strcmp(varargin{2}, 'center')
+            if strcmp(varargin{2}, 'Center')
                 % setup rotation center
-                this.center = varargin{3};
+                obj.Center = varargin{3};
             end
         end
         
         % setup parameter names
-        this.paramNames = {...
+        obj.ParamNames = {...
             'x_w2', 'y_w2', ...  % constant terms for x', y', and z'
             'x_wx', 'y_wx', ...  % x coef
             'x_wy', 'y_wy', ...  % y coef
@@ -98,9 +98,9 @@ methods
     
 end
 
-%% Methods specific to this class
+%% Methods specific to obj class
 methods    
-    function initFromAffineTransform(this, transform)
+    function initFromAffineTransform(obj, transform)
         % Initialize parameters from an affine transform (class or matrix)
         %
         % Example
@@ -116,7 +116,7 @@ methods
         end
         
         % format matrix to have a row vector of 12 elements
-        this.params = [...
+        obj.Params = [...
             transform(1:3, 4)' ...
             transform(1:3, 1)' ...
             transform(1:3, 2)' ...
@@ -130,60 +130,60 @@ end
 
 %% Implementation of methods inherited from Transform
 methods
-    function dim = getDimension(this) %#ok<MANU>
+    function dim = getDimension(obj) %#ok<MANU>
         dim = 2;
     end
 
-    function point2 = transformPoint(this, point)
+    function point2 = transformPoint(obj, point)
         % TRANSFORMPOINT Computes coordinates of transformed point
-        % PT2 = this.transformPoint(PT);
+        % PT2 = obj.transformPoint(PT);
         
         % compute centered coords.
-        x = point(:, 1) - this.center(1);
-        y = point(:, 2) - this.center(2);
+        x = point(:, 1) - obj.Center(1);
+        y = point(:, 2) - obj.Center(2);
         
         % init with translation part
-        x2 = ones(size(x)) * this.params(1);
-        y2 = ones(size(x)) * this.params(2);
+        x2 = ones(size(x)) * obj.Params(1);
+        y2 = ones(size(x)) * obj.Params(2);
         
         % add linear contributions
-        x2 = x2 + x * this.params(3);
-        y2 = y2 + x * this.params(4);
-        x2 = x2 + y * this.params(5);
-        y2 = y2 + y * this.params(6);
+        x2 = x2 + x * obj.Params(3);
+        y2 = y2 + x * obj.Params(4);
+        x2 = x2 + y * obj.Params(5);
+        y2 = y2 + y * obj.Params(6);
 
         % add quadratic contributions
-        x2 = x2 + x.^2 * this.params(7);
-        y2 = y2 + x.^2 * this.params(8);
-        x2 = x2 + x.*y * this.params(9);
-        y2 = y2 + x.*y * this.params(10);
-        x2 = x2 + y.^2 * this.params(11);
-        y2 = y2 + y.^2 * this.params(12);
+        x2 = x2 + x.^2 * obj.Params(7);
+        y2 = y2 + x.^2 * obj.Params(8);
+        x2 = x2 + x.*y * obj.Params(9);
+        y2 = y2 + x.*y * obj.Params(10);
+        x2 = x2 + y.^2 * obj.Params(11);
+        y2 = y2 + y.^2 * obj.Params(12);
 
         % recenter points
-        x2 = x2 + this.center(1);
-        y2 = y2 + this.center(2);
+        x2 = x2 + obj.Center(1);
+        y2 = y2 + obj.Center(2);
 
         % concatenate coordinates
         point2 = [x2 y2];
     end
     
-    function vect2 = transformVector(this, vector, position) %#ok<STOUT>
+    function vect2 = transformVector(obj, vector, position) %#ok<STOUT>
         % TRANSFORMVECTOR Computes coordinates of transformed vector
-        % VEC2 = this.transformPoint(VEC, PT);
+        % VEC2 = obj.transformPoint(VEC, PT);
         % TODO: to be done later
         error('Not yet implemented');
     end
     
-    function jacobian = jacobianMatrix(this, point)
+    function jacobian = jacobianMatrix(obj, point)
         % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
         % jacob(i,j) = d x_i / d x_j
         
         % compute centered coords.
-        x = point(:, 1) - this.center(1);
-        y = point(:, 2) - this.center(2);
+        x = point(:, 1) - obj.Center(1);
+        y = point(:, 2) - obj.Center(2);
        
-        p = this.params;
+        p = obj.Params;
         dxx = p(3)  + 2*x*p(7) + y*p(9);
         dyx = p(4)  + 2*x*p(8) + y*p(10);
         
@@ -197,7 +197,7 @@ end % Transform methods
 
 %% Implementation of methods inherited from ParametricTransform
 methods
-    function jacobian = parametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(obj, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
         
         % extract coordinate of input point(s)
@@ -211,9 +211,9 @@ methods
         end
         
         % jacobians are computed with respect to transformation center
-        x = x - this.center(1);
-        y = y - this.center(2);
-        z = z - this.center(3);
+        x = x - obj.Center(1);
+        y = y - obj.Center(2);
+        z = z - obj.Center(3);
         
         % compute the Jacobian matrix using pre-computed elements
         jacobian = [...
@@ -235,19 +235,19 @@ end % parametric transform methods
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'CenteredQuadTransformModel2D', ...
-            'center', this.center, ...
-            'parameters', this.params);
+        str = struct('Type', 'CenteredQuadTransformModel2D', ...
+            'Center', obj.Center, ...
+            'Parameters', obj.Params);
         
     end
 end
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
-        params = str.parameters;
-        transfo = CenteredQuadTransformModel2D(params, 'center', str.center);
+        params = str.Parameters;
+        transfo = CenteredQuadTransformModel2D(params, 'Center', str.Center);
     end
 end
 

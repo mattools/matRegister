@@ -21,15 +21,15 @@ function testResampler2D %#ok<*DEFNU>
 img = Image.read('cameraman.tif');
 
 res = ImageResampler(1:300, 1:300);
-img2 = res.resample(img, 'linear');
+img2 = resample(res, img, 'linear');
 assertEqual([300 300], size(img2));
 
 lin = .5:.5:300;
 res = ImageResampler(lin, lin);
 img2 = res.resample(img, 'linear');
 assertEqual([600 600], size(img2));
-assertElementsAlmostEqual([.5 .5], img2.origin, 'absolute', .1);
-assertElementsAlmostEqual([.5 .5], img2.spacing, 'absolute', .1);
+assertElementsAlmostEqual([.5 .5], img2.Origin, 'absolute', .1);
+assertElementsAlmostEqual([.5 .5], img2.Spacing, 'absolute', .1);
 
 
 
@@ -47,5 +47,5 @@ lz = linspace(0, 19, 40);
 res = ImageResampler(lx, ly, lz);
 
 % compute resampled image
-img2 = res.resample(img, 'linear');
+img2 = resample(res, img, 'linear');
 assertEqual([20 30 40], size(img2));

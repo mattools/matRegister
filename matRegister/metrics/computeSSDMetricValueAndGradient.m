@@ -1,4 +1,4 @@
-function [res grad] = computeSSDMetricValueAndGradient(img1, img2, points, transfo, gx, gy)
+function [res, grad] = computeSSDMetricValueAndGradient(img1, img2, points, transfo, gx, gy)
 %COMPUTESSDMETRIC  One-line description here, please.
 %   output = computeSSDMetric(input)
 %
@@ -7,10 +7,10 @@ function [res grad] = computeSSDMetricValueAndGradient(img1, img2, points, trans
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-06-10,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -22,8 +22,8 @@ if isa(img1, 'ImageFunction')
 elseif isa(img1, 'Image')
     % if points are no specified, compute their position from image
     if nargin==2
-        x = img1.getX();
-        y = img1.getY();
+        x = getX(img1);
+        y = getY(img1);
         points = [x(:) y(:)];
     end
     % convert image to interpolator
@@ -47,16 +47,16 @@ end
 %% Compute metric value 
 
 % compute values in image 1
-[values1 inside1] = img1.evaluate(points);
+[values1, inside1] = evaluate(img1, points);
 
 % compute values in image 2
-[values2 inside2] = img2.evaluate(points);
+[values2, inside2] = evaluate(img2, points);
 
 % keep only valid values
 insideBoth = inside1 & inside2;
 
 % compute result
-diff = values2(insideBoth)-values1(insideBoth);
+diff = values2(insideBoth) - values1(insideBoth);
 res = sum(diff.^2);
 
 
@@ -67,18 +67,18 @@ inds = find(insideBoth);
 nbInds = length(inds);
 
 %nPoints = size(points, 1);
-nParams = length(transfo.getParameters());
+nParams = length(getParameters(transfo));
 g = zeros(nbInds, nParams);
 
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
 % also converts from (x,y) to (i,j)
-points2 = transfo.transformPoint(points);
+points2 = transformPoint(transfo, points);
 index = round(points2(inds, [2 1]))+1;
 
-for i=1:length(inds)
+for i = 1:length(inds)
     % calcule jacobien pour points valides (repere image fixe)
-    jac = transfo.getParametricJacobian(points(inds(i),:));
+    jac = parametricJacobian(transfo, points(inds(i),:));
     
     % local gradient in moving image
     i1 = index(i, 1);
@@ -86,11 +86,11 @@ for i=1:length(inds)
     grad = [gx(i1,i2) gy(i1,i2)];
     
     % local contribution to metric gradient
-    g(inds(i),:) = grad*jac;
+    g(inds(i),:) = grad * jac;
 end
 
 % calcul du vecteur gradient pondere par difference locale
-gd = g(inds,:).*diff(:, ones(1, nParams));
+gd = g(inds,:) .* diff(:, ones(1, nParams));
 
 % moyenne des vecteurs gradient valides
 grad = mean(gd, 1);

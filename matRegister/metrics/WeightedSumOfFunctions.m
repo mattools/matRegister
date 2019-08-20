@@ -8,26 +8,26 @@ classdef WeightedSumOfFunctions < BaseFunction
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-27,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 %% Properties
 properties
     % the set of functions
-    functionSet;
+    FunctionSet;
     
     % weights associated to each function
-    weights;
+    Weights;
     
 end
  
 %% Constructor
 methods
-    function this = WeightedSumOfFunctions(varargin)
+    function obj = WeightedSumOfFunctions(varargin)
         
         % need 2 inputs
         if nargin<2
@@ -49,12 +49,12 @@ methods
         end
         
         % stores the set of metrics
-        this.functionSet = var;
+        obj.FunctionSet = var;
         
         if nargin<2
-            this.weights = ones(1, length(this.functionSet));
+            obj.Weights = ones(1, length(obj.FunctionSet));
         else
-            this.weights = varargin{2};
+            obj.Weights = varargin{2};
         end
         
     end % constructor
@@ -64,18 +64,18 @@ end % construction function
 %% General methods
 methods
  
-    function value = computeValue(this)
+    function value = computeValue(obj)
         % Compute the sum of the values returned by each child function
         
         % initialize
         value = 0;
         
         % compute the sum
-        for i=1:length(this.functionSet)
-            fun = this.functionSet{i};
-            w = this.weights(i);
+        for i=1:length(obj.FunctionSet)
+            fun = obj.FunctionSet{i};
+            w = obj.Weights(i);
             
-            value = value + w * fun.computeValue();
+            value = value + w * computeValue(fun);
         end        
     end
     

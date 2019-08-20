@@ -49,6 +49,6 @@ T2 = Translation(center);
 
 res = T2*R*T1;
 
-T = CenteredMotionTransform2D([30 0 0], 'center', center);
+T = CenteredMotionTransform2D([30 0 0], 'Center', center);
 
 assertElementsAlmostEqual(affineMatrix(res), affineMatrix(T), 'absolute', .1);

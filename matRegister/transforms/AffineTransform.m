@@ -1,5 +1,5 @@
 classdef AffineTransform < Transform
-%AFFINETRANSFORM  Abstract class for AffineTransform
+%AFFINETRANSFORM  Abstract class for AffineTransform.
 %   
 %   AffineTransform are designed to transform points into other points
 %   using linear relations.
@@ -178,8 +178,8 @@ end
 
 %% Abstract methods
 methods(Abstract)
-    affineMatrix(this)
-    % Returns the (d+1)*(d+1) affine matrix that represents this transform
+    affineMatrix(obj)
+    % Returns the (d+1)*(d+1) affine matrix that represents obj transform
     %
     % usage:
     % trans = Rotation2D([3 4], pi/3); % define an affine transform
@@ -188,12 +188,12 @@ end
 
 %% General methods specific to Affine transforms
 methods
-    function mat = getAffineMatrix(this)
+    function mat = getAffineMatrix(obj)
         warning('deprecated: use method affineMatrix instead');
-        mat = affineMatrix(this);
+        mat = affineMatrix(obj);
     end
     
-    function res = mtimes(this, that)
+    function res = mtimes(obj, that)
         % Multiplies two affine transforms
         % RES = THIS * THAT
         % RES = mtimes(THIS*THAT)
@@ -202,7 +202,7 @@ methods
         % the result is an instance of MatrixAffineTransform.
         
         % extract matrices
-        mat1 = affineMatrix(this);
+        mat1 = affineMatrix(obj);
         mat2 = affineMatrix(that);
         
         % check sizes are equal
@@ -214,28 +214,28 @@ methods
         res = MatrixAffineTransform(mat1 * mat2);
     end
     
-    function res = getInverse(this)
-        % Computes the inverse transform of this affine transform
+    function res = getInverse(obj)
+        % Computes the inverse transform of obj affine transform
         % 
         % TINV = T.getInverse();
         % or 
         % TINV = getInverse(T);
         %
-        mat = affineMatrix(this);
+        mat = affineMatrix(obj);
         res = MatrixAffineTransform(inv(mat));
     end
 end
 
 %% Methods implementing the transform interface
 methods
-    function dim = getDimension(this)
+    function dim = getDimension(obj)
 
         % extract affine coefficients
-        mat = affineMatrix(this);
+        mat = affineMatrix(obj);
         dim = size(mat, 1) - 1;
     end
 
-    function varargout = transformPoint(this, point, varargin)
+    function varargout = transformPoint(obj, point, varargin)
         % Transform the point using affine coefficient
         % 
         % transfo.transformPoint(POINT);
@@ -243,7 +243,7 @@ methods
         % transfo.transformPoint(X, Y, Z);
         
         % extract affine coefficients
-        mat = affineMatrix(this);
+        mat = affineMatrix(obj);
         
         % format to process a single array
         baseSize = size(point);
@@ -277,22 +277,22 @@ methods
         end
     end
     
-    function vector = transformVector(this, vector, position) %#ok<INUSD>
+    function vector = transformVector(obj, vector, position) %#ok<INUSD>
         % Transform the vector using affine coefficients
         % 
         % VEC2 = transfo.transformVector(VEC, POINT);
 
-        mat = affineMatrix(this);
+        mat = affineMatrix(obj);
         res = zeros(size(point));
         for i = 1:size(point, 2)
             res(:,i) = point * mat(i, 1:end-1)';
         end
     end
 
-    function jacMat = jacobianMatrix(this)
+    function jacMat = jacobianMatrix(obj)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
-        mat = affineMatrix(this);
+        mat = affineMatrix(obj);
         jacMat = mat(1:end-1, 1:end-1);
     end
 

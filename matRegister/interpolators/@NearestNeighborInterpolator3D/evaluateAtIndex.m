@@ -1,14 +1,14 @@
-function [val isInside] = evaluateAtIndex(this, varargin)
-% Evaluate the value of an image for a point given in image coord
+function [val, isInside] = evaluateAtIndex(obj, varargin)
+% Evaluate the value of an image for a point given in image coord.
 
 % eventually convert inputs to a single nPoints-by-ndims array
-[index dim] = ImageFunction.mergeCoordinates(varargin{:});
+[index, dim] = ImageFunction.mergeCoordinates(varargin{:});
 
 % number of positions to process
 N = size(index, 1);
 
 % initialize result with default value
-val = ones(dim) * this.fillValue;
+val = ones(dim) * obj.FillValue;
 
 % extract x and y
 xt = index(:, 1);
@@ -17,7 +17,7 @@ zt = index(:, 3);
 
 % select points located inside interpolation area
 % (smaller than image size)
-siz = this.image.getSize();
+siz = size(obj.Image);
 isBefore    = sum(index<1, 2)<0;
 isAfter     = sum(index>=(siz(ones(N,1), :)), 2)>0;
 isInside = ~(isBefore | isAfter);
@@ -34,4 +34,4 @@ j1 = round(yt);
 k1 = round(zt);
 
 % values of the nearest neighbor
-val(isInside) = double(this.image.getPixels(i1, j1, k1));
+val(isInside) = double(getPixels(obj.image, i1, j1, k1));

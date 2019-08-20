@@ -1,5 +1,5 @@
-function [params, value] = startOptimization(this)
-%STARTOPTIMIZATION  Run the optimizer, and return optimized parameters
+function [params, value] = startOptimization(obj)
+% Run the optimizer, and return optimized parameters.
 %
 %   PARAMS = startOptimization(OPTIM)
 %   PARAMS = OPTIM.startOptimization()
@@ -15,13 +15,13 @@ function [params, value] = startOptimization(this)
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-06,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 % Notify beginning of optimization
-this.notify('OptimizationStarted');
+notify(obj, 'OptimizationStarted');
 
 % some options
 options = optimset(...
@@ -29,29 +29,29 @@ options = optimset(...
     'LargeScale', 'off', ...
     'HessUpdate', 'bfgs', ...
     'TolX', 1e-10, ...
-    'MaxIter', this.nIter, ...
-    'Display', this.displayMode);
+    'MaxIter', obj.NIters, ...
+    'Display', obj.DisplayMode);
 
 % Setup the eventual output function
-if ~isempty(this.outputFunction)
-    options.OutputFcn = this.outputFunction;
+if ~isempty(obj.OutputFunction)
+    options.OutputFcn = obj.OutputFunction;
 end
 options.OutputFcn = @outputFunctionHandler;
 
 % resume parameter array
-if ~isempty(this.initialParameters)
-    this.params = this.initialParameters;
+if ~isempty(obj.InitialParameters)
+    obj.Params = obj.InitialParameters;
 end
 
 % run the fminunc Matlab optimisation function
-[params, value] = fminunc(this.costFunction, this.params, options);
+[params, value] = fminunc(obj.costFunction, obj.Params, options);
 
 % update inner data
-this.params = params;
-this.value  = value;
+obj.Params = params;
+obj.Value  = value;
 
 % Notify the end of optimization
-this.notify('OptimizationTerminated');
+notify(obj, 'OptimizationTerminated');
 
 
     function stop = outputFunctionHandler(x, optimValues, state, varargin)
@@ -59,18 +59,18 @@ this.notify('OptimizationTerminated');
         stop = false;
 
         % update current values
-        this.params = x;
-        this.value = optimValues.fval;
+        obj.Params = x;
+        obj.Value = optimValues.fval;
         
         % If an input function was specified, propagates processing
-        if ~isempty(this.outputFunction)
-            stop = this.outputFunction(x, optimValues, state);
+        if ~isempty(obj.OutputFunction)
+            stop = obj.OutputFunction(x, optimValues, state);
         end
         
         % Notify iteration
         if strcmp(state, 'iter')
-            this.costFunction(x);
-            this.notify('OptimizationIterated');
+            obj.CostFunction(x);
+            notify(obj, 'OptimizationIterated');
         end
     end
 

@@ -32,8 +32,8 @@ str = toStruct(transfo);
 transfo2 = RadialScalingTransform2D.fromStruct(str);
 
 assertTrue(isa(transfo2, 'RadialScalingTransform2D'));
-assertElementsAlmostEqual(transfo2.angles, transfo.angles, 'absolute', .01);
-assertElementsAlmostEqual(transfo2.scalings, transfo.scalings, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Angles, transfo.Angles, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Scalings, transfo.Scalings, 'absolute', .01);
 
 
 function test_readWrite
@@ -56,8 +56,8 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'RadialScalingTransform2D'));
-assertElementsAlmostEqual(transfo2.angles, transfo.angles, 'absolute', .01);
-assertElementsAlmostEqual(transfo2.scalings, transfo.scalings, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Angles, transfo.Angles, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Scalings, transfo.Scalings, 'absolute', .01);
 
 % clean up
 delete(fileName);

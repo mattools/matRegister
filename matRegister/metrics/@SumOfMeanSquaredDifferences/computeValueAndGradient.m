@@ -1,26 +1,26 @@
-function [fval grad] = computeValueAndGradient(this)
+function [fval, grad] = computeValueAndGradient(obj)
 %COMPUTEVALUEANDGRADIENT Compute metric value and gradient using current state
 %
-%   [FVAL GRAD] = this.computeValueAndGradient()
+%   [FVAL GRAD] = obj.computeValueAndGradient()
 %
 %   Example
 %   computeValue
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-01-06,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
 
 % extract number of images (which is also the number of transforms)
-nImages = length(this.images);
+nImages = length(obj.Images);
 
-% number of parameter for each transform (assumes this is the same)
-nParams = length(this.transforms{1}.params);
+% number of parameter for each transform (assumes obj is the same)
+nParams = length(obj.Transforms{1}.Params);
     
 % initialize empty metric value
 fval = 0;
@@ -31,12 +31,12 @@ grad = zeros(1, nImages*nParams);
 % index of current params vactor within global param vector
 ind = 1;
 
-nPoints = size(this.points, 1);
+nPoints = size(obj.Points, 1);
 allValues = zeros(nPoints, nImages);
 
 % compute values in each image
-for i=1:nImages
-    [values inside] = this.transformedImages{i}.evaluate(this.points);
+for i = 1:nImages
+    [values, inside] = evaluate(obj.TransformedImages{i}, obj.Points);
     allValues(:, i) = values;
     allValues(~inside, i) = 0;
 end
@@ -44,30 +44,30 @@ end
 
 % Main iteration over all images (image1)
 % image1 is assumed to be the moving image
-for i=1:nImages
+for i = 1:nImages
     % extract data specific to current image
-    transfo = this.transforms{i};
-    gradient = this.transformedGradients{i};
+    transfo = obj.Transforms{i};
+    gradient = obj.TransformedGradients{i};
     
     % initialize zero gradient vector for current transform
     grad_i = zeros(1, nParams);
             
     % evaluate gradient, and re-compute points within image frame, as
     % gradient evaluator can have different behaviour at image borders.
-    [gradVals gradInside] = gradient.evaluate(this.points);
+    [gradVals, gradInside] = evaluate(gradient, obj.Points);
     
     % convert to indices
     inds    = find(gradInside);
     nbInds  = length(inds);
     g = zeros(nbInds, nParams);
     
-    for k=1:nbInds
+    for k = 1:nbInds
         iInd = inds(k);
         
         % compute spatial jacobien for current point
         % (in physical coords)
-        p0  = this.points(iInd, :);
-        jac = getParametricJacobian(transfo, p0);
+        p0  = obj.Points(iInd, :);
+        jac = parametricJacobian(transfo, p0);
         
         % local contribution to metric gradient
         g(iInd, :) = gradVals(iInd, :)*jac;
@@ -76,7 +76,7 @@ for i=1:nImages
     % second iteration over all other images
     % image2 is fixed image, and we look for average transform towards all
     % images
-    for j=[1:i-1 i+1:nImages]
+    for j = [1:i-1 i+1:nImages]
         % compute differences
         diff = allValues(:,i) - allValues(:,j);
         
@@ -102,6 +102,4 @@ for i=1:nImages
     grad(ind:ind+nParams-1) = grad_i;
     ind = ind + nParams;
 end
-
-
 

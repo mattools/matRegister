@@ -23,7 +23,7 @@ end % end properties
 
 %% Constructor
 methods
-    function this = TransformRegularizer(varargin)
+    function obj = TransformRegularizer(varargin)
     % Constructor for TransformRegularizer class
 
     end
@@ -34,7 +34,7 @@ end % end constructors
 %% Methods
 methods (Abstract)
     % evaluate the regularization for a given point
-    evaluate(this, point);
+    evaluate(obj, point);
 end % end methods
 
 end % end classdef

@@ -1,5 +1,5 @@
-function [res, isInside] = computeValue(this)
-%COMPUTEVALUE Compute metric value
+function [res, isInside] = computeValue(obj)
+%COMPUTEVALUE Compute metric value.
 %
 % [VALUE INSIDE] = METRIC.computeValue();
 % Computes and return the value. Returns also a flag that indicates
@@ -7,10 +7,10 @@ function [res, isInside] = computeValue(this)
 %
 
 % compute values in image 1
-[values1, inside1] = this.img1.evaluate(this.points);
+[values1, inside1] = evaluate(obj.Img1, obj.Points);
 
 % compute values in image 2
-[values2, inside2] = this.img2.evaluate(this.points);
+[values2, inside2] = evaluate(obj.Img1, obj.Points);
 
 % keep only valid values
 isInside = inside1 & inside2;

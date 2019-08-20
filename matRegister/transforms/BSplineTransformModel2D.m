@@ -1,5 +1,5 @@
 classdef BSplineTransformModel2D < ParametricTransform
-%BSPLINETRANSFORMMODEL2D Cubic B-Spline Transform model in 2D
+%BSPLINETRANSFORMMODEL2D Cubic B-Spline Transform model in 2D.
 %
 %   Class BSplineTransformModel2D
 %
@@ -12,7 +12,7 @@ classdef BSplineTransformModel2D < ParametricTransform
 %   BSplineTransformModel2D
 %
 %   See also
-%
+%     BSplineTransformModel3D
 
 % ------
 % Author: David Legland
@@ -25,21 +25,21 @@ classdef BSplineTransformModel2D < ParametricTransform
 properties
     % Number of vertices of the grid in each direction
     % (as a 1-by-2 row vector of non zero integers)
-    gridSize;
+    GridSize;
     
     % Coordinates of the first vertex of the grid
     % (as a 1-by-2 row vector of double)
-    gridOrigin;
+    GridOrigin;
     
     % Spacing between the vertices
     % (as a 1-by-2 row vector of double)
-    gridSpacing;
+    GridSpacing;
 end % end properties
 
 
 %% Constructor
 methods
-    function this = BSplineTransformModel2D(varargin)
+    function obj = BSplineTransformModel2D(varargin)
         % Constructor for BSplineTransformModel2D class
         %
         % T = BSplineTransformModel2D();
@@ -52,9 +52,9 @@ methods
         if nargin == 0
             % Initialization with default values
             nd = 2;
-            this.gridSize       = ones(1, nd);
-            this.gridSpacing    = ones(1, nd);
-            this.gridOrigin     = zeros(1, nd);
+            obj.GridSize       = ones(1, nd);
+            obj.GridSpacing    = ones(1, nd);
+            obj.GridOrigin     = zeros(1, nd);
             initializeParameters();
                 
         elseif nargin == 1
@@ -62,32 +62,32 @@ methods
             var = varargin{1};
             if isscalar(var)
                 nd = var;
-                this.gridSize       = ones(1, nd);
-                this.gridSpacing    = ones(1, nd);
-                this.gridOrigin     = zeros(1, nd);
+                obj.GridSize       = ones(1, nd);
+                obj.GridSpacing    = ones(1, nd);
+                obj.GridOrigin     = zeros(1, nd);
                 initializeParameters();
             end
             
         elseif nargin == 3
-            this.gridSize       = varargin{1};
-            this.gridSpacing    = varargin{2};
-            this.gridOrigin     = varargin{3};
+            obj.GridSize       = varargin{1};
+            obj.GridSpacing    = varargin{2};
+            obj.GridOrigin     = varargin{3};
             initializeParameters();
         end
 
         function initializeParameters()
-            dim = this.gridSize();
+            dim = obj.GridSize();
             np  = prod(dim) * length(dim);
-            this.params = zeros(1, np);
+            obj.Params = zeros(1, np);
 
             % initialize parameter names
-            this.paramNames = cell(1, np);
+            obj.ParamNames = cell(1, np);
             ind = 1;
-            for iy = 1:this.gridSize(2)
-                for ix = 1:this.gridSize(1)
-                    this.paramNames{ind} = sprintf('vx_%d_%d', iy, ix);
+            for iy = 1:obj.GridSize(2)
+                for ix = 1:obj.GridSize(1)
+                    obj.ParamNames{ind} = sprintf('vx_%d_%d', iy, ix);
                     ind = ind + 1;
-                    this.paramNames{ind} = sprintf('vy_%d_%d', iy, ix);
+                    obj.ParamNames{ind} = sprintf('vy_%d_%d', iy, ix);
                     ind = ind + 1;
                 end
             end
@@ -100,7 +100,7 @@ end % end constructors
 
 %% Methods specific to class
 methods
-    function drawVertexShifts(this, varargin)
+    function drawVertexShifts(obj, varargin)
         % Draw the displacement associated to each vertex of the grid
         %
         % Example
@@ -110,14 +110,14 @@ methods
         %    drawGrid
         
         % get vertex array
-        v = getGridVertices(this);
+        v = getGridVertices(obj);
         % get array of shifts
-        shifts = getVertexShifts(this);
+        shifts = getVertexShifts(obj);
         
         drawVector(v, shifts, varargin{:});
     end
     
-    function drawGrid(this)
+    function drawGrid(obj)
         % Draw the grid used to defined the deformation
         % (Do not deform the grid)
         %
@@ -128,17 +128,17 @@ methods
         %    drawVertexShifts
 
         % create vertex array
-        v = getGridVertices(this);
+        v = getGridVertices(obj);
         
         nv = size(v, 1);
-        inds = reshape(1:nv, this.gridSize);
+        inds = reshape(1:nv, obj.GridSize);
         
         % edges in direction x
-        ne1 = (this.gridSize(2) - 1) * this.gridSize(1);
+        ne1 = (obj.GridSize(2) - 1) * obj.GridSize(1);
         e1 = [reshape(inds(:, 1:end-1), [ne1 1]) reshape(inds(:, 2:end), [ne1 1])];
         
         % edges in direction y
-        ne2 = this.gridSize(2) * (this.gridSize(1) - 1);
+        ne2 = obj.GridSize(2) * (obj.GridSize(1) - 1);
         e2 = [reshape(inds(1:end-1, :), [ne2 1]) reshape(inds(2:end, :), [ne2 1])];
         
         % create edge array
@@ -147,12 +147,12 @@ methods
         drawGraph(v, e);
     end
     
-    function vertices = getGridVertices(this)
+    function vertices = getGridVertices(obj)
         % Returns coordinates of grid vertices
         
         % base coordinates of grid vertices
-        lx = (0:this.gridSize(1) - 1) * this.gridSpacing(1) + this.gridOrigin(1);
-        ly = (0:this.gridSize(2) - 1) * this.gridSpacing(2) + this.gridOrigin(2);
+        lx = (0:obj.GridSize(1) - 1) * obj.GridSpacing(1) + obj.GridOrigin(1);
+        ly = (0:obj.GridSize(2) - 1) * obj.GridSpacing(2) + obj.GridOrigin(2);
         
         % create base mesh
         % (use reverse order to make vertices iterate in x order first)
@@ -164,10 +164,10 @@ methods
         vertices = [x(:) y(:)];
     end
     
-    function shifts = getVertexShifts(this)
+    function shifts = getVertexShifts(obj)
         % Returns shifts associated to each vertex as a N-by-2 array
-        dx = reshape(this.params(1:2:end), this.gridSize);
-        dy = reshape(this.params(2:2:end), this.gridSize);
+        dx = reshape(obj.Params(1:2:end), obj.GridSize);
+        dy = reshape(obj.Params(2:2:end), obj.GridSize);
         shifts = [dx(:) dy(:)];
     end
 end
@@ -176,34 +176,34 @@ end
 %% Modify or access the grid parameters
 % the ix and iy parameters are the indices of the transform grid.
 methods
-    function ux = getUx(this, ix, iy)
-        ind = sub2ind(this.gridSize, ix, iy) * 2 - 1;
-        ux = this.params(ind);
+    function ux = getUx(obj, ix, iy)
+        ind = sub2ind(obj.GridSize, ix, iy) * 2 - 1;
+        ux = obj.Params(ind);
     end
     
-    function setUx(this, ix, iy, ux)
-        ind = sub2ind(this.gridSize, ix, iy) * 2 - 1;
-        this.params(ind) = ux;
+    function setUx(obj, ix, iy, ux)
+        ind = sub2ind(obj.GridSize, ix, iy) * 2 - 1;
+        obj.Params(ind) = ux;
     end
     
-    function uy = getUy(this, ix, iy)
-        ind = sub2ind(this.gridSize, ix, iy) * 2;
-        uy = this.params(ind);
+    function uy = getUy(obj, ix, iy)
+        ind = sub2ind(obj.GridSize, ix, iy) * 2;
+        uy = obj.Params(ind);
     end
     
-    function setUy(this, ix, iy, uy)
-        ind = sub2ind(this.gridSize, ix, iy) * 2;
-        this.params(ind) = uy;
+    function setUy(obj, ix, iy, uy)
+        ind = sub2ind(obj.GridSize, ix, iy) * 2;
+        obj.Params(ind) = uy;
     end
 end % end methods
 
 
 %% Methods implementing the ParametricTransform interface
 methods
-    function jac = parametricJacobian(this, x, varargin)
+    function jac = parametricJacobian(obj, x, varargin)
         % Computes parametric jacobian for a specific position
         % 
-        % jac = getParametricJacobian(this, x)
+        % jac = getParametricJacobian(obj, x)
         % 
         % The result is a ND-by-NP array, where ND is the number of
         % dimension, and NP is the number of parameters.
@@ -220,13 +220,13 @@ methods
         end
 
         % allocate result
-        np = length(this.params);
+        np = length(obj.Params);
         jac = zeros(2, np, length(x));
         dim = size(jac);
                 
         % compute position wrt to the grid vertices (1-indexed)
-        xg = (x - this.gridOrigin(1)) / this.gridSpacing(1) + 1;
-        yg = (y - this.gridOrigin(2)) / this.gridSpacing(2) + 1;
+        xg = (x - obj.GridOrigin(1)) / obj.GridSpacing(1) + 1;
+        yg = (y - obj.GridOrigin(2)) / obj.GridSpacing(2) + 1;
         
         % coordinates within the unit tile
         xu = xg - floor(xg);
@@ -243,7 +243,7 @@ methods
         for i = -1:2
             % coordinates of neighbor grid vertex
             xv = floor(xg) + i;
-            indOkX = xv >= 1 & xv <= this.gridSize(1);
+            indOkX = xv >= 1 & xv <= obj.GridSize(1);
 
             % evaluate weight associated to grid vertex
             fun_i = baseFuns{i+2};
@@ -251,13 +251,13 @@ methods
             
             for j = -1:2
                 yv = floor(yg) + j;
-                indOkY = yv >= 1 & yv <= this.gridSize(2);
+                indOkY = yv >= 1 & yv <= obj.GridSize(2);
 
                 % indices of points whose grid vertex is defined
                 inds = indOkX & indOkY;
                 
                 % linear index of translation components
-                indX = sub2ind(this.gridSize, xv(inds), yv(inds)) * 2 - 1;
+                indX = sub2ind(obj.GridSize, xv(inds), yv(inds)) * 2 - 1;
                 
                 % spline basis for y vertex
                 fun_j = baseFuns{j+2};
@@ -279,15 +279,15 @@ end
 
 %% Methods implementing the Transform interface
 methods
-    function point2 = transformPoint(this, point)
+    function point2 = transformPoint(obj, point)
         % Compute coordinates of transformed point
         
         % initialize coordinate of result
         point2 = point;
         
         % compute position wrt to the grid vertices (1-indexed)
-        xg = (point(:, 1) - this.gridOrigin(1)) / this.gridSpacing(1) + 1;
-        yg = (point(:, 2) - this.gridOrigin(2)) / this.gridSpacing(2) + 1;
+        xg = (point(:, 1) - obj.GridOrigin(1)) / obj.GridSpacing(1) + 1;
+        yg = (point(:, 2) - obj.GridOrigin(2)) / obj.GridSpacing(2) + 1;
         
         % coordinates within the unit tile
         xu = xg - floor(xg);
@@ -304,7 +304,7 @@ methods
         for i = -1:2
             % coordinates of neighbor grid vertex
             xv = floor(xg) + i;
-            indOkX = xv >= 1 & xv <= this.gridSize(1);
+            indOkX = xv >= 1 & xv <= obj.GridSize(1);
 
             % evaluate weight associated to grid vertex
             fun_i = baseFuns{i+2};
@@ -312,13 +312,13 @@ methods
             
             for j = -1:2
                 yv = floor(yg) + j;
-                indOkY = yv >= 1 & yv <= this.gridSize(2);
+                indOkY = yv >= 1 & yv <= obj.GridSize(2);
 
                 % indices of points whose grid vertex is defined
                 inds = indOkX & indOkY;
                 
                 % linear index of translation components
-                indX = sub2ind(this.gridSize, xv(inds), yv(inds)) * 2 - 1;
+                indX = sub2ind(obj.GridSize, xv(inds), yv(inds)) * 2 - 1;
                 
                 % spline basis for y vertex
                 fun_j = baseFuns{j+2};
@@ -327,13 +327,13 @@ methods
                 b = eval_i(inds) .* fun_j(yu(inds));
                 
                 % update coordinates of transformed points
-                point2(inds,1) = point2(inds,1) + b .* this.params(indX)';
-                point2(inds,2) = point2(inds,2) + b .* this.params(indX+1)';
+                point2(inds,1) = point2(inds,1) + b .* obj.Params(indX)';
+                point2(inds,2) = point2(inds,2) + b .* obj.Params(indX+1)';
             end
         end
     end
     
-    function jac = jacobianMatrix(this, point)
+    function jac = jacobianMatrix(obj, point)
         % Jacobian matrix of the given point
         %
         %   JAC = getJacobian(TRANS, PT)
@@ -361,12 +361,12 @@ methods
         %% Initializations
        
         % extract grid spacing for normalization
-        deltaX = this.gridSpacing(1);
-        deltaY = this.gridSpacing(2);
+        deltaX = obj.GridSpacing(1);
+        deltaY = obj.GridSpacing(2);
         
         % compute position of points wrt to grid vertices
-        xg = (point(:, 1) - this.gridOrigin(1)) / deltaX + 1;
-        yg = (point(:, 2) - this.gridOrigin(2)) / deltaY + 1;
+        xg = (point(:, 1) - obj.GridOrigin(1)) / deltaX + 1;
+        yg = (point(:, 2) - obj.GridOrigin(2)) / deltaY + 1;
         
         % initialize zeros translation vector
         nPts = length(xg);
@@ -389,7 +389,7 @@ methods
         for i = -1:2
             % x-coordinate of neighbor vertex
             xv  = floor(xg) + i;
-            indOkX = xv >= 1 & xv <= this.gridSize(1);
+            indOkX = xv >= 1 & xv <= obj.GridSize(1);
             
             % compute x-coefficients of bezier function and derivative
             bx(indOkX)  = baseFuns{i+2}(xu(indOkX));
@@ -398,7 +398,7 @@ methods
             for j = -1:2
                 % y-coordinate of neighbor vertex
                 yv = floor(yg) + j;
-                indOkY = yv >= 1 & yv <= this.gridSize(2);
+                indOkY = yv >= 1 & yv <= obj.GridSize(2);
                 
                 % indices of points whose grid vertex is defined
                 inds = indOkX & indOkY;
@@ -407,11 +407,11 @@ methods
                 end
 
                 % linear index of translation components
-                indX = sub2ind(this.gridSize, xv(inds), yv(inds)) * 2 - 1;
+                indX = sub2ind(obj.GridSize, xv(inds), yv(inds)) * 2 - 1;
                 
                 % translation vector of the current vertex
-                dxv = reshape(this.params(indX), [1 1 length(indX)]);
-                dyv = reshape(this.params(indX+1), [1 1 length(indX)]);
+                dxv = reshape(obj.Params(indX), [1 1 length(indX)]);
+                dyv = reshape(obj.Params(indX+1), [1 1 length(indX)]);
                 
                 % compute y-coefficients of bezier function and derivative
                 by  = baseFuns{j+2}(yu(inds));
@@ -426,7 +426,7 @@ methods
         end
     end
 
-    function deriv = secondDerivatives(this, point, indI, indJ)
+    function deriv = secondDerivatives(obj, point, indI, indJ)
         % Second derivatives for the given point(s)
         %
         % D2 = secondDerivatives(T, POINT, INDI, INDJ)
@@ -460,12 +460,12 @@ methods
         %% Initializations
        
         % extract grid spacing for normalization
-        deltaX = this.gridSpacing(1);
-        deltaY = this.gridSpacing(2);
+        deltaX = obj.GridSpacing(1);
+        deltaY = obj.GridSpacing(2);
         
         % compute position of points wrt to grid vertices
-        xg = (point(:, 1) - this.gridOrigin(1)) / deltaX + 1;
-        yg = (point(:, 2) - this.gridOrigin(2)) / deltaY + 1;
+        xg = (point(:, 1) - obj.GridOrigin(1)) / deltaX + 1;
+        yg = (point(:, 2) - obj.GridOrigin(2)) / deltaY + 1;
         
         % initialize zeros translation vector
         nPts = length(xg);
@@ -486,7 +486,7 @@ methods
         for i = -1:2
             % x-coordinate of neighbor vertex
             xv  = floor(xg) + i;
-            indOkX = xv >= 1 & xv <= this.gridSize(1);
+            indOkX = xv >= 1 & xv <= obj.GridSize(1);
             
             % compute x-coefficients of bezier function and derivative
             bx(indOkX)  = baseFuns{i+2}(xu(indOkX));
@@ -496,7 +496,7 @@ methods
             for j = -1:2
                 % y-coordinate of neighbor vertex
                 yv = floor(yg) + j;
-                indOkY = yv >= 1 & yv <= this.gridSize(2);
+                indOkY = yv >= 1 & yv <= obj.GridSize(2);
                 
                 % indices of points whose grid vertex is defined
                 inds = indOkX & indOkY;
@@ -505,11 +505,11 @@ methods
                 end
 
                 % linear index of translation components
-                indX = sub2ind([this.gridSize], xv(inds), yv(inds)) * 2 - 1;
+                indX = sub2ind([obj.GridSize], xv(inds), yv(inds)) * 2 - 1;
                 
                 % translation vector of the current vertex
-                dxv = reshape(this.params(indX), [length(indX) 1]);
-                dyv = reshape(this.params(indX+1), [length(indX) 1]);
+                dxv = reshape(obj.Params(indX), [length(indX) 1]);
+                dyv = reshape(obj.Params(indX+1), [length(indX) 1]);
                 
                 % compute y-coefficients of spline function and derivative
                 by  = baseFuns{j+2}(yu(inds));
@@ -537,7 +537,7 @@ methods
         
     end % secondDerivatives
 
-    function lap = curvatureOperator(this, point)
+    function lap = curvatureOperator(obj, point)
         % Compute curvature operator at given position(s)
         %
         %   LAP = getLaplacian(TRANS, PT)
@@ -546,14 +546,14 @@ methods
         %
         
         % compute second derivatives (each array is Npts-by-2
-        dx2 = secondDerivatives(this, point, 1, 1);
-        dy2 = secondDerivatives(this, point, 2, 2);
+        dx2 = secondDerivatives(obj, point, 1, 1);
+        dy2 = secondDerivatives(obj, point, 2, 2);
         
         % compute curvature operator
         lap = sum(dx2, 2).^2 + sum(dy2, 2).^2;
     end
 
-    function dim = getDimension(this) %#ok<MANU>
+    function dim = getDimension(obj) %#ok<MANU>
         dim = 2;
     end
 end
@@ -561,20 +561,20 @@ end
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'BSplineTransformModel2D', ...
-            'gridSize', this.gridSize, ...
-            'gridSpacing', this.gridSpacing, ...
-            'gridOrigin', this.gridOrigin, ...
-            'parameters', this.params);
+        str = struct('Type', 'BSplineTransformModel2D', ...
+            'GridSize', obj.GridSize, ...
+            'GridSpacing', obj.GridSpacing, ...
+            'GridOrigin', obj.GridOrigin, ...
+            'Parameters', obj.Params);
     end
 end
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
-        transfo = BSplineTransformModel2D(str.gridSize, str.gridSpacing, str.gridOrigin);
-        transfo.params = str.parameters;
+        transfo = BSplineTransformModel2D(str.GridSize, str.GridSpacing, str.GridOrigin);
+        transfo.Params = str.Parameters;
     end
 end
 

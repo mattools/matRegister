@@ -18,17 +18,17 @@ classdef SumOfSquaredDifferencesMetric < ImageToImageMetric
 %% Some properties specific to the SSD metric
 properties
     % the transform model (necessary to compute the metric gradient)
-    transform;
+    Transform;
     
     % The gradient image of the moving image (necessary to compute the metric gradient)
-    gradientImage;
+    GradientImage;
 end
 
 %% Constructor
 methods
-    function this = SumOfSquaredDifferencesMetric(varargin)
+    function obj = SumOfSquaredDifferencesMetric(varargin)
         % calls the parent constructor
-        this = this@ImageToImageMetric(varargin{:});
+        obj = obj@ImageToImageMetric(varargin{:});
         
     end % constructor
     
@@ -36,20 +36,20 @@ end % methods
 
 %% Accessors and modifiers
 methods
-    function transform = getTransform(this)
-        transform = this.transform;
+    function transform = getTransform(obj)
+        transform = obj.Transform;
     end
     
-    function setTransform(this, transform)
-        this.transform = transform;
+    function setTransform(obj, transform)
+        obj.Transform = transform;
     end
     
-    function gradient = getGradientImage(this)
-        gradient = this.gradientImage;
+    function gradient = getGradientImage(obj)
+        gradient = obj.GradientImage;
     end
     
-    function setGradientImage(this, gradient)
-        this.gradientImage = gradient ;
+    function setGradientImage(obj, gradient)
+        obj.GradientImage = gradient ;
     end 
         
 end % methods

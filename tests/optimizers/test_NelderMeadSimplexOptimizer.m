@@ -24,9 +24,9 @@ optim = NelderMeadSimplexOptimizer(); %#ok<NASGU>
 function test_Rosenbrock_0_0
 
 optim = NelderMeadSimplexOptimizer(@rosenbrock, [0 0], [.1 .1]);
-optim.displayMode = 'none';
+optim.DisplayMode = 'none';
 
-[params, value] = optim.startOptimization();
+[params, value] = startOptimization(optim);
 
 assertElementsAlmostEqual(params, [1 1], 'absolute', 1e-5);
 assertElementsAlmostEqual(value, 0, 'absolute', 1e-5);
@@ -35,10 +35,10 @@ assertElementsAlmostEqual(value, 0, 'absolute', 1e-5);
 function test_Rosenbrock_M1D2_1
 
 optim = NelderMeadSimplexOptimizer(@rosenbrock, [-1.2 1], [.1 .1]);
-optim.displayMode = 'none';
-optim.nIter = 200;
+optim.DisplayMode = 'none';
+optim.NIters = 200;
 
-[params, value] = optim.startOptimization();
+[params, value] = startOptimization(optim);
 
 assertElementsAlmostEqual(params, [1 1], 'absolute', 1e-5);
 assertElementsAlmostEqual(value, 0, 'absolute', 1e-5);

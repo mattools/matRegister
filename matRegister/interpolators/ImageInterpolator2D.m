@@ -1,10 +1,11 @@
 classdef ImageInterpolator2D < ImageInterpolator
-%INTERPOLATOR2D Abstract class that groups image interpolators
+%INTERPOLATOR2D Abstract class that groups image interpolators.
 %
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-08,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -35,12 +36,12 @@ end % static methods
 
 %% Constructors
 methods (Access = protected)
-    function this = ImageInterpolator2D(image)
+    function obj = ImageInterpolator2D(image)
         % Constructs a new ImageInterpolator2D object.
         % interp = ImageInterpolator2D(IMG);
         % with IMG being a Image2D.
         
-        this = this@ImageInterpolator(image);
+        obj = obj@ImageInterpolator(image);
     end % constructor declaration    
 end % methods
 

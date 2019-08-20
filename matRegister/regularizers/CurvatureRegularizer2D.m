@@ -16,27 +16,27 @@ classdef CurvatureRegularizer2D < TransformRegularizer
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@nantes.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2018-08-08,    using Matlab 9.4.0.813654 (R2018a)
 % Copyright 2018 INRA - BIA-BIBS.
 
 
 %% Properties
 properties
-    transform;
+    Transform;
     
 end % end properties
 
 
 %% Constructor
 methods
-    function this = CurvatureRegularizer2D(varargin)
+    function obj = CurvatureRegularizer2D(varargin)
     % Constructor for CurvatureRegularizer2D class
     
         if ~isa(varargin{1}, 'Transform')
             error('Requires Transform class as first argument');
         end
-        this.transform = varargin{1};
+        obj.Transform = varargin{1};
 
     end
 
@@ -45,10 +45,10 @@ end % end constructors
 
 %% Methods implementing the TransformRegularizer interface
 methods
-    function val = evaluate(this, points)
+    function val = evaluate(obj, points)
         
-        d11 = secondDerivatives(this.transform, 1, 1, points);
-        d22 = secondDerivatives(this.transform, 2, 2, points);
+        d11 = secondDerivatives(obj.Transform, 1, 1, points);
+        d22 = secondDerivatives(obj.Transform, 2, 2, points);
         val = sum(d11.^2 + d22.^2, 2);
     end
 end % end methods

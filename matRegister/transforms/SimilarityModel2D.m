@@ -1,5 +1,5 @@
 classdef SimilarityModel2D < AffineTransform & ParametricTransform
-%Transformation model for a similarity: rotation+scaling followed by a translation
+%Transformation model for a similarity: rotation+scaling followed by a translation.
 %   
 %   Inner optimisable parameters of the transform have the following form:
 %   params[1] = tx
@@ -22,7 +22,7 @@ classdef SimilarityModel2D < AffineTransform & ParametricTransform
 %     img = imread('cameraman.tif');
 %     transfo = SimilarityModel2D([30 20 10 -0.4]);
 %     [x, y] = meshgrid(1:256, 1:256);
-%     pts2 = transfo.transformPoint([x(:) y(:)]);
+%     pts2 = transformPoint(transfo, [x(:) y(:)]);
 %     res = zeros(size(img), 'uint8');
 %     res(:) = imEvaluate(img, pts2);
 %     figure; imshow(res);
@@ -37,21 +37,21 @@ classdef SimilarityModel2D < AffineTransform & ParametricTransform
 
 %% Constructors
 methods
-    function this = SimilarityModel2D(varargin)
-        % Create a new model for 2D motion transform model
+    function obj = SimilarityModel2D(varargin)
+        % Create a new model for 2D motion transform model.
         % (defined by 2 translation parameters and 1 rotation angle)
 
         % call parent constructor for initializing parameters
-        this = this@ParametricTransform([0 0 0 0]);
+        obj = obj@ParametricTransform([0 0 0 0]);
         
         % setup default parameters
-        this.params = [0 0 0 0];
+        obj.Params = [0 0 0 0];
 
         if ~isempty(varargin)
             % extract first argument, and try to interpret
             var = varargin{1};
             if isa(var, 'SimilarityModel2D')
-                this.params = var.params;
+                obj.Params = var.Params;
                 
             elseif isnumeric(var)
                 if length(var) == 1 && var(1) ~= 2
@@ -60,7 +60,7 @@ methods
                     
                 elseif length(var) == 4
                     % if argument is a row vector, it is the parameters
-                    this.params = var(1:4);
+                    obj.Params = var(1:4);
                 else
                     error('Please specify translation, rotation angle and scaling');
                 end
@@ -70,29 +70,29 @@ methods
         end
        
         % setup parameter names
-        this.paramNames = {'X shift', 'Y shift', 'Theta (°)', 'Log2 scale'};
+        obj.ParamNames = {'X shift', 'Y shift', 'Theta (°)', 'Log2 scale'};
                 
     end % constructor declaration
 end
 
 %% Standard methods
 methods        
-    function dim = getDimension(this) %#ok<MANU>
+    function dim = getDimension(obj) %#ok<MANU>
         dim = 2;
     end
 
-    function mat = affineMatrix(this)
-        % Compute affine matrix associated with this transform
+    function mat = affineMatrix(obj)
+        % Compute affine matrix associated with obj transform
         
         % translation vector
-        tx = this.params(1);
-        ty = this.params(2);
+        tx = obj.Params(1);
+        ty = obj.Params(2);
         
         % rotation angle, converted to radians
-        theta = this.params(3) * pi / 180;
+        theta = obj.Params(3) * pi / 180;
 
         % scaling factor, converted to ususal scale
-        k = power(2, this.params(4));
+        k = power(2, obj.Params(4));
         
         % pre-computations
         cot = cos(theta);
@@ -106,7 +106,7 @@ methods
 
     end
   
-    function jacobian = parametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(obj, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
        
         % extract coordinate of input point(s)
@@ -118,12 +118,12 @@ methods
         end
         
         % convert angles to radians
-        theta = this.params(3) * pi / 180;
+        theta = obj.Params(3) * pi / 180;
 
         % scaling factor, converted to ususal scale
-        k = power(2, this.params(4));
+        k = power(2, obj.Params(4));
         % the partial derivative of 2^k wrt k
-        dk = log(2)*this.params(k);
+        dk = log(2) * obj.Params(k);
        
         % precompute angle functions
         cot = cos(theta);
@@ -137,54 +137,25 @@ methods
 
 end % methods
 
-% %% I/O Methods
-% methods (Static)
-%     function transfo = readFromFile(fileName)
-%         % Read transform from the given file name.
-%         % Returns a new instance of MotionModel2D.
-%         %
-%         % Example
-%         %   TRANSFO = MotionModel2D.readFromFile('transfo.txt');
-%         
-%         map = readPropertyFile(fileName);
-%         transfo = MotionModel2D.createFromPropertyMap(map);
-%     end
-%     
-%     function transfo = createFromPropertyMap(map)
-%         % Create a new transform from a set of properties
-%         
-%         transfo = MotionModel2D();
-%         
-%         nbParams = str2double(map('TransformParameterNumber'));
-%         
-%         trParams = map('TransformParameters');
-%         trParams= cellfun(@str2double, regexp(trParams, '\s*', 'split'));
-%         
-%         if nbParams ~= length(trParams)
-%             error('Wrong number of parameters');
-%         end
-%         
-%         setParameters(transfo, trParams);
-%         
-%         center = map('TransformCenter');
-%         center = cellfun(@str2double, regexp(center, '\s*', 'split'));
-%         transfo.center = center;
-%     end
-% end
-
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'SimilarityModel2D', ...
-            'parameters', this.params);
+        str = struct('Type', 'SimilarityModel2D', ...
+            'Parameters', obj.Params);
     end
 end
 methods (Static)
     function motion = fromStruct(str)
         % Creates a new instance from a structure
-        params = str.parameters;
+        if isfield(str, 'Parameters')
+            params = str.Parameters;
+        elseif isfield(str, 'parameters')
+            params = str.parameters;
+        else
+            error('Requires a field <Parameters>');
+        end
         motion = SimilarityModel2D(params);
     end
 end

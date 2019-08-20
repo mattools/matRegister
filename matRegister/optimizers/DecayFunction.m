@@ -1,5 +1,5 @@
 classdef DecayFunction < handle
-%DECAYFUNCTION  Abstract class that models decay function for optimizers
+% Abstract class that models decay function for optimizers.
 %
 %   Class DecayFunction
 %
@@ -7,18 +7,19 @@ classdef DecayFunction < handle
 %   Decayfunction
 %
 %   See also
-%   ExponentialDecayFunction, ElastixDecayFunction
+%     ExponentialDecayFunction, ElastixDecayFunction
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-08-04,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
 
 %% Constructor
 methods
-    function this = DecayFunction(varargin)
+    function obj = DecayFunction(varargin)
     % Constructor for Decayfunction class
 
     end

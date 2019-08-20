@@ -1,5 +1,5 @@
 classdef CenteredEulerTransform3D < AffineTransform & ParametricTransform & CenteredTransformAbstract
-%Transformation model for a centered 3D rotation followed by a translation
+%Transformation model for a centered 3D rotation followed by a translation.
 %   
 %   Inner optimisable parameters of the transform have the following form:
 %   params[1] = phi, rotation angle around Ox, in degrees
@@ -22,28 +22,28 @@ classdef CenteredEulerTransform3D < AffineTransform & ParametricTransform & Cent
 
 %% Constructors
 methods
-    function this = CenteredEulerTransform3D(varargin)
+    function obj = CenteredEulerTransform3D(varargin)
         % Create a new centered motion transform
         
-        this = this@CenteredTransformAbstract([0 0 0]);
+        obj = obj@CenteredTransformAbstract([0 0 0]);
         
-        this.params = zeros(1, 6);
+        obj.Params = zeros(1, 6);
         
         if ~isempty(varargin)
             % extract first argument, and try to interpret
             var = varargin{1};
             if isa(var, 'CenteredEulerTransform3D')
                 % copy constructor
-                this.params = var.params;
+                obj.Params = var.Params;
                 
             elseif isnumeric(var)
                 len = length(var);
                 if len == 6
                     % all parameters are specified
-                    this.params = var;
+                    obj.Params = var;
                 elseif len == 3
                     % specify only angles, initialize translation to 0
-                    this.params = [var 0 0 0];
+                    obj.Params = [var 0 0 0];
                 elseif len == 1
                     % give the possibility to call constructor with the
                     % dimension of image
@@ -61,14 +61,14 @@ methods
         
         % eventually parse additional arguments
         if nargin > 2
-            if strcmp(varargin{2}, 'center')
+            if strcmp(varargin{2}, 'Center')
                 % setup rotation center
-                this.center = varargin{3};
+                obj.Center = varargin{3};
             end
         end
         
         % setup parameter names
-        this.paramNames = {...
+        obj.ParamNames = {...
             'Rot X (°)', 'Rot Y (°)', 'Rot Z (°)', ...
             'X shift', 'Y shift', 'Z shift'};
                 
@@ -77,11 +77,11 @@ end
 
 %% Standard methods
 methods    
-    function dim = getDimension(this) %#ok<MANU>
+    function dim = getDimension(obj) %#ok<MANU>
         dim = 3;
     end
 
-    function initFromTranslation(this, vector)
+    function initFromTranslation(obj, vector)
         % Initialize parameters from a translation vector
         %
         % Example
@@ -91,25 +91,25 @@ methods
         % ans = 
         %     [0 0 0 10 15 20]
         %
-        this.parameters = [0 0 0 vector];
+        obj.Parameters = [0 0 0 vector];
     end
     
-    function mat = affineMatrix(this)
-        % Compute affine matrix associated with this transform
+    function mat = affineMatrix(obj)
+        % Compute affine matrix associated with obj transform
         
         % extract angles and convert to radians
         deg2rad = pi / 180;
-        phi     = this.params(1) * deg2rad;
-        theta   = this.params(2) * deg2rad;
-        psi     = this.params(3) * deg2rad;
+        phi     = obj.Params(1) * deg2rad;
+        theta   = obj.Params(2) * deg2rad;
+        psi     = obj.Params(3) * deg2rad;
 
 %         % compute compound rotation matrix around center
 %         Rx = createRotationOx(phi);
 %         Ry = createRotationOy(theta);
 %         Rz = createRotationOz(psi);
-%         mat = recenterTransform3d(Rz * Ry * Rx, this.center);
+%         mat = recenterTransform3d(Rz * Ry * Rx, obj.Center);
 %         % add translation
-%         mat = createTranslation3d(this.params(4:6)) * mat;
+%         mat = createTranslation3d(obj.Params(4:6)) * mat;
 
         % pre-computations of trigonometric functions
         a = cos(phi);      b = sin(phi);
@@ -121,12 +121,12 @@ methods
         ad = a * d;
         mat = [c*e bd*e-a*f ad*e+b*f; c*f bd*f+a*e ad*f-b*e; -d b*c a*c];
         
-        p0 = this.center';
-        shift = p0 - mat*p0 + this.params(4:6)';
+        p0 = obj.Center';
+        shift = p0 - mat*p0 + obj.Params(4:6)';
         mat = [mat shift ; 0 0 0 1];
     end
   
-    function jacobian = parametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(obj, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
        
         % extract coordinate of input point(s)
@@ -141,9 +141,9 @@ methods
         
         % extract angles in degrees
         k = pi / 180;
-        phi     = this.params(1) * k;
-        theta   = this.params(2) * k;
-        psi     = this.params(3) * k;
+        phi     = obj.Params(1) * k;
+        theta   = obj.Params(2) * k;
+        psi     = obj.Params(3) * k;
 
         % pre-computations of trigonometric functions (in degrees)
         cx = cos(phi);      sx = sin(phi);
@@ -151,9 +151,9 @@ methods
         cz = cos(psi);      sz = sin(psi);
 
         % jacobians are computed with respect to transformation center
-        x = x - this.center(1);
-        y = y - this.center(2);
-        z = z - this.center(3);
+        x = x - obj.Center(1);
+        y = y - obj.Center(2);
+        z = z - obj.Center(3);
         
         % compute the Jacobian matrix using pre-computed elements
         jacobian = [[...
@@ -205,26 +205,26 @@ methods (Static)
         
         center = map('TransformCenter');
         center = cellfun(@str2double, regexp(center, '\s*', 'split'));
-        transfo.center = center;
+        transfo.Center = center;
     end
 end
 
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'CenteredEulerTransform3D', ...
-            'center', this.center, ...
-            'parameters', this.params);
+        str = struct('Type', 'CenteredEulerTransform3D', ...
+            'Center', obj.Center, ...
+            'Parameters', obj.Params);
         
     end
 end
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
-        params = str.parameters;
-        transfo = CenteredEulerTransform3D(params, 'center', str.center);
+        params = str.Parameters;
+        transfo = CenteredEulerTransform3D(params, 'Center', str.Center);
     end
 end
 

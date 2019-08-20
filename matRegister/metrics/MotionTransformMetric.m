@@ -8,17 +8,17 @@ classdef MotionTransformMetric < TransformMetric & ParametricFunction
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-27,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 %% Constructor
 methods
-    function this = MotionTransformMetric(varargin)
+    function obj = MotionTransformMetric(varargin)
         % Initialize the metric with a transform.
         
         transfo = varargin{1};
@@ -26,26 +26,26 @@ methods
             error('Input argument must be a transform');
         end
         
-        this = this@TransformMetric(transfo);
+        obj = obj@TransformMetric(transfo);
     end
 end % constructor
 
 
 methods
-    function setParameters(this, params)
-        this.transform.setParameters(params);
+    function setParameters(obj, params)
+        setParameters(obj.Transform, params);
     end
 end
 
 methods
-    function res = computeValue(this)
+    function res = computeValue(obj)
         
-        transfo = this.transform;
+        transfo = obj.Transform;
         if ~isa(transfo, 'AffineTransform')
             error('Sorry, requires a motion transform as input');
         end
         
-        mat = transfo.getAffineMatrix();
+        mat = affineMatrix(transfo);
         
         linearPart = mat(1:end-1, 1:end-1);
         

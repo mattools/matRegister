@@ -1,5 +1,5 @@
 classdef NearestNeighborInterpolator3D < ImageInterpolator3D
-%NearestNeighborInterpolator3D  Nearest-neighbor interpolator of a 3D image
+% Nearest-neighbor interpolator of a 3D image.
 %   output = NearestNeighborInterpolator3D(IMG)
 %
 %   Example
@@ -10,17 +10,17 @@ classdef NearestNeighborInterpolator3D < ImageInterpolator3D
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-01-07,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 %% Constructors
 methods
-    function this = NearestNeighborInterpolator3D(varargin)
+    function obj = NearestNeighborInterpolator3D(varargin)
         % Constructs a new NearestNeighborInterpolator3D object.
         % interp = LinearInterpolator(IMG);
         % with IMG being a Image2D.
@@ -28,7 +28,7 @@ methods
         if isa(varargin{1}, 'NearestNeighborInterpolator3D')
             % copy constructor
             var = varargin{1};
-            image = var.image;
+            image = var.Image;
         elseif isa(varargin{1}, 'Image3D')
             % initialisation constructor
             image = varargin{1};
@@ -37,7 +37,7 @@ methods
         end
         
         % call superclass constructor
-        this = this@ImageInterpolator3D(image);
+        obj = obj@ImageInterpolator3D(image);
         
     end % constructor declaration
     

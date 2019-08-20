@@ -23,23 +23,23 @@ classdef TransformJacobianResampler < handle
 %% Declaration of class properties
 properties
     % The size of the resulting image
-    outputSize = [];
+    OutputSize = [];
 
     % Data type of resulting image, default is 'uint8'.
-    outputType = 'double';
+    OutputType = 'double';
     
     % physical origin of image first point
-    origin = [];
+    Origin = [];
 
     % Physical spacing between pixels
-    spacing = [];
+    Spacing = [];
 end
 
 %TODO: specify output type;
 
 %% Constructors
 methods
-    function this = TransformJacobianResampler(varargin)
+    function obj = TransformJacobianResampler(varargin)
         % Constructs a new TransformJacobianResampler object.
         %
         % TJR = TransformJacobianResampler(REFIMG)
@@ -61,28 +61,28 @@ methods
 
             % copy each field
             var = varargin{1};
-            this.outputSize = var.outputSize;
-            this.origin     = var.origin;
-            this.spacing    = var.spacing;
+            obj.OutputSize = var.OutputSize;
+            obj.Origin     = var.Origin;
+            obj.Spacing    = var.Spacing;
             
         elseif isa(varargin{1}, 'Image')
             % Initialize fields from a given image
             img = varargin{1};
-            this.outputSize = size(img);
-            this.origin     = img.getOrigin();
-            this.spacing    = img.getSpacing();
+            obj.OutputSize = size(img);
+            obj.Origin     = img.getOrigin();
+            obj.Spacing    = img.getSpacing();
             
         elseif isnumeric(varargin{1})
             % Gives lx and ly
             nbDims = length(varargin);
-            this.outputSize = zeros(1, nbDims);
-            this.origin     = zeros(1, nbDims);
-            this.spacing    = ones(1, nbDims);
+            obj.OutputSize = zeros(1, nbDims);
+            obj.Origin     = zeros(1, nbDims);
+            obj.Spacing    = ones(1, nbDims);
             for i=1:nbDims
                 var = varargin{i};
-                this.outputSize(i)  = length(var);
-                this.origin(i)      = var(1);
-                this.spacing(i)     = var(2)-var(1);
+                obj.OutputSize(i)  = length(var);
+                obj.Origin(i)      = var(1);
+                obj.Spacing(i)     = var(2)-var(1);
             end
         else
             error('Wrong parameter when constructing an ImageResampler');
@@ -92,17 +92,17 @@ methods
 end % methods
 
 methods
-    function setOutputType(this, dataType)
+    function setOutputType(obj, dataType)
         % Specifiy the type of resulting image
-        this.outputType = dataType;
+        obj.OutputType = dataType;
     end
     
-    function type = getOutputType(this)
+    function type = getOutputType(obj)
         % Return the type of resulting image
-        type = this.outputType;
+        type = obj.OutputType;
     end
     
-    function img2 = resample(this, transform)
+    function img2 = resample(obj, transform)
         % Resample a transform
         %
         
@@ -115,11 +115,11 @@ methods
         end
         
         % precompute grid basis for 2D
-        lx = (0:this.outputSize(1)-1)*this.spacing(1) + this.origin(1);
-        ly = (0:this.outputSize(2)-1)*this.spacing(2) + this.origin(2);
+        lx = (0:obj.OutputSize(1)-1)*obj.Spacing(1) + obj.Origin(1);
+        ly = (0:obj.OutputSize(2)-1)*obj.Spacing(2) + obj.Origin(2);
         
         % different processing depending on image dimension
-        outputDim = length(this.outputSize);
+        outputDim = length(obj.OutputSize);
         if outputDim == 2
             % Process 2D images
             
@@ -127,7 +127,7 @@ methods
             [x, y] = meshgrid(lx, ly);
 
             % initialize result array
-            vals = zeros(size(x), this.outputType);
+            vals = zeros(size(x), obj.OutputType);
         
             % compute all jacobians (result stored in a 2*2*N array)
             jac = jacobianMatrix(transform, [x(:) y(:)]);
@@ -139,11 +139,11 @@ methods
             % Process 3D images
             
             % sample grid
-            lz = (0:this.outputSize(3)-1)*this.spacing(3) + this.origin(3);
+            lz = (0:obj.OutputSize(3)-1)*obj.Spacing(3) + obj.Origin(3);
             [x, y, z] = meshgrid(lx, ly, lz);
             
             % initialize result array
-            vals = zeros(size(x), this.outputType);
+            vals = zeros(size(x), obj.OutputType);
         
             % compute result values
             try
@@ -172,8 +172,8 @@ methods
         img2 = Image.create(vals);
         
         % copy spatial calibration info to image
-        img2.origin = this.origin;
-        img2.spacing = this.spacing;
+        img2.Origin = obj.Origin;
+        img2.Spacing = obj.Spacing;
     end
 
 end % methods

@@ -1,5 +1,5 @@
 classdef Transform < handle
-%TRANSFORM  Abstract class for transform
+%TRANSFORM  Abstract class for transform.
 %   
 %   Transform are designed to transform points into other points. This
 %   class defines some abstract methods that have to be implemented by
@@ -37,35 +37,35 @@ methods (Abstract)
     % Return the dimension of this transform
     % In case of a projection transform, returns the dimension of input
     % points.
-    getDimension(this)
+    getDimension(obj)
     
     % Computes coordinates of transformed point
     % pt2 = transformPoint(transfo, pt);
-    transformPoint(this, point)
+    transformPoint(obj, point)
         
     % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
     % jacob(i,j) = d x_i / d x_j
-    jacMat = jacobianMatrix(this, position)
+    jacMat = jacobianMatrix(obj, position)
        
 end % abstract methods
 
 methods
-    function jacMat = getJacobian(this, position)
+    function jacMat = getJacobian(obj, position)
         % deprecated: use jacobianMatrix instead
         warning('deprecated: use method jacobianMatrix instead');
-        jacMat = jacobianMatrix(this, position);
+        jacMat = jacobianMatrix(obj, position);
     end
 end
 
 %% General methods
 methods
-    function res = transformVector(this, vector, position)
+    function res = transformVector(obj, vector, position)
         % Computes coordinates of transformed vector at a given position
         %
         % vec2 = transformVector(transfo, vec, pos);
         %
         
-        jac = jacobianMatrix(this, position); % 2-by-2-by-N
+        jac = jacobianMatrix(obj, position); % 2-by-2-by-N
         nv = size(vector, 1);
         res = zeros(nv, 2);
         for i = 1:nv
@@ -73,7 +73,7 @@ methods
         end
     end
     
-    function res = compose(this, that)
+    function res = compose(obj, that)
         % Computes the composition of the two transforms
         %
         % The following:
@@ -81,14 +81,14 @@ methods
         % P2 = T.tansformPoint(P);
         % % is the same as 
         % P2 = T1.transformPoint(T2.transformPoint(P));
-        res = ComposedTransform(that, this);
+        res = ComposedTransform(that, obj);
     end
     
 end % methods
 
 %% Serialization methods
 methods
-    function write(this, fileName, varargin)
+    function write(obj, fileName, varargin)
         % Writes transform into a JSON file
         % 
         % Requires implementation of the "toStruct" method.
@@ -96,11 +96,11 @@ methods
         if exist('savejson', 'file') == 0
             error('Requires the ''jsonlab'' library');
         end
-        if ~ismethod(this, 'toStruct')
+        if ~ismethod(obj, 'toStruct')
             error('Requires implementation of the ''toStruct'' method');
         end
         
-        savejson('', toStruct(this), 'FileName', fileName, varargin{:});
+        savejson('', toStruct(obj), 'FileName', fileName, varargin{:});
     end
 end
 
@@ -109,10 +109,13 @@ methods (Static)
         % Creates a new transform instance from a structure
         
         % check existence of 'type' field
-        if ~isfield(str, 'type')
+        if isfield(str, 'Type')
+            type = str.Type;
+        elseif isfield(str, 'type')
+            type = str.type;
+        else
             error('Requires a field with name "type"');
         end
-        type = str.type;
 
         % parse transform
         try

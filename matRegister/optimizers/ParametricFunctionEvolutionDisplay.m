@@ -8,27 +8,27 @@ classdef ParametricFunctionEvolutionDisplay < OptimizationListener
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-26,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 properties
-    axisHandle;
+    AxisHandle;
     
-    parametricFunction;
+    ParametricFunction;
     
-    valueArray;
+    ValueArray;
     
-    axisTitle = '';
+    AxisTitle = '';
 end
 
 methods
-    function this = ParametricFunctionEvolutionDisplay(varargin)
+    function obj = ParametricFunctionEvolutionDisplay(varargin)
         
-        if nargin<2
+        if nargin < 2
             error('Need at least two input arguments');
         end
         
@@ -40,18 +40,18 @@ methods
             end
             
             if strcmp(get(var, 'Type'), 'axes')
-                this.axisHandle = var;
+                obj.AxisHandle = var;
             else
-                this.axisHandle = gca;
+                obj.AxisHandle = gca;
             end
         else
-            this.axisHandle = gcf;
+            obj.AxisHandle = gcf;
         end
 
-        this.parametricFunction = varargin{2};
+        obj.ParametricFunction = varargin{2};
         
         if nargin > 2
-            this.axisTitle = varargin{3};
+            obj.AxisTitle = varargin{3};
         end
         
     end % end constructor
@@ -59,29 +59,29 @@ methods
 end
 
 methods
-    function optimizationStarted(this, src, event) %#ok<*INUSD>
+    function optimizationStarted(obj, src, event) %#ok<*INUSD>
         
         % Initialize the parameter array
-        this.valueArray = src.value;
+        obj.ValueArray = src.Value;
     end
     
-    function optimizationIterated(this, src, event)
+    function optimizationIterated(obj, src, event)
         
         
         % compute current value of the function
-        value = this.parametricFunction.computeValue();
+        value = computeValue(obj.ParametricFunction);
         
         % append current value to the value array
-        this.valueArray = [this.valueArray; value];
+        obj.ValueArray = [obj.ValueArray; value];
         
         % display current list of values
-        nv = length(this.valueArray);
-        plot(this.axisHandle, 1:nv, this.valueArray);
-        set(this.axisHandle, 'xlim', [0 nv]);
+        nv = length(obj.ValueArray);
+        plot(obj.AxisHandle, 1:nv, obj.ValueArray);
+        set(obj.AxisHandle, 'xlim', [0 nv]);
         
         % decorate
-        if ~isempty(this.axisTitle)
-            title(this.axisHandle, this.axisTitle);
+        if ~isempty(obj.AxisTitle)
+            title(obj.AxisHandle, obj.AxisTitle);
         end
         
         % refresh display

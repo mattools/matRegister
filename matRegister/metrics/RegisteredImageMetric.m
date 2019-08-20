@@ -8,10 +8,10 @@ classdef RegisteredImageMetric < handle
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-27,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -19,24 +19,24 @@ classdef RegisteredImageMetric < handle
 %% Properties
 properties
     % the reference image (interpolated)
-    fixedImage;
+    FixedImage;
 
     % the moving image (interpolated)
-    movingImage;
+    MovingImage;
 
     % the transform model from fixed image to moving image
-    transform;
+    Transform;
 
     % the set of points used for metric evaluation
-    points;
+    Points;
 
     % the transformed image
-    transformedImage;
+    TransformedImage;
 end
 
 %% Constructor
 methods (Access = protected)
-    function this = RegisteredImageMetric(img1, img2, transfo, points)
+    function obj = RegisteredImageMetric(img1, img2, transfo, points)
         
         % check inputs
         if nargin<3
@@ -45,39 +45,39 @@ methods (Access = protected)
         
         % process fixed image
         if isa(img1, 'ImageFunction')
-            this.fixedImage = img1;
+            obj.FixedImage = img1;
         else
-            this.fixedImage = ImageInterpolator.create(img1, 'linear');
+            obj.FixedImage = ImageInterpolator.create(img1, 'linear');
         end
         
         % process moving image
         if isa(img2, 'ImageFunction')
-            this.movingImage = img2;
+            obj.MovingImage = img2;
         else
-            this.movingImage = ImageInterpolator.create(img2, 'linear');
+            obj.MovingImage = ImageInterpolator.create(img2, 'linear');
         end
         
         % in the case of 3 arguments, the third one is the number of points
-        if nargin==3
-            this.points = transfo;
+        if nargin == 3
+            obj.Points = transfo;
             % create an identify transform
-            nd = img1.getDimension();
-            this.transform = TranslationModel(nd);
+            nd = ndims(img1);
+            obj.Transform = TranslationModel(nd);
             
         else
             % process transform
             if ~isa(transfo, 'ParametricTransform')
                 error('Transform should be parametric');
             end
-            this.transform = transfo;
+            obj.Transform = transfo;
             
             % stores the set of test points
-            this.points = points;
+            obj.Points = points;
         end
         
         % build the backward transformed image
-        this.transformedImage = BackwardTransformedImage(...
-            this.movingImage, this.transform);
+        obj.TransformedImage = BackwardTransformedImage(...
+            obj.MovingImage, obj.Transform);
         
     end % constructor
 
@@ -85,7 +85,7 @@ end % construction function
 
 %% Abstract methods
 methods (Abstract)
-    res = evaluate(this, params)
+    res = evaluate(obj, params)
     % Evaluate the image to image metric
     
 end % general methods

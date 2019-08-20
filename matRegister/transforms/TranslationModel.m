@@ -1,5 +1,5 @@
 classdef TranslationModel < ParametricTransform & AffineTransform
-%Transformation model for a translation defined by ND parameters
+%Transformation model for a translation defined by ND parameters.
 %   output = TranslationModel(input)
 %
 %   Parameters of the transform:
@@ -18,26 +18,26 @@ classdef TranslationModel < ParametricTransform & AffineTransform
 
 %% Constructors
 methods
-    function this = TranslationModel(varargin)
+    function obj = TranslationModel(varargin)
         % Create a new model for translation transform model
         
         % set parameters to default translation in 2D
-        this.params = [0 0];
+        obj.Params = [0 0];
         
         if ~isempty(varargin)
             % extract first argument, and try to interpret
             var = varargin{1};
             if isa(var, 'TranslationModel')
                 % copy constructor
-                this.params = var.params;
+                obj.Params = var.Params;
                 
             elseif isnumeric(var)
                 if isscalar(var)
                     % interpret the scalar as the working dimension
-                    this.params = zeros(1, var);
+                    obj.Params = zeros(1, var);
                 elseif size(var, 1)==1
                     % interpret the vector as the translation parameter
-                    this.params = var;
+                    obj.Params = var;
                 else
                     error('Input argument must be a scalar or a row vector');
                 end
@@ -48,14 +48,14 @@ methods
         end
         
         % update parameter names
-        np = length(this.params);
+        np = length(obj.Params);
         switch np
             case 2
-                this.paramNames = {'X shift', 'Y shift'};
+                obj.ParamNames = {'X shift', 'Y shift'};
             case 3
-                this.paramNames = {'X shift', 'Y shift', 'Z shift'};
+                obj.ParamNames = {'X shift', 'Y shift', 'Z shift'};
             otherwise
-                this.paramNames = cellstr(num2str((1:4)', 'Shift %d'));
+                obj.ParamNames = cellstr(num2str((1:4)', 'Shift %d'));
         end
         
     end % constructor declaration
@@ -63,16 +63,16 @@ end
 
 %% Standard methods
 methods
-    function mat = affineMatrix(this)
-        % Returns the affine matrix that represents this transform
-        nd = length(this.params);
+    function mat = affineMatrix(obj)
+        % Returns the affine matrix that represents obj transform
+        nd = length(obj.Params);
         mat = eye(nd+1);
-        mat(1:end-1, end) = this.params(:);
+        mat(1:end-1, end) = obj.Params(:);
     end
     
-    function jac = parametricJacobian(this, x, varargin) %#ok<INUSD>
+    function jac = parametricJacobian(obj, x, varargin) %#ok<INUSD>
         % Compute jacobian matrix, i.e. derivatives for each parameter
-        nd = length(this.params);
+        nd = length(obj.Params);
         jac = eye(nd);
     end
     
@@ -81,16 +81,16 @@ end % methods
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'TranslationModel', ...
-            'parameters', this.params);
+        str = struct('Type', 'TranslationModel', ...
+            'Parameters', obj.Params);
     end
 end
 methods (Static)
     function motion = fromStruct(str)
         % Creates a new instance from a structure
-        params = str.parameters;
+        params = str.Parameters;
         motion = TranslationModel(params);
     end
 end

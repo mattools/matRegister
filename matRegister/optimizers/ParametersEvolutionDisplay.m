@@ -8,49 +8,49 @@ classdef ParametersEvolutionDisplay < OptimizationListener
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-26,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 properties
-    figureHandle;
+    FigureHandle;
     
-    plotMatrix;
+    PlotMatrix;
     
-    paramValues;
+    ParamValues;
     
-    labels;
+    Labels;
 end
 
 methods
-    function this = ParametersEvolutionDisplay(varargin)
+    function obj = ParametersEvolutionDisplay(varargin)
         if nargin == 0
-            this.figureHandle = gcf;
+            obj.FigureHandle = gcf;
         else
-            this.figureHandle = varargin{1};
+            obj.FigureHandle = varargin{1};
         end
         
         if nargin > 1
-            this.plotMatrix = varargin{2};
+            obj.PlotMatrix = varargin{2};
         else
-            this.plotMatrix = [2 2];
+            obj.PlotMatrix = [2 2];
         end
         
         if nargin > 2
             var = varargin{3};
             if isnumeric(var)
-                this.labels = strtrim(cellstr(num2str((1:10)', 'Param %d')));
+                obj.Labels = strtrim(cellstr(num2str((1:10)', 'Param %d')));
             elseif iscell(var)
-                this.labels = var;
+                obj.Labels = var;
             else
                 error('Can not process labels parameter');
             end
             
         else
-            this.labels = '';
+            obj.Labels = '';
         end
         
     end % end constructor
@@ -58,36 +58,36 @@ methods
 end
 
 methods
-    function optimizationStarted(this, src, event) %#ok<*INUSD>
+    function optimizationStarted(obj, src, event) %#ok<*INUSD>
         % Initialize the parameter array
-        params = src.getParameters();
-        this.paramValues = params;
+        params = getParameters(src);
+        obj.ParamValues = params;
     end
     
-    function optimizationIterated(this, src, event)
+    function optimizationIterated(obj, src, event)
         
         % append current parameters to the parameter array
         params = src.getParameters();
-        this.paramValues = [this.paramValues ; params];
+        obj.ParamValues = [obj.ParamValues ; params];
         
-        figure(this.figureHandle);
-        nRows = this.plotMatrix(1);
-        nCols = this.plotMatrix(2);
-        nv = size(this.paramValues, 1);
+        figure(obj.FigureHandle);
+        nRows = obj.PlotMatrix(1);
+        nCols = obj.PlotMatrix(2);
+        nv = size(obj.ParamValues, 1);
         
-        for i=1:length(params)
+        for i = 1:length(params)
             subplot(nRows, nCols, i);
-            plot(1:nv, this.paramValues(:, i));
+            plot(1:nv, obj.ParamValues(:, i));
             xlim([0 nv]);
             
-            if ~isempty(this.labels)
-                title(this.labels{i});
+            if ~isempty(obj.Labels)
+                title(obj.Labels{i});
             end
         end
         drawnow;
     end
     
-    function optimizationTerminated(this, src, event)
+    function optimizationTerminated(obj, src, event)
     end
     
 end

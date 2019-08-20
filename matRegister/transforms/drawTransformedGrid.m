@@ -1,5 +1,5 @@
 function drawTransformedGrid(transfo, lx, ly, varargin)
-%DRAWTRANSFORMEDGRID Draw the result of a transform applied to a grid
+% Draw the result of a transform applied to a grid.
 %
 %   usage:
 %   drawTransformedGrid(T, LX, LY)

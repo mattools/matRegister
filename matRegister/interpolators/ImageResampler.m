@@ -1,5 +1,5 @@
 classdef ImageResampler < handle
-%IMAGERESAMPLER  Resample an image using a given spatial basis
+%IMAGERESAMPLER  Resample an image using a given spatial basis.
 %
 %   RES = ImageResampler(LX, LY);
 %   RES = ImageResampler(LX, LY, LZ);
@@ -18,33 +18,33 @@ classdef ImageResampler < handle
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-06-03,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 %% Declaration of class properties
 properties
     % The size of the resulting image
-    outputSize = [];
+    OutputSize = [];
 
     % Data type of resulting image, default is 'uint8'.
-    outputType = 'uint8';
+    OutputType = 'uint8';
     
     % physical origin of image first point
-    origin = [];
+    Origin = [];
 
     % Physical spacing between pixels
-    spacing = [];
+    Spacing = [];
 end
 
 %TODO: specify output type;
 
 %% Constructors
 methods
-    function this = ImageResampler(varargin)
+    function obj = ImageResampler(varargin)
         % Constructs a new ImageResampler object.
 
         if isa(varargin{1}, 'ImageResampler')
@@ -52,30 +52,30 @@ methods
 
             % copy each field
             var = varargin{1};
-            this.outputSize = var.outputSize;
-            this.outputType = var.outputType;
-            this.origin     = var.origin;
-            this.spacing    = var.spacing;
+            obj.OutputSize = var.OutputSize;
+            obj.OutputType = var.OutputType;
+            obj.Origin     = var.Origin;
+            obj.Spacing    = var.Spacing;
             
         elseif isa(varargin{1}, 'Image')
             % Initialize fields from a given image
             img = varargin{1};
-            this.outputSize = size(img);
-            this.outputType = img.getDataType();
-            this.origin     = img.origin;
-            this.spacing    = img.spacing;
+            obj.OutputSize = size(img);
+            obj.OutputType = img.getDataType();
+            obj.Origin     = img.Origin;
+            obj.Spacing    = img.Spacing;
             
         elseif isnumeric(varargin{1})
             % Gives lx and ly
             nbDims = length(varargin);
-            this.outputSize = zeros(1, nbDims);
-            this.origin     = zeros(1, nbDims);
-            this.spacing    = ones(1, nbDims);
+            obj.OutputSize = zeros(1, nbDims);
+            obj.Origin     = zeros(1, nbDims);
+            obj.Spacing    = ones(1, nbDims);
             for i=1:nbDims
                 var = varargin{i};
-                this.outputSize(i)  = length(var);
-                this.origin(i)      = var(1);
-                this.spacing(i)     = var(2)-var(1);
+                obj.OutputSize(i)  = length(var);
+                obj.Origin(i)      = var(1);
+                obj.Spacing(i)     = var(2)-var(1);
             end
         else
             error('Wrong parameter when constructing an ImageResampler');
@@ -84,27 +84,27 @@ methods
 end % methods
 
 methods
-    function setOutputType(this, dataType)
+    function setOutputType(obj, dataType)
         % Specifiy the type of resulting image
-        this.outputType = dataType;
+        obj.OutputType = dataType;
     end
     
-    function type = getOutputType(this)
+    function type = getOutputType(obj)
         % Return the type of resulting image
-        type = this.outputType;
+        type = obj.OutputType;
     end
     
-    function img2 = resample(this, varargin)
+    function img2 = resample(obj, varargin)
         % Resample an image, or an interpolated image
         %
-        % IMG2 = this.resample(IMGFUN);
+        % IMG2 = obj.resample(IMGFUN);
         % Use image function IMGFUN as reference. IMGFUN is an instance of 
         % ImageFunction, such as ImageInterpolator.
         %
-        % IMG2 = this.resample(IMG);
+        % IMG2 = obj.resample(IMG);
         % Resample image IMG using linear interpolation.
         %
-        % IMG2 = this.resample(IMG, TYPE);  
+        % IMG2 = obj.resample(IMG, TYPE);  
         % Resample image with specified interpolation type. TYPE can be:
         % 'linear' (default)
         % 'nearest', but is only supported for 2D images.
@@ -140,29 +140,29 @@ methods
         
         
         % precompute positions for 2D
-        lx = (0:this.outputSize(1)-1)*this.spacing(1) + this.origin(1);
-        ly = (0:this.outputSize(2)-1)*this.spacing(2) + this.origin(2);
+        lx = (0:obj.OutputSize(1)-1)*obj.Spacing(1) + obj.Origin(1);
+        ly = (0:obj.OutputSize(2)-1)*obj.Spacing(2) + obj.Origin(2);
         
         % different processing depending on image dimension
-        outputDim = length(this.outputSize);
+        outputDim = length(obj.OutputSize);
         if outputDim==2
             % Process 2D images
             
             [x, y] = meshgrid(lx, ly);
 
-            vals = zeros(size(x), this.outputType);
+            vals = zeros(size(x), obj.OutputType);
         
-            vals(:) = imgFun.evaluate([x(:) y(:)]);
+            vals(:) = evaluate(imgFun, [x(:) y(:)]);
             
         elseif outputDim==3
             % Process 3D images
             
-            lz = (0:this.outputSize(3)-1)*this.spacing(3) + this.origin(3);
+            lz = (0:obj.OutputSize(3)-1)*obj.Spacing(3) + obj.Origin(3);
             [x, y, z] = meshgrid(lx, ly, lz);
             
-            vals = zeros(size(x), this.outputType);
+            vals = zeros(size(x), obj.OutputType);
         
-            vals(:) = imgFun.evaluate([x(:) y(:) z(:)]);
+            vals(:) = evaluate(imgFun, [x(:) y(:) z(:)]);
             
         else
             % TODO: implement for greater dimensions ?
@@ -173,8 +173,8 @@ methods
         img2 = Image.create(vals);
         
         % copy spatial calibration info to image
-        img2.origin = this.origin;
-        img2.spacing = this.spacing;
+        img2.Origin = obj.Origin;
+        img2.Spacing = obj.Spacing;
     end
 
 end % abstract methods

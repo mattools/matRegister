@@ -18,48 +18,48 @@ classdef MultiLinearSearchOptimizer < Optimizer
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-06,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 %% Properties
 properties
-    nIter = 200;
+    NIters = 200;
     
-    directionSet;
+    DirectionSet;
     
     % TODO: change to another name/type of parameter
-    verbose =true;
+    Verbose =true;
 end
 
 %% Constructor
 methods
-    function this = MultiLinearSearchOptimizer(varargin)
-        this = this@Optimizer(varargin{:});
+    function obj = MultiLinearSearchOptimizer(varargin)
+        obj = obj@Optimizer(varargin{:});
     end
 end
 
 %% General methods
 methods
-    function directionSet = getDirectionSet(this)
-        directionSet = this.directionSet;
+    function directionSet = getDirectionSet(obj)
+        directionSet = obj.DirectionSet;
     end
     
-    function setDirectionSet(this, newDirectionSet)
-        this.directionSet = newDirectionSet;
+    function setDirectionSet(obj, newDirectionSet)
+        obj.DirectionSet = newDirectionSet;
     end
 end
 
 %% Private methods
 methods (Access = private)
-    function initDirectionSet(this)
+    function initDirectionSet(obj)
         % init a new set of direction to span the paramater space
         
         % allocate memory
-        nParams = length(this.params);
+        nParams = length(obj.Params);
         set = zeros(nParams+ceil(nParams/2), nParams);
         
         % init main directions (isothetic directions)
@@ -71,12 +71,12 @@ methods (Access = private)
         set(nParams+1:end, :) = tmp;
 
         % process last line
-        if floor(nParams/2)~=ceil(nParams/2)
+        if floor(nParams/2) ~= ceil(nParams/2)
             set(end, 1) = 1;
         end
         
         % stores result
-        this.directionSet = set;
+        obj.DirectionSet = set;
     end
 end
 

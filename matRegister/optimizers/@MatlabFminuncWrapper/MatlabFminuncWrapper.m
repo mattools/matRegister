@@ -8,24 +8,24 @@ classdef MatlabFminuncWrapper < Optimizer
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-01-12,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
 
 %% Properties
 properties
-   nIter = 200;
+   NIters = 200;
 end 
 
 %% Constructor
 methods
-    function this = MatlabFminuncWrapper(varargin)
+    function obj = MatlabFminuncWrapper(varargin)
         
-        this = this@Optimizer();
+        obj = obj@Optimizer();
     end % constructor 
 
 end % construction function

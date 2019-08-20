@@ -1,4 +1,4 @@
-function [params, value] = startOptimization(this, varargin)
+function [params, value] = startOptimization(obj, varargin)
 %STARTOPTIMIZATION  Run the optimizer, and return optimized parameters
 %
 %   PARAMS = startOptimization(OPTIM)
@@ -12,20 +12,20 @@ function [params, value] = startOptimization(this, varargin)
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-11-24,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 % Notify beginning of optimization
-this.notify('OptimizationStarted');
+notify(obj, 'OptimizationStarted');
 
 % get initial parameters
-params = this.params;
-if ~isempty(this.initialParameters)
-    params = this.initialParameters;
+params = obj.Params;
+if ~isempty(obj.InitialParameters)
+    params = obj.InitialParameters;
 end
 if ~isempty(varargin)
     params = varargin{1};
@@ -33,7 +33,7 @@ end
 
 % extract variability
 nParams = length(params);
-variab  = this.parameterVariability;
+variab  = obj.ParameterVariability;
 
 if isscalar(variab)
     variab = repmat(variab, 1, nParams);
@@ -42,16 +42,16 @@ if length(variab) ~= nParams
     warning('oolip:NonInitializedParameter',...
         'Variability not specified, use default variability');
     variab = ones(size(params));
-    this.parameterVariability = variab;
+    obj.ParameterVariability = variab;
 end
 
 % generate nValues values between 0 and 1, avoiding bounds
-pv = linspace(0, 1, this.nValues+2);
+pv = linspace(0, 1, obj.NValues+2);
 pv = pv(2:end-1);
 
-for i = 1:this.nIter
-    if strcmp(this.displayMode, 'iter')
-        disp(sprintf('iter %d/%d', i, this.nIter)); %#ok<DSPS>
+for i = 1:obj.NIters
+    if strcmp(obj.DisplayMode, 'iter')
+        disp(sprintf('iter %d/%d', i, obj.NIters)); %#ok<DSPS>
     end
 
     for p = 1:nParams
@@ -60,28 +60,28 @@ for i = 1:this.nIter
         paramValues = norminv(pv, params(p), variab(p));
         
         % compute the metric for the given param
-        res = zeros(this.nValues, 1);
-        for k = 1:this.nValues
+        res = zeros(obj.NValues, 1);
+        for k = 1:obj.NValues
             params(p) = paramValues(k);
-            res(k) = this.costFunction(params);
+            res(k) = obj.CostFunction(params);
         end
         
         [value, bestK] = min(res);
         params(p) = paramValues(bestK);
         
         % update optimizer internal state
-        this.params = params;
-        this.value  = value;
+        obj.Params = params;
+        obj.Value  = value;
         
         % notify
-        this.notify('OptimizationIterated');
+        notify(obj, 'OptimizationIterated');
     end 
 end
 
 % update inner data
-this.params = params;
-this.value = value;
+obj.Params = params;
+obj.Value = value;
 
 % Notify the end of optimization
-this.notify('OptimizationTerminated');
+notify(obj, 'OptimizationTerminated');
 

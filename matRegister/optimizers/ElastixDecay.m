@@ -1,5 +1,5 @@
 classdef ElastixDecay < DecayFunction
-%ELASTIXDECAY Decay function used in Elastix software
+% Decay function used in Elastix software.
 %
 %   Class ElastixDecay
 %
@@ -26,28 +26,28 @@ classdef ElastixDecay < DecayFunction
 
 %% Properties
 properties
-    a_num;
-    a_denom = 50;
-    alpha = 0.602;
+    A_num;
+    A_denom = 50;
+    Alpha = 0.602;
 end % end properties
 
 
 %% Constructor
 methods
-    function this = ElastixDecay(varargin)
+    function obj = ElastixDecay(varargin)
         % Constructor for ElastixDecay class
         
         if nargin > 0
             var = varargin{1};
             if isa(var, 'ElastixDecay')
                 % Copy constructor
-                this.a_num      = var.a_num;
-                this.a_denom    = var.a_denom;
-                this.alpha      = var.alpha;
+                obj.A_num      = var.A_num;
+                obj.A_denom    = var.A_denom;
+                obj.Alpha      = var.Alpha;
                 
             elseif isnumeric(var)
                 % initialisation constructor
-                this.a_num = var;
+                obj.A_num = var;
                 
             else
                 error('Wrong type of input');
@@ -56,10 +56,10 @@ methods
             varargin(1) = [];
             
             if ~isempty(varargin)
-                this.a_denom = varargin{1};
+                obj.A_denom = varargin{1};
             end
             if length(varargin) > 1
-                this.alpha = varargin{2};
+                obj.Alpha = varargin{2};
             end
         end
     end
@@ -69,8 +69,8 @@ end % end constructors
 
 %% Methods
 methods
-    function alpha = evaluate(this, iter)
-        alpha = this.a_num ./ (this.a_denom + iter) .^ this.alpha;
+    function alpha = evaluate(obj, iter)
+        alpha = obj.A_num ./ (obj.A_denom + iter) .^ obj.Alpha;
     end
 end % end methods
 

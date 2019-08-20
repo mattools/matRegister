@@ -1,5 +1,5 @@
 classdef OptimizationListener < handle
-%OPTIMIZATIONLISTENER Base class for listening to Optimization events
+%OPTIMIZATIONLISTENER Base class for listening to Optimization events.
 %
 %   output = OptimizationListener(input)
 %
@@ -11,13 +11,13 @@ classdef OptimizationListener < handle
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@nantes.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-27,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 %% Constructor
 methods
-    function this = OptimizationListener(varargin)
+    function obj = OptimizationListener(varargin)
         % Default constructeur        
     end % end constructor
     
@@ -25,16 +25,16 @@ end
 
 %% General methods
 methods
-    function optimizationStarted(this, src, event)        %#ok<*INUSD,*MANU>
-        % Overload this function to handle the 'OptimizationStarted' event
+    function optimizationStarted(obj, src, event)        %#ok<*INUSD,*MANU>
+        % Overload obj function to handle the 'OptimizationStarted' event
     end
     
-    function optimizationIterated(this, src, event)        
-        % Overload this function to handle the 'OptimizationIterated' event
+    function optimizationIterated(obj, src, event)        
+        % Overload obj function to handle the 'OptimizationIterated' event
     end
     
-    function optimizationTerminated(this, src, event)        
-        % Overload this function to handle the 'OptimizationTerminated' event
+    function optimizationTerminated(obj, src, event)        
+        % Overload obj function to handle the 'OptimizationTerminated' event
     end
     
 end % general methods

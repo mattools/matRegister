@@ -27,30 +27,30 @@ classdef NelderMeadSimplexOptimizer < Optimizer
 %% Properties
 properties
     % maximum number of iterations
-    nIter = 200;
+    NIters = 200;
     
     % tolerance on function value 
-    ftol = 1e-5;
+    FTol = 1e-5;
     
     % delta in each direction
-    deltas; 
+    Deltas; 
     
     % the inner simplex, as a (ND+1)-by-ND array
-    simplex;
+    Simplex;
     
     % the vector of function evaluations
-    evals;
+    Evals;
     
     % the sum of the vertex coordinates
-    psum;
+    Psum;
     
     % number of function evaluation
-    numFunEvals;
+    NumFunEvals;
 end
 
 %% Constructor
 methods
-    function this = NelderMeadSimplexOptimizer(varargin)
+    function obj = NelderMeadSimplexOptimizer(varargin)
         %Create a new Simplex Optimizer
         %
         % OPT = NelderMeadSimplexOptimizer();
@@ -67,7 +67,7 @@ methods
         % vector the same size as PARAMS0, with values 1e-5.
         %
         
-        this = this@Optimizer();
+        obj = obj@Optimizer();
         
         if nargin==0
             return;
@@ -75,13 +75,12 @@ methods
         
         if nargin >= 2
             % setup cost function
-            this.setCostFunction(varargin{1});
+            setCostFunction(obj, varargin{1});
 
             % setup initial optimal value
             params = varargin{2};
-            this.setInitialParameters(params);
-            this.setParameters(params);
-
+            setInitialParameters(obj, params);
+            setParameters(obj, params);
         end
 
         % setup vector of variation amounts in each direction
@@ -92,9 +91,9 @@ methods
         end
         
         if length(del) == 1
-            this.deltas = del * ones(size(params));
+            obj.Deltas = del * ones(size(params));
         else
-            this.deltas = del;
+            obj.Deltas = del;
         end
         
     end % end of constructor
@@ -102,46 +101,46 @@ end
 
 %% Private functions
 methods (Access = private)
-    function initializeSimplex(this)
+    function initializeSimplex(obj)
         % Initialize the simplex. 
         % This is a (ND+1)-by-ND array containing the coordinates of a
         % vertex on each row.
         
-        if isempty(this.params)
-            if isempty(this.initialParameters)
-                error('oolip:NelderMeadSimplexOptimizer:initialization', ...
+        if isempty(obj.Params)
+            if isempty(obj.InitialParameters)
+                error('MatRegister:NelderMeadSimplexOptimizer:initialization', ...
                     'Need to specify initial parameters');
             end
-            this.params = this.initialParameters;
+            obj.Params = obj.InitialParameters;
         end
         
-        nd = length(this.params);
+        nd = length(obj.Params);
         
         % ensure delta has valid value
-        if isempty(this.deltas)
-            this.deltas = 1e-5 * ones(1, nd);
+        if isempty(obj.Deltas)
+            obj.Deltas = 1e-5 * ones(1, nd);
         end
         
         % initialize vertex coordinates
-        this.simplex = repmat(this.params, nd+1, 1);
-        for i=1:nd
-            this.simplex(i+1, i) = this.params(i) + this.deltas(i);
+        obj.Simplex = repmat(obj.Params, nd+1, 1);
+        for i = 1:nd
+            obj.Simplex(i+1, i) = obj.Params(i) + obj.Deltas(i);
         end
         
         % compute sum of vertex coordinates
-        this.psum = sum(this.simplex, 1);
+        obj.Psum = sum(obj.Simplex, 1);
 
         % evaluate function for each vertex of the simplex
-        this.evals = zeros(nd+1, 1);
+        obj.Evals = zeros(nd+1, 1);
         for i=1:nd+1
-            this.evals(i) = this.costFunction(this.simplex(i, :));
+            obj.Evals(i) = obj.CostFunction(obj.Simplex(i, :));
         end
         
-        this.numFunEvals = 0;
+        obj.NumFunEvals = 0;
 
    end
     
-    function [ptry, ytry] = evaluateReflection(this, ihi, fac)
+    function [ptry, ytry] = evaluateReflection(obj, ihi, fac)
         % helper function that evaluates the value of the function at the
         % reflection of point with index ihi
         %
@@ -153,36 +152,36 @@ methods (Access = private)
         % YTRY is the function evaluation at the newly evaluated point
         
         % compute weighting factors
-        nd = length(this.params);
+        nd = length(obj.Params);
         fac1 = (1 - fac) / nd;
         fac2 = fac1 - fac;
          
         % position of the new candidate point
-        ptry = this.psum * fac1 - this.simplex(ihi, :) * fac2;
+        ptry = obj.Psum * fac1 - obj.Simplex(ihi, :) * fac2;
         
         % evaluate function value
-        ytry = this.costFunction(ptry);
-        this.numFunEvals = this.numFunEvals + 1;
+        ytry = obj.CostFunction(ptry);
+        obj.NumFunEvals = obj.NumFunEvals + 1;
 
     end
 
-    function updateSimplex(this, ihi, pTry, yTry)
-        this.evals(ihi) = yTry;
-        this.psum = this.psum - this.simplex(ihi, :) + pTry ;
-        this.simplex(ihi, :) = pTry;
+    function updateSimplex(obj, ihi, pTry, yTry)
+        obj.Evals(ihi) = yTry;
+        obj.Psum = obj.Psum - obj.Simplex(ihi, :) + pTry ;
+        obj.Simplex(ihi, :) = pTry;
     end
     
-    function contractSimplex(this, indLow)
+    function contractSimplex(obj, indLow)
         
-        nd = length(this.params);
+        nd = length(obj.Params);
         
-        pLow = this.simplex(indLow,:);
+        pLow = obj.Simplex(indLow,:);
         for i = [1:indLow-1 indLow+1:nd]
-            this.simplex(i, :) = (this.simplex(i,:) + pLow) * .5;
-            this.evals(i) = this.costFunction(this.simplex(i,:));
+            obj.Simplex(i, :) = (obj.Simplex(i,:) + pLow) * .5;
+            obj.Evals(i) = obj.CostFunction(obj.Simplex(i,:));
         end
         
-        this.numFunEvals = this.numFunEvals + nd;
+        obj.NumFunEvals = obj.NumFunEvals + nd;
 
     end
     

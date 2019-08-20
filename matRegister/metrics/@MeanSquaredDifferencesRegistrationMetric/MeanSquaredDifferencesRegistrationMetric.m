@@ -8,22 +8,22 @@ classdef MeanSquaredDifferencesRegistrationMetric < RegisteredImageMetric
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-27,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
  
 %% Properties
 properties
     % The gradient image
-    gradientImage;
+    GradientImage;
 end
  
 %% Constructor
 methods
-    function this = MeanSquaredDifferencesRegistrationMetric(varargin)
+    function obj = MeanSquaredDifferencesRegistrationMetric(varargin)
         
         grad = [];
         if nargin==5
@@ -33,8 +33,8 @@ methods
             inputs = varargin;
         end
         
-        this = this@RegisteredImageMetric(inputs{:});
-        this.gradientImage = grad;
+        obj = obj@RegisteredImageMetric(inputs{:});
+        obj.GradientImage = grad;
         
     end % constructor
  
@@ -42,23 +42,23 @@ end % construction function
 
 %% Some general usage methods
 methods
-    function transform = getTransform(this)
-        transform = this.transform;
+    function transform = getTransform(obj)
+        transform = obj.Transform;
     end
     
-    function setTransform(this, transform)
-        this.transform = transform;
+    function setTransform(obj, transform)
+        obj.Transform = transform;
         % build the backward transformed image
-        this.transformedImage = BackwardTransformedImage(...
-            this.movingImage, this.transform);
+        obj.TransformedImage = BackwardTransformedImage(...
+            obj.MovingImage, obj.Transform);
     end
     
-    function gradient = getGradientImage(this)
-        gradient = this.gradientImage;
+    function gradient = getGradientImage(obj)
+        gradient = obj.GradientImage;
     end
     
-    function setGradientImage(this, gradient)
-        this.gradientImage = gradient ;
+    function setGradientImage(obj, gradient)
+        obj.GradientImage = gradient ;
     end 
         
 end

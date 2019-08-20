@@ -1,4 +1,4 @@
-function [params, value] = startOptimization(this)
+function [params, value] = startOptimization(obj)
 %STARTOPTIMIZATION  Run the optimizer, and return optimized parameters
 %
 %   PARAMS = startOptimization(OPTIM)
@@ -15,21 +15,21 @@ function [params, value] = startOptimization(this)
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-11-19,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 % Notify beginning of optimization
-this.notify('OptimizationStarted');
+notify(obj, 'OptimizationStarted');
 
-params = this.params;
-if ~isempty(this.initialParameters)
-    params = this.initialParameters;
+params = obj.Params;
+if ~isempty(obj.InitialParameters)
+    params = obj.InitialParameters;
 end
 
 nParams = length(params);
-bounds = this.bounds;
+bounds = obj.Bounds;
 
 if size(bounds, 1)~=nParams || size(bounds, 2)~=2
     warning('oolip:NonInitializedParameter',...
@@ -38,36 +38,36 @@ if size(bounds, 1)~=nParams || size(bounds, 2)~=2
 end
 
 
-for i = 1:this.nIter
+for i = 1:obj.NIters
     for p = 1:nParams
         % choose a set of values
         par0 = bounds(p, 1);
         par1 = bounds(p, 2);
-        paramValues = linspace(par0, par1, this.nValues);
+        paramValues = linspace(par0, par1, obj.NValues);
         
         % compute the metric for the given param
-        res = zeros(this.nValues, 1);
-        for k = 1:this.nValues
+        res = zeros(obj.NValues, 1);
+        for k = 1:obj.NValues
             params(p) = paramValues(k);
-            res(k) = this.costFunction(params);
+            res(k) = obj.CostFunction(params);
         end
         
         [value, bestK] = min(res);
         params(p) = paramValues(bestK);
         
         % update optimizer internal state
-        this.params = params;
-        this.value  = value;
+        obj.Params = params;
+        obj.Value  = value;
         
         % notify
-        this.notify('OptimizationIterated');
+        notify(obj, 'OptimizationIterated');
     end 
 end
 
 % update inner data
-this.params = params;
-this.value = value;
+obj.Params = params;
+obj.Value = value;
 
 % Notify the end of optimization
-this.notify('OptimizationTerminated');
+notify(obj, 'OptimizationTerminated');
 

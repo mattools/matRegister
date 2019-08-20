@@ -1,5 +1,5 @@
-function res = computeValue(this)
-%COMPUTEVALUE Compute metric value 
+function res = computeValue(obj)
+%COMPUTEVALUE Compute metric value.
 %
 %   output = computeValue(input)
 %
@@ -8,27 +8,27 @@ function res = computeValue(this)
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-11-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 % extract number of images
-nImages = length(this.images);
+nImages = length(obj.Images);
 
 % number of points
-nPoints = size(this.points, 1);
+nPoints = size(obj.Points, 1);
 
 % all values and flags
 allValues   = zeros(nPoints, nImages);
 allIsInside = false(nPoints, nImages);
 
 % update values 
-for i=1:nImages
-    [val ind] = evaluate(this.images{i}, this.points);
+for i = 1:nImages
+    [val, ind] = evaluate(obj.Images{i}, obj.Points);
     allValues(:,i) = val;
     allIsInside(:,i) = ind;
 end

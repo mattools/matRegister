@@ -1,15 +1,15 @@
 classdef ImageFunction < handle
-%IMAGEFUNCTION Represent any object that determines value from an image
+%IMAGEFUNCTION Represent any object that determines value from an image.
 %   
 %   Serves as a base class for Interpolators.
 %
 %   See also
 %   ImageInterpolator
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-08,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -18,7 +18,7 @@ end
 
 %% Static methods
 methods(Access=protected, Static)
-    function [coords dim varargin] = mergeCoordinates(varargin)
+    function [coords, dim, varargin] = mergeCoordinates(varargin)
         %MERGECOORDINATES Merge all coordinates into a single N-by-2 array
         % 
         % [coords dim] = mergeCoordinates(X, Y)
@@ -82,7 +82,7 @@ methods(Access=protected, Static)
     end
     
     function varargout = splitCoordinates(coords, dim)
-        %SPLITCOORDINATES Split a coordinate array into a cell array
+        %SPLITCOORDINATES Split a coordinate array into a cell array.
         % 
         % [X Y] = splitCoordinates(COORDS, DIM);
         % [X Y Z] = splitCoordinates(COORDS, DIM);
@@ -98,7 +98,7 @@ methods(Access=protected, Static)
         varargout = cell(1, nDims);
         
         % compute each coordinate array
-        for i=1:nDims
+        for i = 1:nDims
             varargout{i} = reshape(coords(:,i), dim);
         end
     end
@@ -116,20 +116,20 @@ end % abstract methods
 %% General methods
 methods
     
-    function res = resample(this, varargin)
+    function res = resample(obj, varargin)
         % Evaluates the function for a set of positions and create new image
         %
-        % RES = this.resample(BASE_IMAGE);
+        % RES = obj.resample(BASE_IMAGE);
         % Specify coordinates from a reference image
         %
-        % RES = this.resample(LX, LY);
+        % RES = obj.resample(LX, LY);
         % specify coordinate using two position vectors
         %
         
         assert (~isempty(varargin), 'Should specify at least one argument');
 
         sampler = ImageResampler(varargin{:});
-        res = sampler.resample(this);
+        res = sampler.resample(obj);
     end
     
 end % general methods

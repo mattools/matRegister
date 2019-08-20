@@ -9,30 +9,31 @@ classdef NearestNeighborGradientEvaluator < ImageFunction
 %   See also
 %
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-12-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 properties
     % the image whom gradient will be evaluated
-    image;
+    Image;
     
     % output type of interpolation, double by default
-    outputType = 'double';
+    OutputType = 'double';
 
     % default value for points outside image
-    defaultValue = NaN;
+    DefaultValue = NaN;
     
     % the filters used for gradient evaluation in each direction.
     % should be a cell array with as many columns as image dimension.
-    filters;
+    Filters;
 end
 
 %% Constructors
 methods
-    function this = NearestNeighborGradientEvaluator(varargin)
+    function obj = NearestNeighborGradientEvaluator(varargin)
        
         if nargin == 0
             return;
@@ -41,40 +42,40 @@ methods
         % extract image to interpolate
         var = varargin{1};
         if isa(var, 'NearestNeighborGradientEvaluator')
-            this.image = var.image;
+            obj.Image = var.Image;
         elseif isa(var, 'Image')
-            this.image = var;
+            obj.Image = var;
         end
         varargin(1) = [];
         
-        if this.image.getChannelNumber() > 1
+        if channelNumber(obj.Image) > 1
             error('Gradient of vector images is not supported');
         end
         
         % setup default values depending on image dimension
-        nd = getDimension(this.image);
+        nd = ndims(obj.Image);
         switch nd
             case 1
-                this.filters = {[1 0 -1]'};
+                obj.Filters = {[1 0 -1]'};
             case 2
                 sx = fspecial('sobel')'/8;
-                this.filters = {sx, sx'};
+                obj.Filters = {sx, sx'};
             case 3
-                [sx sy sz] = Image.create3dGradientKernels();
-                this.filters = {sx, sy, sz};
+                [sx, sy, sz] = Image.create3dGradientKernels();
+                obj.Filters = {sx, sy, sz};
         end
         
         % parse user specified options
         while length(varargin) > 1
             paramName = varargin{1};
             if strcmpi(paramName, 'defaultValue')
-                this.defaultValue = varargin{2};
+                obj.DefaultValue = varargin{2};
                 
             elseif strcmpi(paramName, 'filters')
-                this.defaultValue = varargin{2};
+                obj.Filters = varargin{2};
                 
             elseif strcmpi(paramName, 'outputType')
-                this.outputType = varargin{2};
+                obj.OutputType = varargin{2};
                 
             else
                 error(['Unknown parameter name: ' paramName]);

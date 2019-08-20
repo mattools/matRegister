@@ -14,10 +14,10 @@ function value = evaluateSSDAndMotionDeviationValue(params, tim1, tim2, points, 
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-09-28,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -27,17 +27,17 @@ function value = evaluateSSDAndMotionDeviationValue(params, tim1, tim2, points, 
 n = length(params);
 
 % update each transform
-tim1.transform.setParameters(params(1:n/2));
-tim2.transform.setParameters(params(n/2+1:end));
+setParameters(tim1.Transform, params(1:n/2));
+setParameters(tim2.Transform, params(n/2+1:end));
 
 
 %% Compute metric value 
 
 % compute values in image 1
-[values1 inside1] = tim1.evaluate(points);
+[values1, inside1] = evaluate(tim1, points);
 
 % compute values in image 2
-[values2 inside2] = tim2.evaluate(points);
+[values2, inside2] = evaluate(tim2, points);
 
 % keep only valid values
 inds = inside1 & inside2;
@@ -49,8 +49,8 @@ metricValue = sum(diff);
 
 %% Compute transform regularisation
 
-regul1 = computeMotionDeviation(tim1.transform);
-regul2 = computeMotionDeviation(tim2.transform);
+regul1 = computeMotionDeviation(tim1.Transform);
+regul2 = computeMotionDeviation(tim2.Transform);
 
 regulValue = regul1^2 + regul2^2;
 

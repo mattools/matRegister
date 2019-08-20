@@ -8,18 +8,18 @@ classdef MeanSquaresImageToImageMetric < ImageToImageMetric
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-08-12,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 %% Constructor
 methods
-    function this = MeanSquaresImageToImageMetric(varargin)
+    function obj = MeanSquaresImageToImageMetric(varargin)
         % calls the parent constructor
-        this = this@ImageToImageMetric(varargin{:});
+        obj = obj@ImageToImageMetric(varargin{:});
         
     end % constructor
     
@@ -27,14 +27,14 @@ end % methods
 
 %% Implemented methods
 methods
-    function [res isInside] = computeValue(this)
+    function [res, isInside] = computeValue(obj)
         % compute metric value.
         
         % compute values in image 1
-        [values1 inside1] = this.img1.evaluate(this.points);
+        [values1, inside1] = evaluate(obj.Img1, obj.Points);
         
         % compute values in image 2
-        [values2 inside2] = this.img2.evaluate(this.points);
+        [values2, inside2] = evaluate(obj.Img2, obj.Points);
         
         % keep only valid values
         isInside = inside1 & inside2;
@@ -44,9 +44,9 @@ methods
         res = mean(diff);
     end
     
-    function [res grad isInside] = computeValueAndGradient(this, transfo, gx, gy)
+    function [res, grad, isInside] = computeValueAndGradient(obj, transfo, gx, gy)
         % compute metric value and gradient
-        % [RES DERIV] = this.computeValue(MODEL);
+        % [RES DERIV] = obj.computeValue(MODEL);
         %
         % Example:
         % ssdMetric = SSDMetricCalculator(img1, img2, dx1, dy1);
@@ -55,10 +55,10 @@ methods
         %
         
         % compute values in image 1
-        [values1 inside1] = this.img1.evaluate(this.points);
+        [values1, inside1] = evaluate(obj.Img1, obj.Points);
         
         % compute values in image 2
-        [values2 inside2] = this.img2.evaluate(this.points);
+        [values2, inside2] = evaluate(obj.Img2, obj.Points);
                 
         % keep only valid values
         isInside = inside1 & inside2;
@@ -77,18 +77,18 @@ methods
         nbInds = length(inds);
         
         %nPoints = size(points, 1);
-        nParams = length(transfo.getParameters());
+        nParams = length(getParameters(transfo));
         g = zeros(nbInds, nParams);
         
         % convert from physical coordinates to index coordinates
         % (assumes spacing is 1 and origin is 0)
         % also converts from (x,y) to (i,j)
-        points2 = transfo.transformPoint(this.points);
+        points2 = transformPoint(transfo, obj.Points);
         index = round(points2(inds, [2 1]))+1;
         
-        for i=1:length(inds)
+        for i = 1:length(inds)
             % calcule jacobien pour points valides (repere image fixe)
-            jac = transfo.getParametricJacobian(this.points(inds(i),:));
+            jac = getParametricJacobian(transfo, obj.Points(inds(i),:));
             
             % local gradient in moving image
             i1 = index(i, 1);

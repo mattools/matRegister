@@ -8,28 +8,28 @@ classdef SumOfCostFunctions < CostFunction
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-01-06,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
 
 %% Properties
 properties
-    costFunctions;
+    CostFunctions;
 end 
 
 %% Constructor
 methods
-    function this = SumOfCostFunctions(varargin)
+    function obj = SumOfCostFunctions(varargin)
         % Construct a new cost function aggregator
         
         if ~isempty(varargin)
             var = varargin{1};
             if iscell(var)
-                this.costFunctions = var;
+                obj.CostFunctions = var;
             end
         end
         
@@ -39,7 +39,7 @@ end % construction function
 
 %% General methods
 methods
-    function varargout = evaluate(this, params)
+    function varargout = evaluate(obj, params)
         % Evaluate each stored cost function and compute their sum
         %
         % Example
@@ -50,13 +50,13 @@ methods
         % % evaluate value and gradient
         % [F G] = SOCF.evaluate(PARAMS);
         
-        nf = length(this.costFunctions);
+        nFuns = length(obj.CostFunctions);
         
         f = 0;
         if nargout<=1
             % iterate over cost functions
-            for i=1:nf
-                f = f + evaluate(this.costFunction{i}, params);
+            for i = 1:nFuns
+                f = f + evaluate(obj.CostFunction{i}, params);
             end
             
             % format output arguments
@@ -67,8 +67,8 @@ methods
             g = zeros(size(params));
             
             % iterate over cost functions
-            for i=1:nf
-                [fi, gi] = evaluate(this.costFunction{i}, params);
+            for i = 1:nFuns
+                [fi, gi] = evaluate(obj.CostFunction{i}, params);
                 f = f + fi;
                 g = g + gi;
             end

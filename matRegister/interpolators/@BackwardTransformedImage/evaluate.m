@@ -1,4 +1,4 @@
-function [val isInside] = evaluate(this, varargin)
+function [val, isInside] = evaluate(obj, varargin)
 %EVALUATE Evaluate intensity of transformed image at a given physical position
 %
 % This function exists to have an interface comparable to Interpolator
@@ -13,23 +13,23 @@ function [val isInside] = evaluate(this, varargin)
 % X and Y should be the same size. The result VAL has the same size
 % as X and Y.
 %
-% [VAL INSIDE] = interpolator.evaluate(...)
+% [VAL, INSIDE] = interpolator.evaluate(...)
 % Also return a boolean flag the same size as VAL indicating
 % whether or not the given position as located inside the
 % evaluation frame.
 %
 
 % eventually convert inputs to a single nPoints-by-ndims array
-[point dim] = ImageFunction.mergeCoordinates(varargin{:});
+[point, dim] = ImageFunction.mergeCoordinates(varargin{:});
 
 % Compute transformed coordinates
-point = this.transform.transformPoint(point);
+point = transformPoint(obj.Transform, point);
 
 % evaluate interpolated values
-[val isInside] = this.interpolator.evaluate(point);
+[val, isInside] = evaluate(obj.Interpolator, point);
 
 % convert to have the same size as inputs
-elDim = this.interpolator.getElementSize();
+elDim = getElementSize(obj.Interpolator);
 val = reshape(val, [dim elDim]);
 isInside = reshape(isInside, dim);
 

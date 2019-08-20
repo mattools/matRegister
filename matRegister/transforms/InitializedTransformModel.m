@@ -1,5 +1,5 @@
 classdef InitializedTransformModel < ParametricTransform
-% Encapsulation of a parametric and an initial transform
+% Encapsulation of a parametric and an initial transform.
 %
 %   TC = InitializedTransformModel(T0, T1)
 %   T0 is the initial transform, T1 is the transform to optimize. The
@@ -19,38 +19,38 @@ classdef InitializedTransformModel < ParametricTransform
 
 properties
     % the initial transform
-    initial;
+    Initial;
     
     % the parametric transform to optimize
-    transform;
+    Transform;
 end
 
 %% Constructor
 methods
-    function this = InitializedTransformModel(varargin)
+    function obj = InitializedTransformModel(varargin)
         % class constructor
         % T = InitializedTransformModel(T1, T2);
         
         if isa(varargin{1}, 'ComposedTransform') && nargin == 1
             % copy constructor
             var = varargin{1};
-            this.initial = var.initial;
-            this.transform = var.transform;
+            obj.Initial = var.Initial;
+            obj.Transform = var.Transform;
             
         elseif nargin == 2
             % initialization constructor
-            this.initial = varargin{1};
-            this.transform = varargin{2};
+            obj.Initial = varargin{1};
+            obj.Transform = varargin{2};
             
         else
             error('Wrong parameter when constructing an initialized transform model');
         end
         
         % check validity of arguments
-        if ~isa(this.initial, 'Transform')
+        if ~isa(obj.Initial, 'Transform')
             error('initial transform must be an instance of Transform');
         end
-        if ~isa(this.transform, 'ParametricTransform')
+        if ~isa(obj.Transform, 'ParametricTransform')
             error('Last transform must be a ParametricTransform');
         end
         
@@ -64,22 +64,22 @@ end
 % local parameters
 
 methods
-    function p = getParameters(this)
+    function p = getParameters(obj)
         % Returns the parameter vector of the transform
-        p = this.transform.params;
+        p = obj.Transform.Params;
     end
     
-    function setParameters(this, params)
+    function setParameters(obj, params)
         % Changes the parameter vector of the transform
-        this.transform.params = params;
+        obj.Transform.Params = params;
     end
     
-    function Np = getParameterLength(this)
+    function Np = getParameterLength(obj)
         % Returns the length of the vector parameter
-        Np = length(this.transform.params);
+        Np = length(obj.Transform.Params);
     end
     
-    function name = getParameterName(this, paramIndex)
+    function name = getParameterName(obj, paramIndex)
         % Return the name of the i-th parameter
         %
         % NAME = Transfo.getParameterName(PARAM_INDEX);
@@ -93,18 +93,18 @@ methods
         %
         
         % check index is not too high
-        if paramIndex > length(this.transform.params)
+        if paramIndex > length(obj.Transform.Params)
             error('Index greater than the number of parameters');
         end
         
         % return a parameter name if it was initialized
         name = '';
-        if paramIndex <= length(this.transform.paramNames)
-            name = this.transform.paramNames{paramIndex};
+        if paramIndex <= length(obj.Transform.ParamNames)
+            name = obj.Transform.ParamNames{paramIndex};
         end
     end
     
-    function names = getParameterNames(this)
+    function names = getParameterNames(obj)
         % Return the names of all parameters in a cell array of strings
         %
         % NAMES = transfo.getParameterNames();
@@ -116,38 +116,38 @@ methods
         %   'X shift'   'Y shift'
         %
         
-        names = this.transform.paramNames;
+        names = obj.Transform.ParamNames;
     end
     
-    function jacobian = parametricJacobian(this, point, varargin)
+    function jacobian = parametricJacobian(obj, point, varargin)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
 
         % first, transform points
-        point = transformPoint(this.initial, point, varargin{:});
+        point = transformPoint(obj.Initial, point, varargin{:});
         
         % then, compute parametric jacobian of the last transform
-        jacobian = getParametricJacobian(this.transform, point, varargin{:});
+        jacobian = parametricJacobian(obj.Transform, point, varargin{:});
         
     end
 end % methods implementing ParametricTransform interface
 
 %% Methods implementing Transform interface
 methods
-    function point = transformPoint(this, point)
-        point = transformPoint(this.transform, transformPoint(this.initial, point));
+    function point = transformPoint(obj, point)
+        point = transformPoint(obj.Transform, transformPoint(obj.Initial, point));
     end
     
-    function jacobian = jacobianMatrix(this, point, varargin)
+    function jacobian = jacobianMatrix(obj, point, varargin)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
         
-        jacobian = this.initial.getJacobian(point);
-        jacobian = this.transform.getJacobian(point) * jacobian;
+        jacobian = jacobianMatrix(obj.Initial, point);
+        jacobian = jacobianMatrix(obj.Transform, point) * jacobian;
     end
     
-    function dim = getDimension(this)
-        dim = getDimension(this.initial);
+    function dim = getDimension(obj)
+        dim = getDimension(obj.Initial);
     end
 
 end % methods implementing Transform interface
@@ -156,19 +156,19 @@ end % methods implementing Transform interface
 %% Serialization methods
 
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'InitializedTransformModel', ...
-            'initial', toStruct(this.initial), ...
-            'transform', toStruct(this.transform));
+        str = struct('Type', 'InitializedTransformModel', ...
+            'Initial', toStruct(obj.Initial), ...
+            'Transform', toStruct(obj.Transform));
     end
 end
 
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
-        init = Transform.fromStruct(str.initial);
-        transform = Transform.fromStruct(str.transform);
+        init = Transform.fromStruct(str.Initial);
+        transform = Transform.fromStruct(str.Transform);
         transfo = InitializedTransformModel(init, transform);
     end
 end

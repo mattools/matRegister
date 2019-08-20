@@ -41,7 +41,7 @@ rot = createEulerAnglesRotation(10*pi/180, 20*pi/180, 30*pi/180);
 rot2 = recenterTransform3d(rot, [50 80 40]);
 
 % calcul de la surface du cerveau
-[f0 v0] = isosurface(imgCropBin);
+[f0, v0] = isosurface(imgCropBin);
 
 % affiche la surface
 figure(2); clf; hold on;
@@ -80,7 +80,7 @@ I2 = samp.resample(tim);
 imgTransBin = imopen(I2.getBuffer>0, ones([3 3 3]));
 
 % calcul isosurface du resultat
-[ft vt] = isosurface(imgTransBin, .5);
+[ft, vt] = isosurface(imgTransBin, .5);
 
 % affiche en surimpression, les maillages violet et bleu doivent se
 % superposer

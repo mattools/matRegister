@@ -1,5 +1,5 @@
 classdef CenteredTransformAbstract < ParametricTransform 
-%CENTEREDTRANSFORMABSTRACT Add center management to a transform
+% Add center management to a transform.
 %
 %   This class is a skeleton to add the management of center to a transform
 %   class. It is supposed to be derived to more specialized classes.
@@ -9,41 +9,41 @@ classdef CenteredTransformAbstract < ParametricTransform
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-12-02,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 %% Properties
 properties
     % The center of the transform. Initialized to (0,0,0).
-    center = [0 0 0];
+    Center = [0 0 0];
 end
 
 %% Constructor
 methods
     % constructor
-    function this = CenteredTransformAbstract(varargin)
+    function obj = CenteredTransformAbstract(varargin)
         % Create a new centered transform
         % This constructor only initialize the center with the correct
         % dimension.
         %
         % Usage (in constructor if derived classes):
-        % this = this@CenteredTransformAbstract(ND);
+        % obj = obj@CenteredTransformAbstract(ND);
         % Initialize the center at the origin, with Nd dimensions.
         %
-        % this = this@CenteredTransformAbstract(CENTER);
+        % obj = obj@CenteredTransformAbstract(CENTER);
         % Initialize the center with the specified value.
         %
         
         if ~isempty(varargin)
             var = varargin{1};
             if length(var)==1
-                this.center = zeros(1, var);
+                obj.Center = zeros(1, var);
             else
-                this.center = var;
+                obj.Center = var;
             end
         end
     end % constructor
@@ -51,21 +51,21 @@ end
 
 %% Methods
 methods
-    function setCenter(this, center)
+    function setCenter(obj, center)
         % Changes the center of rotation of the transform
-        this.center = center;
+        obj.Center = center;
     end
     
-    function center = getCenter(this)
+    function center = getCenter(obj)
         % Returns the center of rotation of the transform
-        center = this.center;
+        center = obj.Center;
     end
 
 end % methods
 
 %% I/O Methods
 methods
-    function writeToFile(this, file)
+    function writeToFile(obj, file)
         % Write transform parameter to the given file handle
         % Assumes file handle is an instance of FileWriter.
         %
@@ -83,12 +83,12 @@ methods
         end
         
         % Write generic information
-        writeToFile@ParametricTransform(this, file);
+        writeToFile@ParametricTransform(obj, file);
         
         % Add information on transformation center
-        nDims = getDimension(this);
+        nDims = getDimension(obj);
         pattern = ['TransformCenter =', repmat(' %g', 1, nDims) '\n'];
-        fprintf(file, pattern, this.center);
+        fprintf(file, pattern, obj.Center);
         
         % close file
         if closeFile

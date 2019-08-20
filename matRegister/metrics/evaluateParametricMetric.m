@@ -1,5 +1,5 @@
-function [res grad] = evaluateParametricMetric(params, transfo, metric)
-%EVALUATEPARAMETRICMETRIC Function handle for wrapping metrics
+function [res, grad] = evaluateParametricMetric(params, transfo, metric)
+% Function handle for wrapping metrics.
 %
 %   VAL = evaluateParametricMetric(PARAMS, TRANSFO, METRIC)
 %   Update the parametric transform TRANSFO with the given parameters, then
@@ -42,19 +42,20 @@ function [res grad] = evaluateParametricMetric(params, transfo, metric)
 %         54.4077
 %   
 %   See also
-%   SimplexRegistration/register
+%     SimplexRegistration/register
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-08-12,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
-transfo.setParameters(params);
+setParameters(transfo, params);
 
-if nargout>1
-    [res grad] = metric.computeValueAndGradient();
+if nargout > 1
+    [res, grad] = computeValueAndGradient(metric);
 else
-    res = metric.computeValue();
+    res = computeValue(metric);
 end

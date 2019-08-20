@@ -33,5 +33,5 @@ transfo = InitializedTransformModel(init, trans);
 
 transfo2 = InitializedTransformModel.fromStruct(toStruct(transfo));
 assertTrue(isa(transfo2, 'InitializedTransformModel'));
-assertTrue(isa(transfo2.initial, 'Transform'));
-assertTrue(isa(transfo2.transform, 'ParametricTransform'));
+assertTrue(isa(transfo2.Initial, 'Transform'));
+assertTrue(isa(transfo2.Transform, 'ParametricTransform'));

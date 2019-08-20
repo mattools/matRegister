@@ -1,4 +1,4 @@
-function [res grad] = evaluateParametricMetricValueAndGradient(params, transfo, metric, varargin)
+function [res, grad] = evaluateParametricMetricValueAndGradient(params, transfo, metric, varargin)
 %evaluateParametricMetricValueAndGradient Function handle for minimisation
 %
 %   [VAL GRAD] = evaluateParametricMetric(PARAMS, TRANSFO, METRIC, GX, GY)
@@ -44,14 +44,14 @@ function [res grad] = evaluateParametricMetricValueAndGradient(params, transfo, 
 %   
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-08-12,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
-transfo.setParameters(params);
+setParameters(transfo, params);
 
-[res grad] = metric.computeValueAndGradient(transfo, varargin{:});
+[res, grad] = computeValueAndGradient(metric, transfo, varargin{:});

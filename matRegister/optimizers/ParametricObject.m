@@ -8,26 +8,26 @@ classdef ParametricObject < handle
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-11-03,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 %% Methods for managing parameters
 methods (Abstract)
-    params = getParameters(this)
+    params = getParameters(obj)
     % Returns the parameter vector of the transform
     
-    setParameters(this, params)
+    setParameters(obj, params)
     % Changes the parameter vector of the transform
     
-    Np = getParameterLength(this)
+    Np = getParameterLength(obj)
     % Returns the length of the vector parameter
     
-    name = getParameterName(this, paramIndex)
+    name = getParameterName(obj, paramIndex)
     % Return the name of the i-th parameter
     %
     % NAME = Transfo.getParameterName(PARAM_INDEX);
@@ -40,7 +40,7 @@ methods (Abstract)
     %   Y shift
     %
     
-    name = getParameterNames(this)
+    name = getParameterNames(obj)
     % Return the names of all parameters in a cell array of strings
     %
     % NAMES = Transfo.getParameterNames();

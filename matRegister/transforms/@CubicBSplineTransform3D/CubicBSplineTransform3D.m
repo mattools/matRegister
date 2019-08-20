@@ -18,40 +18,40 @@ classdef CubicBSplineTransform3D < ParametricTransform
 %% Properties
 properties
     % Number of vertices of the grid in each direction
-    gridSize;
+    GridSize;
     
     % Coordinates of the first vertex of the grid
-    gridOrigin;
+    GridOrigin;
     
     % Spacing between the vertices
-    gridSpacing;
+    GridSpacing;
 end 
 
 %% Constructor
 methods
-    function this = CubicBSplineTransform3D(varargin)
+    function obj = CubicBSplineTransform3D(varargin)
         % Ajouter le code du constructeur ici
         if nargin==1
             var = varargin{1};
             if isscalar(var)
                 nd = var;
-                this.gridSize       = ones(1, nd);
-                this.gridSpacing    = ones(1, nd);
-                this.gridOrigin     = zeros(1, nd);
+                obj.GridSize       = ones(1, nd);
+                obj.GridSpacing    = ones(1, nd);
+                obj.GridOrigin     = zeros(1, nd);
                 initializeParameters();
             end
             
         elseif nargin==3
-            this.gridSize       = varargin{1};
-            this.gridSpacing    = varargin{2};
-            this.gridOrigin     = varargin{3};
+            obj.GridSize       = varargin{1};
+            obj.GridSpacing    = varargin{2};
+            obj.GridOrigin     = varargin{3};
             initializeParameters();
         end
 
         function initializeParameters()
-            dim = this.gridSize();
+            dim = obj.GridSize();
             np  = prod(dim) * length(dim);
-            this.params = zeros(1, np);
+            obj.Params = zeros(1, np);
         end
     end % constructor 
 
@@ -59,11 +59,11 @@ end % construction function
 
 %% General methods
 methods
-    function dim = getDimension(this) %#ok<MANU>
+    function dim = getDimension(obj) %#ok<MANU>
         dim = 3;
     end
 
-    function [point2, isInside] = transformPoint(this, point)
+    function [point2, isInside] = transformPoint(obj, point)
         % Compute coordinates of transformed point
         
         % compute centered coords.
@@ -72,14 +72,14 @@ methods
         z = point(:, 3);
         
         % compute position wrt to the grid vertices
-        xg = (x - this.gridOrigin(1)) / this.gridSpacing(1) + 1;
-        yg = (y - this.gridOrigin(2)) / this.gridSpacing(2) + 1;
-        zg = (z - this.gridOrigin(3)) / this.gridSpacing(3) + 1;
+        xg = (x - obj.GridOrigin(1)) / obj.GridSpacing(1) + 1;
+        yg = (y - obj.GridOrigin(2)) / obj.GridSpacing(2) + 1;
+        zg = (z - obj.GridOrigin(3)) / obj.GridSpacing(3) + 1;
         
         % compute indices of points located within interpolation area
-        isInsideX   = xg >= 2 & xg < this.gridSize(1)-1;
-        isInsideY   = yg >= 2 & yg < this.gridSize(2)-1;
-        isInsideZ   = zg >= 2 & zg < this.gridSize(3)-1;
+        isInsideX   = xg >= 2 & xg < obj.GridSize(1)-1;
+        isInsideY   = yg >= 2 & yg < obj.GridSize(2)-1;
+        isInsideZ   = zg >= 2 & zg < obj.GridSize(3)-1;
         isInside    = isInsideX & isInsideY & isInsideZ;
 
         % select valid points
@@ -91,9 +91,9 @@ methods
         nValid = length(xg);
 
         % compute indices in linear indexing
-        dimX    = this.gridSize(1);
-        dimXY   = this.gridSize(1) * this.gridSize(2);
-        dimXYZ  = prod(this.gridSize);
+        dimX    = obj.GridSize(1);
+        dimXY   = obj.GridSize(1) * obj.GridSize(2);
+        dimXYZ  = prod(obj.GridSize);
 
         % coordinates within the unit tile
         xu = xg - floor(xg);
@@ -144,9 +144,9 @@ methods
                     indZ = indX + 2 * dimXYZ;
 
                     % update total translation component
-                    dx = dx + b .* this.params(indX)';
-                    dy = dy + b .* this.params(indY)';
-                    dz = dz + b .* this.params(indZ)';
+                    dx = dx + b .* obj.Params(indX)';
+                    dy = dy + b .* obj.Params(indY)';
+                    dz = dz + b .* obj.Params(indZ)';
 
                 end                
             end
@@ -160,46 +160,46 @@ methods
                 
     end
     
-    function ux = getUx(this, x, y, z)
-        ind = sub2ind([this.gridSize 3], x, y, z, 1);
-        ux = this.params(ind);
+    function ux = getUx(obj, x, y, z)
+        ind = sub2ind([obj.GridSize 3], x, y, z, 1);
+        ux = obj.Params(ind);
     end
     
-    function setUx(this, x, y, z, ux)
-        ind = sub2ind([this.gridSize 3], x, y, z, 1);
-        this.params(ind) = ux;
+    function setUx(obj, x, y, z, ux)
+        ind = sub2ind([obj.GridSize 3], x, y, z, 1);
+        obj.Params(ind) = ux;
     end
     
-    function uy = getUy(this, x, y, z)
-        ind = sub2ind([this.gridSize 3], x, y, z, 2);
-        uy = this.params(ind);
+    function uy = getUy(obj, x, y, z)
+        ind = sub2ind([obj.GridSize 3], x, y, z, 2);
+        uy = obj.Params(ind);
     end
     
-    function setUy(this, x, y, z, uy)
-        ind = sub2ind([this.gridSize 3], x, y, z, 2);
-        this.params(ind) = uy;
+    function setUy(obj, x, y, z, uy)
+        ind = sub2ind([obj.GridSize 3], x, y, z, 2);
+        obj.Params(ind) = uy;
     end
     
-    function uz = getUz(this, x, y, z)
-        ind = sub2ind([this.gridSize 3], x, y, z, 3);
-        uz = this.params(ind);
+    function uz = getUz(obj, x, y, z)
+        ind = sub2ind([obj.GridSize 3], x, y, z, 3);
+        uz = obj.Params(ind);
     end
     
-    function setUz(this, x, y, z, uz)
-        ind = sub2ind([this.gridSize 3], x, y, z, 3);
-        this.params(ind) = uz;
+    function setUz(obj, x, y, z, uz)
+        ind = sub2ind([obj.GridSize 3], x, y, z, 3);
+        obj.Params(ind) = uz;
     end
     
-    function drawGrid(this)
+    function drawGrid(obj)
 
         % create vertex array
-        v = getGridVertices(this);
+        v = getGridVertices(obj);
         
         nv = size(v, 1);
-        inds = reshape(1:nv, this.gridSize);
+        inds = reshape(1:nv, obj.GridSize);
         
         % grid size
-        dim = this.gridSize();
+        dim = obj.GridSize();
         
         % edges in direction x
         ne1 = (dim(2) - 1) * dim(1) * dim(3);
@@ -219,13 +219,13 @@ methods
         drawGraph(v, e);
     end
     
-    function vertices = getGridVertices(this)
+    function vertices = getGridVertices(obj)
         % get coordinates of grid vertices
         
         % base coordinates of grid vertices
-        lx = (0:this.gridSize(1) - 1) * this.gridSpacing(1) + this.gridOrigin(1);
-        ly = (0:this.gridSize(2) - 1) * this.gridSpacing(2) + this.gridOrigin(2);
-        lz = (0:this.gridSize(3) - 1) * this.gridSpacing(3) + this.gridOrigin(3);
+        lx = (0:obj.GridSize(1) - 1) * obj.GridSpacing(1) + obj.GridOrigin(1);
+        ly = (0:obj.GridSize(2) - 1) * obj.GridSpacing(2) + obj.GridOrigin(2);
+        lz = (0:obj.GridSize(3) - 1) * obj.GridSpacing(3) + obj.GridOrigin(3);
         
         % create base mesh
         [y, x, z] = meshgrid(ly, lx, lz);
@@ -234,21 +234,21 @@ methods
         nv = numel(x);
         
         % add grid shifts
-        x = x + reshape(this.params(1:nv), this.gridSize);
-        y = y + reshape(this.params(nv+(1:nv)), this.gridSize);
-        z = z + reshape(this.params(2*nv+(1:nv)), this.gridSize);
+        x = x + reshape(obj.Params(1:nv), obj.GridSize);
+        y = y + reshape(obj.Params(nv+(1:nv)), obj.GridSize);
+        z = z + reshape(obj.Params(2*nv+(1:nv)), obj.GridSize);
         
         % create vertex array
         vertices = [x(:) y(:) z(:)];
     end
     
-    function transformVector(this, varargin)
+    function transformVector(obj, varargin)
         error('MatRegister:UnimplementedMethod', ...
             'Method "%s" is not implemented for class "%s"', ...
             'transformVector', mfilename);
     end
     
-    function jac = jacobianMatrix(this, point)
+    function jac = jacobianMatrix(obj, point)
         % Jacobian matrix of the given point
         %
         
@@ -277,17 +277,17 @@ methods
         z = point(:, 3);
         
         % compute position wrt to the grid vertices
-        deltaX = this.gridSpacing(1);
-        deltaY = this.gridSpacing(2);
-        deltaZ = this.gridSpacing(3);
-        xg = (x - this.gridOrigin(1)) / deltaX + 1;
-        yg = (y - this.gridOrigin(2)) / deltaY + 1;
-        zg = (z - this.gridOrigin(3)) / deltaZ + 1;
+        deltaX = obj.GridSpacing(1);
+        deltaY = obj.GridSpacing(2);
+        deltaZ = obj.GridSpacing(3);
+        xg = (x - obj.GridOrigin(1)) / deltaX + 1;
+        yg = (y - obj.GridOrigin(2)) / deltaY + 1;
+        zg = (z - obj.GridOrigin(3)) / deltaZ + 1;
         
         % compute indices of values within interpolation area
-        isInsideX = xg >= 2 & xg < this.gridSize(1)-1;
-        isInsideY = yg >= 2 & yg < this.gridSize(2)-1;
-        isInsideZ = zg >= 2 & zg < this.gridSize(3)-1;
+        isInsideX = xg >= 2 & xg < obj.GridSize(1)-1;
+        isInsideY = yg >= 2 & yg < obj.GridSize(2)-1;
+        isInsideZ = zg >= 2 & zg < obj.GridSize(3)-1;
         isInside = isInsideX & isInsideY & isInsideZ;
         inds = isInside;
 
@@ -305,7 +305,7 @@ methods
         zu = reshape(zg - floor(zg), [1 1 nValid]);
 
         % compute indices in linear indexing
-        dimGrid = this.gridSize;
+        dimGrid = obj.GridSize;
         dimX    = dimGrid(1);
         dimXY   = dimX * dimGrid(2);
         dimXYZ  = dimXY * dimGrid(3);
@@ -357,9 +357,9 @@ methods
                     indZ = indX + 2 * dimXYZ;
 
                     % translation vector of the current vertex
-                    dxv = reshape(this.params(indX), [1 1 length(inds)]);
-                    dyv = reshape(this.params(indY), [1 1 length(inds)]);
-                    dzv = reshape(this.params(indZ), [1 1 length(inds)]);
+                    dxv = reshape(obj.Params(indX), [1 1 length(inds)]);
+                    dyv = reshape(obj.Params(indY), [1 1 length(inds)]);
+                    dzv = reshape(obj.Params(indZ), [1 1 length(inds)]);
                     
                     
                     % update jacobian matrix elements
@@ -379,7 +379,7 @@ methods
 
     end
     
-    function jac = parametricJacobian(this, x, varargin)
+    function jac = parametricJacobian(obj, x, varargin)
         % Compute parametric jacobian for a specific position
         % The result is a ND-by-NP array, where ND is the number of
         % dimension, and NP is the number of parameters.
@@ -395,17 +395,17 @@ methods
         end
         
         % compute position wrt to the grid vertices
-        deltaX = this.gridSpacing(1);
-        deltaY = this.gridSpacing(2);
-        deltaZ = this.gridSpacing(3);
-        xg = (x - this.gridOrigin(1)) / deltaX + 1;
-        yg = (y - this.gridOrigin(2)) / deltaY + 1;
-        zg = (z - this.gridOrigin(2)) / deltaZ + 1;
+        deltaX = obj.GridSpacing(1);
+        deltaY = obj.GridSpacing(2);
+        deltaZ = obj.GridSpacing(3);
+        xg = (x - obj.GridOrigin(1)) / deltaX + 1;
+        yg = (y - obj.GridOrigin(2)) / deltaY + 1;
+        zg = (z - obj.GridOrigin(2)) / deltaZ + 1;
         
         % compute indices of values within interpolation area
-        isInsideX = xg >= 2 & xg < this.gridSize(1)-1;
-        isInsideY = yg >= 2 & yg < this.gridSize(2)-1;
-        isInsideZ = zg >= 2 & zg < this.gridSize(3)-1;
+        isInsideX = xg >= 2 & xg < obj.GridSize(1)-1;
+        isInsideY = yg >= 2 & yg < obj.GridSize(2)-1;
+        isInsideZ = zg >= 2 & zg < obj.GridSize(3)-1;
         isInside = isInsideX & isInsideY & isInsideZ;
         inds = find(isInside);
         
@@ -418,8 +418,8 @@ methods
         nValid = length(xg);
 
         % pre-allocate result array
-        nd = length(this.gridSize);
-        np = length(this.params);
+        nd = length(obj.GridSize);
+        np = length(obj.Params);
         jac = zeros(nd, np, length(x));
 
         % if all points are outside, return zeros matrix
@@ -432,7 +432,7 @@ methods
         yu = reshape(yg - floor(yg), [1 1 nValid]);       
         zu = reshape(zg - floor(zg), [1 1 nValid]);       
         
-        dimGrid = this.gridSize;
+        dimGrid = obj.GridSize;
         dimX    = dimGrid(1);
         dimXY   = dimX * dimGrid(2);
         dimXYZ  = dimXY * dimGrid(3);
@@ -492,7 +492,7 @@ end % general methods
 
 %% I/O Methods
 methods
-    function writeToFile(this, file)
+    function writeToFile(obj, file)
         % Write transform parameter to the given file handle
         % Assumes file handle is an instance of FileWriter.
         %
@@ -511,20 +511,20 @@ methods
         
         nDims = 3;
         
-        fprintf(file, 'TransformType = %s\n', class(this));
+        fprintf(file, 'TransformType = %s\n', class(obj));
         fprintf(file, 'TransformDimension = %d\n', nDims);
         
-        nParams = length(this.params);
+        nParams = length(obj.Params);
         fprintf(file, 'TransformParameterNumber = %d \n', nParams);
         
         pattern = ['TransformParameters =', repmat(' %g', 1, nParams) '\n'];
-        fprintf(file, pattern, this.params);
+        fprintf(file, pattern, obj.Params);
         
         % some transform specific settings
         pattern = ['%s =' repmat(' %g', 1, nDims) '\n'];
-        fprintf(file, pattern, 'TransformGridSize',     this.gridSize);
-        fprintf(file, pattern, 'TransformGridOrigin',   this.gridOrigin);
-        fprintf(file, pattern, 'TransformGridSpacing',  this.gridSpacing);
+        fprintf(file, pattern, 'TransformGridSize',     obj.GridSize);
+        fprintf(file, pattern, 'TransformGridOrigin',   obj.GridOrigin);
+        fprintf(file, pattern, 'TransformGridSpacing',  obj.GridSpacing);
 
         % close file
         if closeFile

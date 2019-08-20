@@ -1,5 +1,5 @@
 classdef Motion2D <  AffineTransform
-%MOTION2D Composition of a rotation (around origin) and a translation
+%MOTION2D Composition of a rotation (around origin) and a translation.
 %
 %   T = Motion2D(THETA, U)
 %   THETA is the angle of rotation around origin, given in DEGREES
@@ -21,15 +21,15 @@ classdef Motion2D <  AffineTransform
 
 properties
     % angle of rotation around origin, in degrees
-    theta = 0;
+    Theta = 0;
         
     % translation after rotation
-    translation = zeros(1, 2);
+    Translation = zeros(1, 2);
 end
 
 %% Constructors
 methods
-    function this = Motion2D(varargin)
+    function obj = Motion2D(varargin)
         % Create a new model for translation transform model
         if isempty(varargin)
             % parameters already set to default values
@@ -39,13 +39,13 @@ methods
         var = varargin{1};
         if isa(var, 'Motion2D')
             % copy constructor
-            this.theta = var.theta;
-            this.translation = var.translation;
+            obj.Theta = var.Theta;
+            obj.Translation = var.Translation;
         else
             % extract first argument, and try to interpret
             if isnumeric(var) && length(varargin)==2
-                this.theta = var;
-                this.translation = varargin{2};
+                obj.Theta = var;
+                obj.Translation = varargin{2};
             else
                 error('Unable to understand input arguments');
             end
@@ -56,22 +56,22 @@ end
 
 %% Standard methods
 methods
-    function dim = getDimension(this) %#ok<MANU>
+    function dim = getDimension(obj) %#ok<MANU>
         dim = 2;
     end
 
     
-    function mat = affineMatrix(this)
-        % Returns the 3*3 affine matrix that represents this transform
+    function mat = affineMatrix(obj)
+        % Returns the 3*3 affine matrix that represents obj transform
         
         % pre-computation
-        thetaInRadians = deg2rad(this.theta);
+        thetaInRadians = deg2rad(obj.Theta);
         cot = cos(thetaInRadians);
         sit = sin(thetaInRadians);
 
         mat = [ ...
-            cot -sit this.translation(1); ...
-            sit  cot this.translation(2); ...
+            cot -sit obj.Translation(1); ...
+            sit  cot obj.Translation(2); ...
             0 0 1];
     end
     
@@ -79,18 +79,26 @@ end % methods
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'Motion2D', ...
-            'translation', this.translation, ...
-            'rotationAngle', this.theta);
+        str = struct('Type', 'Motion2D', ...
+            'Translation', obj.Translation, ...
+            'RotationAngle', obj.Theta);
     end
 end
 methods (Static)
     function motion = fromStruct(str)
         % Creates a new instance from a structure
-        trans = str.translation;
-        theta = str.rotationAngle;
+        if isfield(str, 'Translation')
+            trans = str.Translation;
+        elseif isfield(str, 'translation')
+            trans = str.Translation;
+        end
+        if isfield(str, 'RotationAngle')
+            theta = str.RotationAngle;
+        elseif isfield(str, 'rotationAngle')
+            theta = str.rotationAngle;
+        end
         motion = Motion2D(theta, trans);
     end
 end

@@ -26,7 +26,7 @@ T2 = Translation(center);
 
 res = T2 * R * T1;
 
-T = CenteredMotionTransform2D([30 0 0], 'center', center);
+T = CenteredMotionTransform2D([30 0 0], 'Center', center);
 
 matTh = affineMatrix(res);
 mat = affineMatrix(T);
@@ -36,7 +36,7 @@ assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
 function test_getDimension
 
 center = [6 8];
-T = CenteredMotionTransform2D([30 0 0], 'center', center);
+T = CenteredMotionTransform2D([30 0 0], 'Center', center);
 
 dim = getDimension(T);
 
@@ -53,7 +53,7 @@ end
 
 % create transfo
 center = [6 8];
-T = CenteredMotionTransform2D([30 0 0], 'center', center);
+T = CenteredMotionTransform2D([30 0 0], 'Center', center);
 mat0 = affineMatrix(T);
 
 % save the transfo
@@ -72,12 +72,12 @@ delete(fileName);
 function test_ToStruct
 % Test call of function without argument
 
-transfo = CenteredMotionTransform2D([10 20 30], 'center', [50 50]);
+transfo = CenteredMotionTransform2D([10 20 30], 'Center', [50 50]);
 str = toStruct(transfo);
 transfo2 = CenteredMotionTransform2D.fromStruct(str);
 
 assertTrue(isa(transfo2, 'CenteredMotionTransform2D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
 
 
 function test_readWrite
@@ -90,7 +90,7 @@ if exist(fileName, 'file')
 end
 
 % arrange
-transfo = CenteredMotionTransform2D([10 20 30], 'center', [50 50]);
+transfo = CenteredMotionTransform2D([10 20 30], 'Center', [50 50]);
 
 % act
 write(transfo, fileName);
@@ -98,8 +98,8 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'CenteredMotionTransform2D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
-assertElementsAlmostEqual(transfo2.center, transfo.center, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Center, transfo.Center, 'absolute', .01);
 
 % clean up
 delete(fileName);

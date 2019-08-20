@@ -26,12 +26,12 @@ function test_ToStruct
 % Test call of function without argument
 
 params = [.1 .2  1.1 0.2  0.1 1.2  0.01 0.01 0.01 0.01 0.01 0.01];
-transfo = CenteredQuadTransformModel2D(params, 'center', [50 50]);
+transfo = CenteredQuadTransformModel2D(params, 'Center', [50 50]);
 str = toStruct(transfo);
 transfo2 = CenteredQuadTransformModel2D.fromStruct(str);
 
 assertTrue(isa(transfo2, 'CenteredQuadTransformModel2D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
 
 
 function test_readWrite
@@ -45,7 +45,7 @@ end
 
 % arrange
 params = [.1 .2  1.1 0.2  0.1 1.2  0.01 0.01 0.01 0.01 0.01 0.01];
-transfo = CenteredQuadTransformModel2D(params, 'center', [50 50]);
+transfo = CenteredQuadTransformModel2D(params, 'Center', [50 50]);
 
 % act
 write(transfo, fileName);
@@ -53,8 +53,8 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'CenteredQuadTransformModel2D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
-assertElementsAlmostEqual(transfo2.center, transfo.center, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Center, transfo.Center, 'absolute', .01);
 
 % clean up
 delete(fileName);

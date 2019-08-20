@@ -1,5 +1,5 @@
 classdef ComposedTransform < Transform
-%COMPOSEDTRANSFORM  Compose several transforms to create a new transform
+% Compose several transforms to create a new transform.
 %   output = ComposedTransform(input)
 %
 %   Example
@@ -16,25 +16,25 @@ classdef ComposedTransform < Transform
 
 properties
     % the set of encapsulated transforms
-    transforms;
+    Transforms;
 end
 
 %% Constructor
 methods
-    function this = ComposedTransform(varargin)
+    function obj = ComposedTransform(varargin)
         % class constructor
         % T = ComposedTransform(T1, T2);
         
         if isa(varargin{1}, 'ComposedTransform')
             % copy constructor
             var = varargin{1};
-            this.transforms = var.transforms;
+            obj.Transforms = var.Transforms;
         elseif isa(varargin{1}, 'Transform')
             % initialize tranform array
             nTransfos = length(varargin);
-            this.transforms = cell(nTransfos, 1);
+            obj.Transforms = cell(nTransfos, 1);
             for i = 1:nTransfos
-                this.transforms{i} = varargin{i};
+                obj.Transforms{i} = varargin{i};
             end
         else
             error('Wrong parameter when constructing a Composed transform');
@@ -45,28 +45,28 @@ end
 
 %% Methods implementing Transform interface
 methods
-    function dim = getDimension(this)
-        dim = getDimension(this.transforms{1});
+    function dim = getDimension(obj)
+        dim = getDimension(obj.Transforms{1});
     end
 
-    function point = transformPoint(this, point)
-        for i = 1:length(this.transforms)
-            point = this.transforms{i}.transformPoint(point);
+    function point = transformPoint(obj, point)
+        for i = 1:length(obj.Transforms)
+            point = transformPoint(obj.Transforms{i}, point);
         end
     end
     
-    function vector = transformVector(this, vector, position)
-        for i = 1:length(this.transforms)
-            vector = this.transforms{i}.transformVector(vector, position);
+    function vector = transformVector(obj, vector, position)
+        for i = 1:length(obj.Transforms)
+            vector = transformVector(obj.Transforms{i}, vector, position);
         end
     end
     
-    function jacMat = jacobianMatrix(this, point)
+    function jacMat = jacobianMatrix(obj, point)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
-        jacMat = this.transforms{1}.jacobianMatrix(point);
-        for i = 2:length(this.transforms)
-            jacMat = this.transforms{i}.jacobianMatrix(point) * jacMat;
+        jacMat = jacobianMatrix(obj.Transforms{1}, point);
+        for i = 2:length(obj.Transforms)
+            jacMat = jacobianMatrix(obj.Transforms{i}, point) * jacMat;
         end
     end
 end % methods

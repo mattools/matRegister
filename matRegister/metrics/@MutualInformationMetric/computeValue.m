@@ -1,4 +1,4 @@
-function [mi isInside] = computeValue(this)
+function [mi, isInside] = computeValue(obj)
 %COMPUTEVALUE Compute metric value
 %
 % [VALUE INSIDE] = METRIC.computeValue();
@@ -7,15 +7,15 @@ function [mi isInside] = computeValue(this)
 %
 
 % compute values in image 1
-[values1 inside1] = this.img1.evaluate(this.points);
+[values1, inside1] = evaluate(obj.Img1, obj.Points);
 
 % compute values in image 2
-[values2 inside2] = this.img2.evaluate(this.points);
+[values2, inside2] = evaluate(obj.Img2, obj.Points);
 
 % keep only valid values
 isInside = inside1 & inside2;
 
-% reference for computiung histograms.
+% reference bin centers for computing histograms.
 % TODO: replace by class field
 x = 0:255;
 
@@ -31,7 +31,7 @@ hist2   = hist(values2(isInside), vals2);
 hist12  = zeros(length(vals1), length(vals2));
 
 inds = find(isInside);
-for i=1:length(inds)
+for i = 1:length(inds)
     % get each value, and convert to index
     v1 = find(values1(inds(i))>=vals1, 1, 'last');
     v2 = find(values2(inds(i))>=vals2, 1, 'last');
@@ -59,7 +59,7 @@ mi = -mi;
         hist = hist / sum(hist(:));
         
         % compute entropy
-        h = -sum(hist.*log(hist));
+        h = -sum(hist .* log(hist));
     end
 
 end

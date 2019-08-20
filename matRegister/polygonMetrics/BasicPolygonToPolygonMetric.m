@@ -17,19 +17,19 @@ classdef BasicPolygonToPolygonMetric < handle
 
 properties
     % the reference polygon
-    poly1;
+    Poly1;
     
     % the polygon to transform
-    poly2;
+    Poly2;
     
     % the parametric transform
-    transfo;
+    Transfo;
 end
 
 %% Constructor method
 methods
     
-    function this = BasicPolygonToPolygonMetric(poly1, poly2, transfo)
+    function obj = BasicPolygonToPolygonMetric(poly1, poly2, transfo)
         
         if nargin < 3
             error('Require three input arguments');
@@ -40,25 +40,25 @@ methods
         end
         
         % initialize fields
-        this.poly1 = poly1;
-        this.poly2 = poly2;
-        this.transfo = transfo;
+        obj.Poly1 = poly1;
+        obj.Poly2 = poly2;
+        obj.Transfo = transfo;
         
     end % constructor
 end
 
 %% Evaluation method
 methods
-    function that = evaluate(this, params)
+    function that = evaluate(obj, params)
         
         % update transformation model
-        this.transfo.params = params;
+        obj.Transfo.Params = params;
         
         % transform polygon
-        polyt = transformPoint(this.transfo, this.poly2);
+        polyt = transformPoint(obj.Transfo, obj.Poly2);
         
         % compute metric
-        dist = distancePointPolygon(this.poly1, polyt);
+        dist = distancePointPolygon(obj.Poly1, polyt);
         that = sum(dist.^2);
     end
     

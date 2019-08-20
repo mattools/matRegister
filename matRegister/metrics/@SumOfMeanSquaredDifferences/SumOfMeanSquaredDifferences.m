@@ -1,7 +1,7 @@
 classdef SumOfMeanSquaredDifferences < CostFunction
 %SUMOFMEANSQUAREDDIFFERENCES Compute the sum of MSD on each image couples
 %
-%   Quite similar to class "SumOfSSDImageSetMetric", but this class is
+%   Quite similar to class "SumOfSSDImageSetMetric", but obj class is
 %   intended to provide computation of Gradient with respect to parameters.
 %
 %   output = SumOfMeanSquaredDifferences(input)
@@ -11,10 +11,10 @@ classdef SumOfMeanSquaredDifferences < CostFunction
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-01-06,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
@@ -23,31 +23,31 @@ properties
     % First, some "public" data.
     
     % the set of images to transform
-    images;
+    Images;
     
     % the set of test points in reference space
-    points;
+    Points;
     
     % the set of parametric transforms
-    transforms;
+    Transforms;
     
     % the set of gradient image. Either as a set of Vector Images, or as a
     % set of Gradient evaluators
-    gradients;
+    Gradients;
     
     % Then, some private data used during computation
     
     % images after transforms
-    transformedImages;
+    TransformedImages;
     
     % gradient images after transforms
-    transformedGradients
+    TransformedGradients
     
 end 
 
 %% Constructor
 methods
-    function this = SumOfMeanSquaredDifferences(images, points, transforms, varargin)
+    function obj = SumOfMeanSquaredDifferences(images, points, transforms, varargin)
         % Construct a new image set metric
         %
         % Metric = SumOfMeanSquaredDifferences(IMGS, PTS, TRANSFOS);
@@ -56,29 +56,29 @@ methods
         
         errorID = 'SumOfMeanSquaredDifferences:Constructor';
         
-        if nargin>=3
+        if nargin >= 3
             % Inputs are the set of images, the array of points, and the
             % set of transforms
-            this.images     = images;
-            this.points     = points;
-            this.transforms = transforms;
+            obj.Images     = images;
+            obj.Points     = points;
+            obj.Transforms = transforms;
         else
             error(errorID, 'Need at least 3 inputs');
         end
         
         % Gradients can be specified
-        if nargin>3
-            this.gradients = varargin{1};
+        if nargin> 3 
+            obj.Gradients = varargin{1};
         else
             error('Not yet implemented');
             %TODO: create gradients or gradient interpolators
         end
         
-        ensureImagesValidity(this);
-        createTransformedImages(this);
+        ensureImagesValidity(obj);
+        createTransformedImages(obj);
 
-        ensureGradientsValidity(this);
-        createTransformedGradients(this);
+        ensureGradientsValidity(obj);
+        createTransformedGradients(obj);
         
     end % constructor 
 
@@ -87,11 +87,11 @@ end % construction function
 %% General methods
 methods (Access = protected)
 
-    function ensureImagesValidity(this)
+    function ensureImagesValidity(obj)
         % Checks that images are instances of ImageFunction, otherwise
         % creates appropriate interpolators
-        for i=1:length(this.images)
-            img = this.images{i};
+        for i = 1:length(obj.Images)
+            img = obj.Images{i};
             
             % input image should be an image function
             if isa(img, 'ImageFunction')
@@ -107,37 +107,37 @@ methods (Access = protected)
             else
                 error('Unknown image data');
             end
-            this.images{i} = img;
+            obj.Images{i} = img;
             
         end
     end
     
-    function createTransformedImages(this)
+    function createTransformedImages(obj)
         % Creates instances of transformed images
         
         % small check
-        nImg = length(this.images);        
-        if length(this.transforms) ~= nImg
+        nImg = length(obj.Images);        
+        if length(obj.Transforms) ~= nImg
             error('Number of transforms should equal number of images');
         end
         
         % create array
-        this.transformedImages = cell(1, nImg);
+        obj.TransformedImages = cell(1, nImg);
         
         % iterate over image-transform couple to create transformed images
-        for i=1:nImg
-            image = this.images{i};
-            transfo = this.transforms{i};
+        for i = 1:nImg
+            image = obj.Images{i};
+            transfo = obj.Transforms{i};
             tim = BackwardTransformedImage(image, transfo);
-            this.transformedImages{i} = tim;
+            obj.TransformedImages{i} = tim;
         end
     end
     
-    function ensureGradientsValidity(this)
+    function ensureGradientsValidity(obj)
         % Checks that gradient images are instances of ImageFunction, 
         % otherwise creates appropriate interpolators
-        for i=1:length(this.gradients)
-            gradImg = this.gradients{i};
+        for i = 1:length(obj.Gradients)
+            gradImg = obj.Gradients{i};
             
             % input image should be an image function
             if isa(gradImg, 'ImageFunction')
@@ -150,29 +150,29 @@ methods (Access = protected)
             else
                 error('Unknown image data');
             end
-            this.gradients{i} = gradImg;
+            obj.Gradients{i} = gradImg;
             
         end
     end
     
-    function createTransformedGradients(this)
+    function createTransformedGradients(obj)
         % Creates instances of transformed gradient images or functions
         
         % small check
-        nImg = length(this.gradients);        
-        if length(this.transforms) ~= nImg
+        nImg = length(obj.Gradients);        
+        if length(obj.Transforms) ~= nImg
             error('Number of transforms should equal number of gradient images');
         end
         
         % create array
-        this.transformedGradients = cell(1, nImg);
+        obj.TransformedGradients = cell(1, nImg);
         
         % iterate over image-transform couple to create transformed images
-        for i=1:nImg
-            image = this.gradients{i};
-            transfo = this.transforms{i};
+        for i = 1:nImg
+            image = obj.Gradients{i};
+            transfo = obj.Transforms{i};
             tim = BackwardTransformedImage(image, transfo);
-            this.transformedGradients{i} = tim;
+            obj.TransformedGradients{i} = tim;
         end
     end
     

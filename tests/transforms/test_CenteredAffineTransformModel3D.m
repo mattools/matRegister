@@ -46,7 +46,7 @@ transfo = CenteredAffineTransformModel3D(trans);
 
 % add center
 center  = [10 20 30];
-transfo.setCenter(center);
+setCenter(transfo, center);
 
 % center should not change translation
 mat = affineMatrix(transfo);
@@ -73,22 +73,22 @@ transfo = CenteredAffineTransformModel3D(rot);
 
 % add center
 center  = [10 20 30];
-transfo.setCenter(center);
+setCenter(transfo, center);
 
 % center should not change translation
-assertElementsAlmostEqual(center, transfo.transformPoint(center), 'absolute', .1);
+assertElementsAlmostEqual(center, transformPoint(transfo, center), 'absolute', .1);
 
 
 function test_ToStruct
 % Test call of function without argument
 
 mat = [1.1 0.1 0.1 1   0.1 1.1 0.1 1  0.1 0.1 1.1 1];
-transfo = CenteredAffineTransformModel3D(mat, 'center', [30 20 10]);
+transfo = CenteredAffineTransformModel3D(mat, 'Center', [30 20 10]);
 str = toStruct(transfo);
 transfo2 = CenteredAffineTransformModel3D.fromStruct(str);
 
 assertTrue(isa(transfo2, 'CenteredAffineTransformModel3D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
 
 
 function test_readWrite
@@ -102,7 +102,7 @@ end
 
 % arrange
 mat = [1.1 0.1 0.1 1   0.1 1.1 0.1 1  0.1 0.1 1.1 1];
-transfo = CenteredAffineTransformModel3D(mat, 'center', [30 20 10]);
+transfo = CenteredAffineTransformModel3D(mat, 'Center', [30 20 10]);
 
 % act
 write(transfo, fileName);
@@ -110,8 +110,8 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'CenteredAffineTransformModel3D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
-assertElementsAlmostEqual(transfo2.center, transfo.center, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Center, transfo.Center, 'absolute', .01);
 
 % clean up
 delete(fileName);

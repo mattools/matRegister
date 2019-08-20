@@ -28,7 +28,7 @@ T2  = createTranslation3d(center);
 T0  = createTranslation3d([6 7 8]);
 matTh = T0 * T2 * R * T1;
 
-T = CenteredEulerTransform3D([3 4 5 6 7 8], 'center', center);
+T = CenteredEulerTransform3D([3 4 5 6 7 8], 'Center', center);
 
 mat = affineMatrix(T);
 assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
@@ -37,7 +37,7 @@ assertElementsAlmostEqual(matTh, mat, 'absolute', .1);
 function test_getDimension
 
 center = [6 8 9];
-T = CenteredEulerTransform3D([3 4 5 6 7 8], 'center', center);
+T = CenteredEulerTransform3D([3 4 5 6 7 8], 'Center', center);
 
 dim = getDimension(T);
 
@@ -54,7 +54,7 @@ end
 
 % create transfo
 center = [6 8 9];
-T = CenteredEulerTransform3D([3 4 5 6 7 8], 'center', center);
+T = CenteredEulerTransform3D([3 4 5 6 7 8], 'Center', center);
 mat0 = affineMatrix(T);
 
 % save the transfo
@@ -74,12 +74,11 @@ delete(fileName);
 function test_ToStruct
 % Test call of function without argument
 
-transfo = CenteredEulerTransform3D([10 20 30 10 20 30], 'center', [50 50 50]);
+transfo = CenteredEulerTransform3D([10 20 30 10 20 30], 'Center', [50 50 50]);
 str = toStruct(transfo);
 transfo2 = CenteredEulerTransform3D.fromStruct(str);
 
 assertTrue(isa(transfo2, 'CenteredEulerTransform3D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
 
 
 function test_readWrite
@@ -92,7 +91,7 @@ if exist(fileName, 'file')
 end
 
 % arrange
-transfo = CenteredEulerTransform3D([10 20 30 10 20 30], 'center', [50 50 50]);
+transfo = CenteredEulerTransform3D([10 20 30 10 20 30], 'Center', [50 50 50]);
 
 % act
 write(transfo, fileName);
@@ -100,8 +99,7 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'CenteredEulerTransform3D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
-assertElementsAlmostEqual(transfo2.center, transfo.center, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Center, transfo.Center, 'absolute', .01);
 
 % clean up
 delete(fileName);

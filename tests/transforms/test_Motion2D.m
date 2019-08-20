@@ -30,8 +30,8 @@ str = toStruct(transfo);
 transfo2 = Motion2D.fromStruct(str);
 
 assertTrue(isa(transfo2, 'Motion2D'));
-assertElementsAlmostEqual(transfo2.theta, transfo.theta, 'absolute', .01);
-assertElementsAlmostEqual(transfo2.translation, transfo.translation, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Theta, transfo.Theta, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Translation, transfo.Translation, 'absolute', .01);
 
 
 function test_readWrite(testCase) %#ok<*DEFNU>
@@ -52,8 +52,8 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'Motion2D'));
-assertElementsAlmostEqual(transfo2.theta, transfo.theta, 'absolute', .01);
-assertElementsAlmostEqual(transfo2.translation, transfo.translation, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Theta, transfo.Theta, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Translation, transfo.Translation, 'absolute', .01);
 
 % clean up
 delete(fileName);

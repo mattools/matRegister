@@ -1,5 +1,5 @@
 classdef ParametricTransform < Transform & ParametricObject
-%PARAMETRICTRANSFORM  Abstract class for parametric transform ND->ND
+%PARAMETRICTRANSFORM  Abstract class for parametric transform ND->ND.
 %
 %   Superclass for transformation model that can be represented by a vector
 %   of parameters, and used as input in optimization procedures.
@@ -14,16 +14,16 @@ classdef ParametricTransform < Transform & ParametricObject
 %% Properties definition
 properties
     % the set of inner parameters of the transform
-    params;
+    Params;
     
     % the name of each parameter, stored to facilitate automatic plotting.
     % Given as row vector of char arrays.
-    paramNames = {};
+    ParamNames = {};
 end
 
 %% Constructor (protected)
 methods (Access = protected)
-    function this = ParametricTransform(varargin)
+    function obj = ParametricTransform(varargin)
         % Construct a new parametric transform.
         %
         % TRANSFO = ParametricTransform(NP);
@@ -41,37 +41,37 @@ methods (Access = protected)
         if ~isempty(varargin)
             var = varargin{1};
             if isscalar(var)
-                this.params = zeros(1, var);
+                obj.Params = zeros(1, var);
             else
-                this.params = var;
+                obj.Params = var;
             end
         end
         
         % parameter names ciould also be specified
         if nargin > 1
-            this.paramNames = varargin{2};
+            obj.ParamNames = varargin{2};
         end
     end
 end
 
 %% Methods for managing parameters
 methods
-    function p = getParameters(this)
+    function p = getParameters(obj)
         % Returns the parameter vector of the transform
-        p = this.params;
+        p = obj.Params;
     end
     
-    function setParameters(this, params)
+    function setParameters(obj, params)
         % Changes the parameter vector of the transform
-        this.params = params;
+        obj.Params = params;
     end
     
-    function Np = getParameterLength(this)
+    function Np = getParameterLength(obj)
         % Returns the length of the vector parameter
-        Np = length(this.params);
+        Np = length(obj.Params);
     end
     
-    function name = getParameterName(this, paramIndex)
+    function name = getParameterName(obj, paramIndex)
         % Return the name of the i-th parameter
         %
         % NAME = Transfo.getParameterName(PARAM_INDEX);
@@ -85,18 +85,18 @@ methods
         %
         
         % check index is not too high
-        if paramIndex > length(this.params)
+        if paramIndex > length(obj.Params)
             error('Index greater than the number of parameters');
         end
         
         % return a parameter name if it was initialized
         name = '';
-        if paramIndex <= length(this.paramNames)
-            name = this.paramNames{paramIndex};
+        if paramIndex <= length(obj.ParamNames)
+            name = obj.ParamNames{paramIndex};
         end
     end
     
-    function name = getParameterNames(this)
+    function name = getParameterNames(obj)
         % Return the names of all parameters in a cell array of strings
         %
         % NAMES = Transfo.getParameterNames();
@@ -108,13 +108,13 @@ methods
         %   'X shift'   'Y shift'
         %
         
-        name = this.paramNames;
+        name = obj.ParamNames;
     end
     
-    function jac = getParametricJacobian(this, x, varargin)
+    function jac = getParametricJacobian(obj, x, varargin)
         % deprecated: use parametricJacobian instead
         warning('deprecated: use parametricJacobian method instead');
-        jac = parametricJacobian(this, x, varargin{:});
+        jac = parametricJacobian(obj, x, varargin{:});
     end
 end % methods
 
@@ -134,14 +134,14 @@ methods (Abstract)
     %     ans =
     %         1.0000         0  -13.6603
     %              0    1.0000    3.6603
-    parametricJacobian(this, x, varargin)
+    parametricJacobian(obj, x, varargin)
 
 end % abstract methods 
 
 
 %% I/O Methods
 methods
-    function writeToFile(this, file)
+    function writeToFile(obj, file)
         % Write transform parameter to the given file handle
         % Assumes file handle is an instance of FileWriter.
         %
@@ -158,16 +158,16 @@ methods
             closeFile = true;
         end
         
-        nDims = getDimension(this);
+        nDims = getDimension(obj);
         
-        fprintf(file, 'TransformType = %s\n', class(this));
+        fprintf(file, 'TransformType = %s\n', class(obj));
         fprintf(file, 'TransformDimension = %d\n', nDims);
         
-        nParams = length(this.params);
+        nParams = length(obj.Params);
         fprintf(file, 'TransformParameterNumber = %d \n', nParams);
         
         pattern = ['TransformParameters =', repmat(' %g', 1, nParams) '\n'];
-        fprintf(file, pattern, this.params);
+        fprintf(file, pattern, obj.Params);
         
         % close file
         if closeFile

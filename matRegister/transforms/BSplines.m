@@ -1,5 +1,5 @@
 classdef BSplines < handle
-%BSPLINES Static functions for the manipulation of cubic B-splines
+%BSPLINES Static functions for the manipulation of cubic B-splines.
 %
 %   Example
 %   coef = BSplines.beta3_0(u);

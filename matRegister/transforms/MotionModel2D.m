@@ -1,5 +1,5 @@
 classdef MotionModel2D < AffineTransform & ParametricTransform
-%Transformation model for a centered rotation followed by a translation
+%Transformation model for a centered rotation followed by a translation.
 %   
 %   Inner optimisable parameters of the transform have the following form:
 %   params[1] = tx
@@ -24,22 +24,22 @@ classdef MotionModel2D < AffineTransform & ParametricTransform
 
 %% Constructors
 methods
-    function this = MotionModel2D(varargin)
+    function obj = MotionModel2D(varargin)
         % Create a new model for 2D motion transform model
         % (defined by 2 translation parameters and 1 rotation angle)
 
         % call parent constructor for initializing parameters
-        this = this@ParametricTransform([0 0 0]);
+        obj = obj@ParametricTransform([0 0 0]);
         
         % setup default parameters
-        this.params = [0 0 0];
+        obj.Params = [0 0 0];
 
         if ~isempty(varargin)
             % extract first argument, and try to interpret
             var = varargin{1};
             if isa(var, 'MotionModel2D')
                 % copy constructor
-                this.params = var.params;
+                obj.Params = var.Params;
                 
             elseif isnumeric(var)
                 if length(var) == 1 && var(1) ~= 2
@@ -48,7 +48,7 @@ methods
                     
                 elseif length(var) == 3
                     % if argument is a row vector, it is the parameters
-                    this.params = var(1:3);
+                    obj.Params = var(1:3);
                 else
                     error('Please specify angle in degrees and vector');
                 end
@@ -58,26 +58,26 @@ methods
         end
        
         % setup parameter names
-        this.paramNames = {'X shift', 'Y shift', 'Theta (°)'};
+        obj.ParamNames = {'X shift', 'Y shift', 'Theta (°)'};
                 
     end % constructor declaration
 end
 
 %% Standard methods
 methods        
-    function dim = getDimension(this) %#ok<MANU>
+    function dim = getDimension(obj) %#ok<MANU>
         dim = 2;
     end
 
-    function mat = affineMatrix(this)
-        % Compute affine matrix associated with this transform
+    function mat = affineMatrix(obj)
+        % Compute affine matrix associated with obj transform
         
         % translation vector
-        tx = this.params(1);
-        ty = this.params(2);
+        tx = obj.Params(1);
+        ty = obj.Params(2);
         
         % rotation angle, converted to radians
-        theta = this.params(3) * pi / 180;
+        theta = obj.Params(3) * pi / 180;
 
         % pre-computations
         cot = cos(theta);
@@ -91,7 +91,7 @@ methods
 
     end
   
-    function jacobian = parametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(obj, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
        
         % extract coordinate of input point(s)
@@ -103,7 +103,7 @@ methods
         end
         
         % convert angles to radians
-        theta = this.params(3) * pi / 180;
+        theta = obj.Params(3) * pi / 180;
         
         % precompute angle functions
         cot = cos(theta);
@@ -154,16 +154,20 @@ end % methods
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'MotionModel2D', ...
-            'parameters', this.params);
+        str = struct('Type', 'MotionModel2D', ...
+            'Parameters', obj.Params);
     end
 end
 methods (Static)
     function motion = fromStruct(str)
         % Creates a new instance from a structure
-        params = str.parameters;
+        if isfield(str, 'Parameters')
+            params = str.Parameters;
+        elseif isfield(str, 'parameters')
+            params = str.parameters;
+        end
         motion = MotionModel2D(params);
     end
 end

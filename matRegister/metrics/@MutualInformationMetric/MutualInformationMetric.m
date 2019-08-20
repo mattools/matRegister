@@ -1,5 +1,5 @@
 classdef MutualInformationMetric < ImageToImageMetric
-%MutualInformationMetric Compute minus the mutual information of two images
+% Compute minus the mutual information of two images.
 %
 %   output = MutualInformationMetric(input)
 %
@@ -9,18 +9,18 @@ classdef MutualInformationMetric < ImageToImageMetric
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-08-12,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 %% Constructor
 methods
-    function this = MutualInformationMetric(varargin)
+    function obj = MutualInformationMetric(varargin)
         % calls the parent constructor
-        this = this@ImageToImageMetric(varargin{:});
+        obj = obj@ImageToImageMetric(varargin{:});
         
     end % constructor
     

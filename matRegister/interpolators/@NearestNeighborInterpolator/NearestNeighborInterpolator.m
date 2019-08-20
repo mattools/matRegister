@@ -1,5 +1,5 @@
 classdef NearestNeighborInterpolator < ImageInterpolator
-%NEARESTNEIGHBORINTERPOLATOR  Nearest-neighbor interpolator of an image
+%NEARESTNEIGHBORINTERPOLATOR  Nearest-neighbor interpolator of an image.
 %
 %   output = NearestNeighborInterpolator(IMG)
 %
@@ -11,17 +11,17 @@ classdef NearestNeighborInterpolator < ImageInterpolator
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-01-07,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 %% Constructors
 methods
-    function this = NearestNeighborInterpolator(varargin)
+    function obj = NearestNeighborInterpolator(varargin)
         % Constructs a new NearestNeighborInterpolator object.
         % interp = LinearInterpolator(IMG);
         % with IMG being a Image2D.
@@ -29,7 +29,7 @@ methods
         if isa(varargin{1}, 'NearestNeighborInterpolator')
             % copy constructor
             var = varargin{1};
-            image = var.image;
+            image = var.Image;
         elseif isa(varargin{1}, 'Image')
             % initialisation constructor
             image = varargin{1};
@@ -39,7 +39,7 @@ methods
         end
         
         % call superclass constructor
-        this = this@ImageInterpolator(image);
+        obj = obj@ImageInterpolator(image);
         
     end % constructor declaration
     

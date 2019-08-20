@@ -21,30 +21,30 @@ classdef ImageSetMetric < handle
 %% Properties
 properties
     % the set of images
-    images;
+    Images;
     
     % the set of points that will be used for evaluating the metric
-    points;
+    Points;
     
 end % properties
 
 %% Constructor
 methods (Access = protected)
     
-    function this = ImageSetMetric(varargin)
+    function obj = ImageSetMetric(varargin)
         % Protected constructor of ImageSetMetric class
         errorID = 'ImageSetMetric:Constructor';
         
         if nargin==2
             % Inputs are the set of images, and the array of points
-            this.images = varargin{1};
-            this.points = varargin{2};
+            obj.Images = varargin{1};
+            obj.Points = varargin{2};
             
         else
             error(errorID, 'Need at least 2 inputs');
         end
         
-        ensureImagesValidity(this);
+        ensureImagesValidity(obj);
         
     end % constructor
     
@@ -53,11 +53,11 @@ end % methods
 %% Private methods
 methods (Access=private)
     
-    function ensureImagesValidity(this)
+    function ensureImagesValidity(obj)
         % Checks that images are instances of ImageFunction, otherwise
         % create appropriate interpolators
-        for i=1:length(this.images)
-            img = this.images{i};
+        for i = 1:length(obj.Images)
+            img = obj.Images{i};
             
             % input image should be an image function
             if isa(img, 'ImageFunction')
@@ -73,7 +73,7 @@ methods (Access=private)
             else
                 error('Unknown image data');
             end
-            this.images{i} = img;
+            obj.Images{i} = img;
             
         end
     end
@@ -81,7 +81,7 @@ end
 
 %% Abstract methods
 methods (Abstract)
-    computeValue(this)
+    computeValue(obj)
     % Evaluate the difference between the images
 end
 

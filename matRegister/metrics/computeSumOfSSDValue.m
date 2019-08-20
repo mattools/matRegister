@@ -17,7 +17,7 @@ nCombis = size(combis, 1);
 
 % compute SSD for each couple
 res = zeros(nCombis, 1);
-for i=1:nCombis
+for i = 1:nCombis
     i1 = combis(i,1);
     i2 = combis(i,2);
     

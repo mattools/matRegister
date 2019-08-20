@@ -26,12 +26,12 @@ function test_ToStruct
 % Test call of function without argument
 
 transfo = BSplineTransformModel2D([3 3], [10 10], [0 0]);
-transfo.params = zeros(1, 18);
+transfo.Params = zeros(1, 18);
 str = toStruct(transfo);
 transfo2 = BSplineTransformModel2D.fromStruct(str);
 
 assertTrue(isa(transfo2, 'BSplineTransformModel2D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
 
 
 function test_readWrite
@@ -45,7 +45,7 @@ end
 
 % arrange
 transfo = BSplineTransformModel2D([3 3], [10 10], [0 0]);
-transfo.params = zeros(1, 18);
+transfo.Params = zeros(1, 18);
 
 % act
 write(transfo, fileName);
@@ -53,7 +53,7 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'BSplineTransformModel2D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
 
 % clean up
 delete(fileName);

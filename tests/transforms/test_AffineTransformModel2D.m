@@ -32,7 +32,7 @@ str = toStruct(transfo);
 transfo2 = AffineTransformModel2D.fromStruct(str);
 
 assertTrue(isa(transfo2, 'AffineTransformModel2D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
 
 
 function test_readWrite
@@ -53,7 +53,7 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'AffineTransformModel2D'));
-assertElementsAlmostEqual(transfo2.params, transfo.params, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.Params, transfo.Params, 'absolute', .01);
 
 % clean up
 delete(fileName);

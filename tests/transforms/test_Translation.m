@@ -20,35 +20,35 @@ function testEmptyConstructor %#ok<*DEFNU>
 
 % test empty constructor
 trans = Translation();
-assertTrue(trans.isvalid());
+assertTrue(isvalid(trans));
 
 function testConstructor2D
 
 % test constructor with separate arguments
 trans = Translation(2, 3);
-assertTrue(trans.isvalid());
+assertTrue(isvalid(trans));
 
 % test constructor with bundled arguments
 trans = Translation([2, 3]);
-assertTrue(trans.isvalid());
+assertTrue(isvalid(trans));
 
 % test copy constructor
 trans2 = Translation(trans);
-assertTrue(trans2.isvalid());
+assertTrue(isvalid(trans2));
 
 function testConstructor3D
 
 % test constructor with separate arguments
 trans = Translation(2, 3, 4);
-assertTrue(trans.isvalid());
+assertTrue(isvalid(trans));
 
 % test constructor with bundled arguments
 trans = Translation([2, 3, 4]);
-assertTrue(trans.isvalid());
+assertTrue(isvalid(trans));
 
 % test copy constructor
 trans2 = Translation(trans);
-assertTrue(trans2.isvalid());
+assertTrue(isvalid(trans2));
 
 
 function testIsa
@@ -66,7 +66,7 @@ str = toStruct(transfo);
 transfo2 = Translation.fromStruct(str);
 
 assertTrue(isa(transfo2, 'Translation'));
-assertElementsAlmostEqual(transfo2.u, transfo.u, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.U, transfo.U, 'absolute', .01);
 
 
 function test_readWrite
@@ -87,7 +87,7 @@ transfo2 = Transform.read(fileName);
 
 % assert
 assertTrue(isa(transfo2, 'Translation'));
-assertElementsAlmostEqual(transfo2.u, transfo.u, 'absolute', .01);
+assertElementsAlmostEqual(transfo2.U, transfo.U, 'absolute', .01);
 
 % clean up
 delete(fileName);

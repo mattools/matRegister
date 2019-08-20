@@ -1,5 +1,5 @@
 classdef AffineTransformModel2D < AffineTransform & ParametricTransform 
-%Transformation model for a 2D affine transform
+%Transformation model for a 2D affine transform.
 %
 %   TRANSFO = AffineTransformModel2D()
 %   Creates a new instanfce of affine parametric model in 2D, with 6
@@ -20,29 +20,29 @@ classdef AffineTransformModel2D < AffineTransform & ParametricTransform
 
 %% Constructors
 methods
-    function this = AffineTransformModel2D(varargin)
+    function obj = AffineTransformModel2D(varargin)
         % Create a new affine transform model
         
         % initialize to identity
-        this.params = [1 0 0   0 1 0];
+        obj.Params = [1 0 0   0 1 0];
         
         if ~isempty(varargin)
             % extract first argument, and try to interpret
             var = varargin{1};
             if isa(var, 'AffineTransformModel2D')
                 % copy constructor
-                this.params = var.params;
+                obj.Params = var.Params;
                 
             elseif isnumeric(var)
                 len = length(var);
                 if len == 6
                     % all parameters are specified as a row vector
-                    this.params = var;
+                    obj.Params = var;
                     
                 elseif sum(size(var)~=[3 3])==0 || sum(size(var)~=[2 3])==0
                     % the parameter matrix is specified
                     var = var(1:2, :)';
-                    this.params = var(:)';
+                    obj.Params = var(:)';
                     
                 elseif len == 1
                     % give the possibility to call constructor with the
@@ -62,7 +62,7 @@ methods
         end
         
         % setup parameter names
-        this.paramNames = {...
+        obj.ParamNames = {...
             'm00', 'm01', 'm02', ...
             'm10', 'm11', 'm12', ...
             };
@@ -70,9 +70,9 @@ methods
     
 end
 
-%% Methods specific to this class
+%% Methods specific to obj class
 methods
-    function initFromAffineTransform(this, transform)
+    function initFromAffineTransform(obj, transform)
         % Initialize parameters from an affine transform (class or matrix)
         %
         % Example
@@ -89,7 +89,7 @@ methods
         
         % format matrix to have a row vector of 12 elements
         params0 = transform(1:3, :)';
-        this.params = params0(:)';
+        obj.Params = params0(:)';
     end
 
 end
@@ -97,23 +97,23 @@ end
 
 %% Implementation of methods inherited from AffineTransform
 methods
-    function dim = getDimension(this) %#ok<MANU>
-        % Returns the dimension of the tansform, in this case 2.
+    function dim = getDimension(obj) %#ok<MANU>
+        % Returns the dimension of the tansform, in obj case 2.
         dim = 2;
     end
 
-    function mat = affineMatrix(this)
-        % Compute affine matrix associated with this transform
+    function mat = affineMatrix(obj)
+        % Compute affine matrix associated with obj transform
         
         % convert parameters to a 3-by-3 affine matrix
-        mat = [this.params(1:3); this.params(4:6); 0 0 1];
+        mat = [obj.Params(1:3); obj.Params(4:6); 0 0 1];
     end
 end
 
 
 %% Implementation of methods inherited from ParametricTransform
 methods
-    function jacobian = parametricJacobian(this, x, varargin) %#ok<INUSL>
+    function jacobian = parametricJacobian(obj, x, varargin) %#ok<INUSL>
         % Compute jacobian matrix, i.e. derivatives for each parameter
         % Result is a 2-by-6 matrix
         
@@ -138,16 +138,16 @@ end % parametric transform methods
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'AffineTransformModel2D', ...
-            'parameters', this.params);
+        str = struct('Type', 'AffineTransformModel2D', ...
+            'Parameters', obj.Params);
     end
 end
 methods (Static)
     function motion = fromStruct(str)
         % Creates a new instance from a structure
-        params = str.parameters;
+        params = str.Parameters;
         motion = AffineTransformModel2D(params);
     end
 end

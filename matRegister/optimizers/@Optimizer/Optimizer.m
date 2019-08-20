@@ -28,30 +28,30 @@ classdef Optimizer < handle
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@nantes.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-06,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 properties
     % the function to minimize
-    costFunction;
+    CostFunction;
     
     % the initial set of parameters
-    initialParameters = [];
+    InitialParameters = [];
     
     % the current set of parameters
-    params;
+    Params;
 
     % the current value
-    value; 
+    Value; 
     
     % Some scaling of the parameters for homogeneization
     % (parameters will be divided by corresponding scale)
-    parameterScales = [];
+    ParameterScales = [];
     
     % the function that will be called at each iteration
     % (the use of Optimization Events is more convenient)
-    outputFunction = [];
+    OutputFunction = [];
     
     % Specifies which information will be displayed at each iteration
     % Can be one of:
@@ -59,7 +59,7 @@ properties
     % 'final'   display only message of convergence
     % 'notify'  display message if convergence failed
     % 'off'     does not display anything
-    displayMode = 'notify';
+    DisplayMode = 'notify';
 end
 
 %% Events
@@ -76,12 +76,12 @@ end
 
 %% Constructor
 methods (Access = protected)
-    function this = Optimizer(costFun, params0, varargin)
+    function obj = Optimizer(costFun, params0, varargin)
         % Initialize a new Optimizer
         %
         % Usage (in sub-class constructor):
-        % this = this@Optimizer();
-        % this = this@Optimizer(FUN, PARAMS);
+        % obj = obj@Optimizer();
+        % obj = obj@Optimizer(FUN, PARAMS);
         % FUN is either a function handle, or an instance of CostFunction
         % PARAMS is the initial set of parameters
         %
@@ -92,9 +92,9 @@ methods (Access = protected)
             return;
         end
         
-        setCostFunction(this, costFun);
-        setInitialParameters(this, params0);
-        setParameters(this, params0);
+        setCostFunction(obj, costFun);
+        setInitialParameters(obj, params0);
+        setParameters(obj, params0);
         
     end 
         
@@ -108,35 +108,35 @@ end
 
 %% General methods
 methods
-    function params = getInitialParameters(this)
-        params = this.initialParameters;
+    function params = getInitialParameters(obj)
+        params = obj.InitialParameters;
     end
     
-    function setInitialParameters(this, params0)
-        this.initialParameters = params0;
+    function setInitialParameters(obj, params0)
+        obj.InitialParameters = params0;
     end
     
-    function params = getParameters(this)
-        params = this.params;
+    function params = getParameters(obj)
+        params = obj.Params;
     end
     
-    function setParameters(this, params)
-        this.params = params;
+    function setParameters(obj, params)
+        obj.Params = params;
     end
     
-    function scales = getParameterScales(this)
-        scales = this.parameterScales;
+    function scales = getParameterScales(obj)
+        scales = obj.ParameterScales;
     end
     
-    function setParameterScales(this, scales)
-        this.parameterScales = scales;
+    function setParameterScales(obj, scales)
+        obj.ParameterScales = scales;
     end
     
-    function fun = getCostFunction(this)
-        fun = this.costFunction;
+    function fun = getCostFunction(obj)
+        fun = obj.CostFunction;
     end
     
-    function setCostFunction(this, fun)
+    function setCostFunction(obj, fun)
         % Set up the cost function.
         %
         % Usage
@@ -147,34 +147,34 @@ methods
         % CostFunction.
         
         if isa(fun, 'function_handle')
-            this.costFunction = fun;
+            obj.CostFunction = fun;
         elseif isa(fun, 'CostFunction')
-            this.costFunction = @fun.evaluate;
+            obj.CostFunction = @fun.evaluate;
         end
     end
     
-    function fun = getOutputFunction(this)
-        fun = this.outputFunction;
+    function fun = getOutputFunction(obj)
+        fun = obj.OutputFunction;
     end
     
-    function setOutputFunction(this, fun)
-        this.outputFunction = fun;
+    function setOutputFunction(obj, fun)
+        obj.OutputFunction = fun;
     end
     
-    function mode = getDisplayMode(this)
-        mode = this.displayMode;
+    function mode = getDisplayMode(obj)
+        mode = obj.DisplayMode;
     end
     
-    function setDisplayMode(this, mode)
-        this.displayMode = mode;
+    function setDisplayMode(obj, mode)
+        obj.DisplayMode = mode;
     end
     
 end % general methods
 
 %% Listeners management
 methods
-    function addOptimizationListener(this, listener)
-        %Adds an OptimizationListener to this optimizer
+    function addOptimizationListener(obj, listener)
+        %Adds an OptimizationListener to obj optimizer
         %
         % usage: 
         %   addOptimizationListener(OPTIM, LISTENER);
@@ -191,9 +191,9 @@ methods
         end
         
         % link function handles to events
-        this.addlistener('OptimizationStarted', @listener.optimizationStarted);
-        this.addlistener('OptimizationIterated', @listener.optimizationIterated);
-        this.addlistener('OptimizationTerminated', @listener.optimizationTerminated);
+        addlistener(obj, 'OptimizationStarted', @listener.optimizationStarted);
+        addlistener(obj, 'OptimizationIterated', @listener.optimizationIterated);
+        addlistener(obj, 'OptimizationTerminated', @listener.optimizationTerminated);
         
     end
 end

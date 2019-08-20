@@ -1,5 +1,5 @@
 classdef CenteredMotionTransform2D < AffineTransform & ParametricTransform & CenteredTransformAbstract
-%Transformation model for a centered rotation followed by a translation
+%Transformation model for a centered rotation followed by a translation.
 %   
 %   Inner optimisable parameters of the transform have the following form:
 %   params[1] = theta, in degrees
@@ -27,25 +27,25 @@ classdef CenteredMotionTransform2D < AffineTransform & ParametricTransform & Cen
 
 %% Constructors
 methods
-    function this = CenteredMotionTransform2D(varargin)
+    function obj = CenteredMotionTransform2D(varargin)
         % Create a new model for 2D motion transform model
         % (defined by 1 rotation angle and 2 translation parameters)
 
         % call parent constructor for initializing center
-        this = this@CenteredTransformAbstract([0 0]);
+        obj = obj@CenteredTransformAbstract([0 0]);
         
         % call parent constructor for initializing parameters
-        this = this@ParametricTransform([0 0 0]);
+        obj = obj@ParametricTransform([0 0 0]);
         
         % setup default parameters
-        this.params = [0 0 0];
-        this.center = [0 0];
+        obj.Params = [0 0 0];
+        obj.Center = [0 0];
 
         if ~isempty(varargin)
             % extract first argument, and try to interpret
             var = varargin{1};
             if isa(var, 'CenteredMotionTransform2D')
-                this.params = var.params;
+                obj.Params = var.Params;
                 
             elseif isnumeric(var)
                 if length(var) == 1 && var(1) ~= 2
@@ -54,7 +54,7 @@ methods
                     
                 elseif length(var) == 3
                     % if argument is a row vector, it is the parameters
-                    this.params = var(1:3);
+                    obj.Params = var(1:3);
                 else
                     error('Please specify angle in degrees and vector');
                 end
@@ -65,41 +65,41 @@ methods
         
         % eventually parse additional arguments
         if nargin > 2
-            if strcmp(varargin{2}, 'center')
+            if strcmp(varargin{2}, 'Center')
                 % setup rotation center
-                this.center = varargin{3};
+                obj.Center = varargin{3};
             end
         end
         
         % setup parameter names
-        this.paramNames = {'Theta (°)', 'X shift', 'Y shift'};
+        obj.ParamNames = {'Theta (°)', 'X shift', 'Y shift'};
                 
     end % constructor declaration
 end
 
 %% Standard methods
 methods        
-    function dim = getDimension(this) %#ok<MANU>
+    function dim = getDimension(obj) %#ok<MANU>
         dim = 2;
     end
 
-    function mat = affineMatrix(this)
-        % Compute affine matrix associated with this transform
+    function mat = affineMatrix(obj)
+        % Compute affine matrix associated with obj transform
         
         % converts to radians
-        theta = this.params(1) * pi / 180;
+        theta = obj.Params(1) * pi / 180;
 
         % pre-computations
         cot = cos(theta);
         sit = sin(theta);
 
         % center coordinates
-        cx = this.center(1);
-        cy = this.center(2);
+        cx = obj.Center(1);
+        cy = obj.Center(2);
 
         % translation vector
-        ux = this.params(2);
-        uy = this.params(3);
+        ux = obj.Params(2);
+        uy = obj.Params(3);
         
         % build matrix
         mat = [...
@@ -109,7 +109,7 @@ methods
 
     end
   
-    function jacobian = parametricJacobian(this, x, varargin)
+    function jacobian = parametricJacobian(obj, x, varargin)
         % Compute jacobian matrix, i.e. derivatives for each parameter
        
         % extract coordinate of input point(s)
@@ -121,15 +121,15 @@ methods
         end
         
         % convert angles to degrees
-        theta = this.params(1) * pi / 180;
+        theta = obj.Params(1) * pi / 180;
         
         % precompute angle functions
         cot = cos(theta);
         sit = sin(theta);
         
         % recenter the point coordinates
-        x = x - this.center(1);
-        y = y - this.center(2);
+        x = x - obj.Center(1);
+        y = y - obj.Center(2);
         
         % compute parametric jacobian
         jacobian = [...
@@ -160,7 +160,7 @@ methods (Static)
         nbParams = str2double(map('TransformParameterNumber'));
         
         trParams = map('TransformParameters');
-        trParams= cellfun(@str2double, regexp(trParams, '\s*', 'split'));
+        trParams = cellfun(@str2double, regexp(trParams, '\s*', 'split'));
         
         if nbParams ~= length(trParams)
             error('Wrong number of parameters');
@@ -170,26 +170,26 @@ methods (Static)
         
         center = map('TransformCenter');
         center = cellfun(@str2double, regexp(center, '\s*', 'split'));
-        transfo.center = center;
+        transfo.Center = center;
     end
 end
 
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'CenteredMotionTransform2D', ...
-            'center', this.center, ...
-            'parameters', this.params);
+        str = struct('Type', 'CenteredMotionTransform2D', ...
+            'Center', obj.Center, ...
+            'Parameters', obj.Params);
         
     end
 end
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
-        params = str.parameters;
-        transfo = CenteredMotionTransform2D(params, 'center', str.center);
+        params = str.Parameters;
+        transfo = CenteredMotionTransform2D(params, 'Center', str.Center);
     end
 end
 

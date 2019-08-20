@@ -8,10 +8,10 @@ classdef NearestGradientEvaluator2D < ImageFunction
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-10-11,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
@@ -21,13 +21,13 @@ end
 
 %% Constructors
 methods
-    function this = NearestGradientEvaluator2D(varargin)
+    function obj = NearestGradientEvaluator2D(varargin)
         if nargin>0
             var = varargin{1};
             if isa(var, 'NearestGradientEvaluator2D')
-                this.refImage = var.refImage;
+                obj.RefImage = var.RefImage;
             elseif isa(var, 'Image')
-                this.refImage = var;
+                obj.RefImage = var;
             end
         end
     end

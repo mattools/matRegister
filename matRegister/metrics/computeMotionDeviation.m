@@ -7,25 +7,26 @@ function res = computeMotionDeviation(transfo)
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-06-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 if ~isa(transfo, 'AffineTransform')
-    error('Sorry, requires a motion transform as input');
+    error('Requires a motion transform as input');
 end
 
-mat = transfo.getAffineMatrix();
+mat = affineMatrix(transfo);
 
 linearPart = mat(1:end-1, 1:end-1);
 
-if size(linearPart, 2)==2
+if size(linearPart, 2) == 2
     theta = atan2(mat(2,1), mat(1,1));
     rotLog = sqrt(2)*abs(theta);
-elseif size(linearPart, 1)==3
+    
+elseif size(linearPart, 1) == 3
     % compute rotation angle theta around the rotation axis (not computed)
     % valid only for 3D rotation matrices...
     theta = acos((trace(linearPart)-1)/2);

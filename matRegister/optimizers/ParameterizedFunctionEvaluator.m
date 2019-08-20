@@ -8,24 +8,24 @@ classdef ParameterizedFunctionEvaluator < SingleValuedCostFunction
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-11-03,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 
 %% Properties
 properties
-    transform;
-    baseFunction;
+    Transform;
+    BaseFunction;
 end
 
 
 %% Constructor
 methods
-    function this = ParameterizedFunctionEvaluator(transform, baseFunction)
+    function obj = ParameterizedFunctionEvaluator(transform, baseFunction)
         %Constructor for a new MetricEvaluator
         % THIS = MetricEvaluator(TRANSFO, METRIC)
         
@@ -34,8 +34,8 @@ methods
             error('First argument must be a parametric object');
         end
         
-        this.transform = transform;
-        this.baseFunction = baseFunction;
+        obj.Transform = transform;
+        obj.BaseFunction = baseFunction;
       
     end % constructor
  
@@ -45,17 +45,17 @@ end % construction function
 %% General methods
 methods
  
-    function [res, grad] = evaluate(this, params)
+    function [res, grad] = evaluate(obj, params)
         % Update transform parameters, and compute function value (and grad)
         
         % update params
-        setParameters(this.transform, params);
+        setParameters(obj.Transform, params);
         
         % compute value and eventually graident
-        if nargout<=1
-            res = computeValue(this.baseFunction);
+        if nargout <= 1
+            res = computeValue(obj.BaseFunction);
         else
-            [res, grad] = computeValueAndGradient(this.baseFunction);
+            [res, grad] = computeValueAndGradient(obj.BaseFunction);
         end
     end
 end % general methods

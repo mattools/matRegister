@@ -1,36 +1,36 @@
-function [params, value] = startOptimization(this)
+function [params, value] = startOptimization(obj)
 %STARTOPTIMIZATION Run the optimization algorithm
 
 
 % ensure there is a valid direction set
-if isempty(this.directionSet)
-    this.initDirectionSet();
+if isempty(obj.DirectionSet)
+    initDirectionSet(obj);
 end
 
 
 % default tolerance
 tol = 1e-5;
 
-nDirs = size(this.directionSet, 1);
+nDirs = size(obj.DirectionSet, 1);
 
 % main loop
 % Use linear search in a set of directions that span the parameters of the
 % first transform.
 % The same process could be obteained by calling 'directionSetMinimizer'.
 dirIndex = 1;
-for i = 1:this.nIter
-    if this.verbose
-        disp(sprintf('iteration %d / %d', i, this.nIter)); %#ok<DSPS>
+for i = 1:obj.NIters
+    if obj.Verbose
+        disp(sprintf('iteration %d / %d', i, obj.NIters)); %#ok<DSPS>
     end
     
     % current direction
-    dir = this.directionSet(dirIndex, :);
+    dir = obj.DirectionSet(dirIndex, :);
     
     % update direction index
     dirIndex = mod(dirIndex, nDirs) + 1;
     
     % use a function handle of 1 variable
-    fun1 = @(t) this.costFunction(this.params + t*dir);
+    fun1 = @(t) obj.CostFunction(obj.Params + t*dir);
     
     % guess initial bounds of the function
     ax = 0;
@@ -41,17 +41,17 @@ for i = 1:this.nIter
     [tmin, value] = brentLineSearch(fun1, ax, bx, cx, tol);
     
     % construct new optimal point
-    this.params = this.params + tmin*dir;
+    obj.Params = obj.Params + tmin*dir;
     
     % Call an output function for processing current point
-    if ~isempty(this.outputFunction)
+    if ~isempty(obj.OutputFunction)
         % setup optim values
         optimValues.fval = value;
         optimValues.iteration = i;
         optimValues.procedure = 'Linear search';
         
         % call output function with appropriate parameters
-        stop = this.outputFunction(this.params, optimValues, 'iter');
+        stop = obj.OutputFunction(obj.Params, optimValues, 'iter');
         if stop
             break;
         end
@@ -59,8 +59,7 @@ for i = 1:this.nIter
 end
 
 % format output arguments
-params = this.params;
-
+params = obj.Params;
 
 % we need a final end because nested functions are used
 end

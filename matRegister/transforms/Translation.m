@@ -1,5 +1,5 @@
 classdef Translation < AffineTransform
-%TRANSLATION Defines a translation in ND space
+%TRANSLATION Defines a translation in ND space.
 %   
 %   Representation of a translation transform in ND space.
 %   The translation vector is stored by the class, and the transformation
@@ -32,12 +32,12 @@ classdef Translation < AffineTransform
 
 properties
     % the translation vector, stored as a row vector
-    u;
+    U;
 end
 
 %% Abstract methods
 methods
-    function this = Translation(varargin)
+    function obj = Translation(varargin)
         %TRANSLATION Class constructor
         %
         % T = Translation(VEC)
@@ -55,58 +55,58 @@ methods
         
         if nargin == 0
             % empty constructor, initialized to (0,0) 2D translation
-            this.u = [0 0];
+            obj.U = [0 0];
             return;
         end
         
         if isa(varargin{1}, 'Translation')
             % copy constructor
             var = varargin{1};
-            this.u = var.u;
+            obj.U = var.U;
         elseif isnumeric(varargin{1})
             var = varargin{1};
             if size(var, 2) == 1
                 % initialize with separate scalar parameters
-                this.u = zeros(1, nargin);
+                obj.U = zeros(1, nargin);
                 for i=1:nargin
-                    this.u(i) = varargin{i};
+                    obj.U(i) = varargin{i};
                 end
             else
                 % initialize with bundled parameters
-                this.u = var;
+                obj.U = var;
             end
         else
-            error('Wrong parameter when constructing a Composed transform');
+            error('Wrong parameter when constructing a Translation');
         end
     end
 end
 
 methods
-    function d = getDimension(this)
-        d = length(this.u);
+    function d = getDimension(obj)
+        d = length(obj.U);
     end
     
-    function mat = affineMatrix(this)
+    function mat = affineMatrix(obj)
         % Returns the (ND+1)*(ND+1) affine matrix representing translation
-        nd = length(this.u);
+        nd = length(obj.U);
         mat = eye(nd+1);
-        mat(1:end-1, end) = this.u(:);
+        mat(1:end-1, end) = obj.U(:);
     end
     
 end % end methods
 
 %% Serialization methods
 methods
-    function str = toStruct(this)
+    function str = toStruct(obj)
         % Converts to a structure to facilitate serialization
-        str = struct('type', 'Translation', ...
-            'vector', this.u);
+        str = struct('Type', 'Translation', ...
+            'Vector', obj.U);
     end
 end
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
-        transfo = Translation(str.vector);
+        transfo = Translation(str.Vector);
     end
 end
 

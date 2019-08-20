@@ -8,10 +8,10 @@ classdef OptimizationIterationLogger < OptimizationListener
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-08-29,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
@@ -19,23 +19,23 @@ classdef OptimizationIterationLogger < OptimizationListener
 %% Properties
 properties
     % the file to write in (file handle)
-    file;
+    File;
     
     % time spent last iteration
-    time0;
+    Time0;
 end % end properties
 
 
 %% Constructor
 methods
-    function this = OptimizationIterationLogger(fileName)
+    function obj = OptimizationIterationLogger(fileName)
         % Constructor for OptimizationIterationLogger class
         
         if nargin < 1
             error('Requires a file name as first argument');
         end
         
-        this.file = fopen(fileName, 'wt');
+        obj.File = fopen(fileName, 'wt');
     end
 
 end % end constructors
@@ -43,25 +43,25 @@ end % end constructors
 
 %% Optimization Listener Methods
 methods
-    function optimizationStarted(this, src, event) %#ok<*INUSD>
-        fprintf(this.file, 'iter     f_value     ||gradient||   time[s]\n');
-        this.time0 = tic;
+    function optimizationStarted(obj, src, event) %#ok<*INUSD>
+        fprintf(obj.File, 'iter     f_value     ||gradient||   time[s]\n');
+        obj.Time0 = tic;
     end
     
-    function optimizationIterated(this, optim, event)
-        value = optim.value;
-        time = toc(this.time0);
-        grad = sqrt(sum(optim.gradient .^ 2));
+    function optimizationIterated(obj, optim, event)
+        value = optim.Value;
+        time = toc(obj.Time0);
+        grad = sqrt(sum(optim.Gradient .^ 2));
         
         pattern = '%3d    %f    %f    %f\n';
-        fprintf(this.file, pattern, optim.iter, value, grad, time);
+        fprintf(obj.File, pattern, optim.Iter, value, grad, time);
         
-        this.time0 = tic;
+        obj.Time0 = tic;
     end
     
-    function optimizationTerminated(this, src, event)
+    function optimizationTerminated(obj, src, event)
         disp('End of optimization');
-        fclose(this.file);
+        fclose(obj.File);
     end
 end % end methods
 

@@ -1,5 +1,5 @@
 classdef ConstantCostFunction < CostFunction
-%CONSTANTCOSTFUNCTION Dummy cost function used for tests
+%CONSTANTCOSTFUNCTION Dummy cost function used for tests.
 %
 %   CCF = ConstantCostFunction();
 %
@@ -11,16 +11,16 @@ classdef ConstantCostFunction < CostFunction
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2011-01-06,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2011 INRA - Cepia Software Platform.
 
 
 methods 
-    function varargout = evaluate(this, params) %#ok<INUSL>
+    function varargout = evaluate(obj, params) %#ok<INUSL>
         % Returns the same value (here, 1), whatever the param vector
         fval = 1;
         if nargout<=1

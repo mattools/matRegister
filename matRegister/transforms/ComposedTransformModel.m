@@ -1,5 +1,5 @@
 classdef ComposedTransformModel < ParametricTransform
-%COMPOSEDTRANSFORMMODEL Compose several transforms, the last one being parametric 
+% Compose several transforms, the last one being parametric.
 %
 %   TC = ComposedTransformModel(T0, T1)
 %   T0 is the initial transform, T1 is the transform to optimize. The
@@ -10,42 +10,42 @@ classdef ComposedTransformModel < ParametricTransform
 %
 %   See also
 %
-%
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
 
 properties
     % the set of encapsulated transforms
-    transforms;
+    Transforms;
 end
 
 %% Constructor
 methods
-    function this = ComposedTransformModel(varargin)
+    function obj = ComposedTransformModel(varargin)
         % class constructor
         % T = ComposedTransformModel(T1, T2);
         
         if isa(varargin{1}, 'ComposedTransform') && nargin == 1
             % copy constructor
             var = varargin{1};
-            this.transforms = var.transforms;
+            obj.Transforms = var.Transforms;
             
         elseif isa(varargin{1}, 'Transform')
             % initialize tranform array
             nbTrans = length(varargin);
-            this.transforms = cell(nbTrans, 1);
+            obj.Transforms = cell(nbTrans, 1);
             for i = 1:nbTrans
-                this.transforms{i} = varargin{i};
+                obj.Transforms{i} = varargin{i};
             end
             
         else
             error('Wrong parameter when constructing a Composed transform');
         end
         
-        if ~isa(this.transforms{end}, 'ParametricTransform')
+        if ~isa(obj.Transforms{end}, 'ParametricTransform')
             error('Last transform must be a ParametricTransform');
         end
         
@@ -55,45 +55,45 @@ end
 
 %% Methods implementing Transform interface
 methods
-    function dim = getDimension(this)
-        dim = getDimension(this.transforms{1});
+    function dim = getDimension(obj)
+        dim = getDimension(obj.Transforms{1});
     end
 
-    function point = transformPoint(this, point)
-        for i = 1:length(this.transforms)
-            point = this.transforms{i}.transformPoint(point);
+    function point = transformPoint(obj, point)
+        for i = 1:length(obj.Transforms)
+            point = TransformPoint(obj.Transforms{i}, point);
         end
     end
     
-    function vector = transformVector(this, vector, position)
-        for i = 1:length(this.transforms)
-            vector = this.transforms{i}.transformVector(vector, position);
+    function vector = transformVector(obj, vector, position)
+        for i = 1:length(obj.Transforms)
+            vector = TransformVector(obj.Transforms{i}, vector, position);
         end
     end
     
-    function jacobian = getJacobian(this, point, varargin)
+    function jacobian = jacobianMatrix(obj, point, varargin)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
         
-        jacobian = this.transforms{1}.getJacobian(point);
-        for i = 2:length(this.transforms)
-            jacobian = this.transforms{i}.getJacobian(point, varargin{:}) * jacobian;
+        jacobian = jacobianMatrix(obj.Transforms{1}, point);
+        for i = 2:length(obj.Transforms)
+            jacobian = jacobianMatrix(obj.Transforms{i}, point, varargin{:}) * jacobian;
         end
     end
     
-    function jacobian = parametricJacobian(this, point, varargin)
+    function jacobian = parametricJacobian(obj, point, varargin)
         % Compute jacobian matrix, i.e. derivatives for coordinate
         % jacob(i,j) = d x_i / d x_j
 
-        nTransfos = length(this.transforms);
+        nTransfos = length(obj.Transforms);
         
         % first, transform points
         for i = 1:nTransfos-1
-            point = this.transforms{i}.transformPoint(point, varargin{:});
+            point = TransformPoint(obj.Transforms{i}, point, varargin{:});
         end
 
         % then, compute parametric jacobian of the last transform
-        jacobian = this.transforms{end}.getParametricJacobian(point, varargin{:});
+        jacobian = getParametricJacobian(obj.Transforms{end}, point, varargin{:});
         
     end
 end % methods
@@ -105,22 +105,22 @@ end % methods
 % local parameters
 
 methods
-    function p = getParameters(this)
+    function p = getParameters(obj)
         % Returns the parameter vector of the transform
-        p = this.transforms{end}.params;
+        p = obj.Transforms{end}.Params;
     end
     
-    function setParameters(this, params)
+    function setParameters(obj, params)
         % Changes the parameter vector of the transform
-        this.transforms{end}.params = params;
+        obj.Transforms{end}.Params = params;
     end
     
-    function Np = getParameterLength(this)
+    function Np = getParameterLength(obj)
         % Returns the length of the vector parameter
-        Np = length(this.transforms{end}.params);
+        Np = length(obj.Transforms{end}.Params);
     end
     
-    function name = getParameterName(this, paramIndex)
+    function name = getParameterName(obj, paramIndex)
         % Return the name of the i-th parameter
         %
         % NAME = Transfo.getParameterName(PARAM_INDEX);
@@ -134,18 +134,18 @@ methods
         %
         
         % check index is not too high
-        if paramIndex > length(this.transforms{end}.params)
+        if paramIndex > length(obj.Transforms{end}.Params)
             error('Index greater than the number of parameters');
         end
         
         % return a parameter name if it was initialized
         name = '';
-        if paramIndex <= length(this.transforms{end}.paramNames)
-            name = this.transforms{end}.paramNames{paramIndex};
+        if paramIndex <= length(obj.Transforms{end}.ParamNames)
+            name = obj.Transforms{end}.ParamNames{paramIndex};
         end
     end
     
-    function name = getParameterNames(this)
+    function name = getParameterNames(obj)
         % Return the names of all parameters in a cell array of strings
         %
         % NAMES = Transfo.getParameterNames();
@@ -157,7 +157,7 @@ methods
         %   'X shift'   'Y shift'
         %
         
-        name = this.transforms{end}.paramNames;
+        name = obj.Transforms{end}.ParamNames;
     end
 end % overridden methods
 

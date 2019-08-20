@@ -28,5 +28,5 @@ axis equal; axis([-10 10 -10 10]);
 drawPolygon(poly, 'k');
 
 % draw transformed polygon
-poly2 = transfo.transformPoint(poly);
+poly2 = transformPoint(transfo, poly);
 drawPolygon(poly2, 'm')

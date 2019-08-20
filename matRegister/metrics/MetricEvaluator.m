@@ -10,6 +10,7 @@ classdef MetricEvaluator < handle
 %
 %   See also
 %     ParametricTransform, ImageToImageMetric
+%
 
 % ------
 % Author: David Legland
@@ -20,14 +21,14 @@ classdef MetricEvaluator < handle
  
 %% Properties
 properties
-    transform;
-    metric;
+    Transform;
+    Metric;
 end
 
 
 %% Constructor
 methods
-    function this = MetricEvaluator(transform, metric)
+    function obj = MetricEvaluator(transform, metric)
         %Constructor for a new MetricEvaluator
         % THIS = MetricEvaluator(TRANSFO, METRIC)
         
@@ -36,8 +37,8 @@ methods
             error('First argument must be a parametric transform');
         end
         
-        this.transform = transform;
-        this.metric = metric;
+        obj.Transform = transform;
+        obj.Metric = metric;
       
     end % constructor
  
@@ -47,17 +48,17 @@ end % construction function
 %% General methods
 methods
  
-    function [res, grad] = evaluate(this, params)
+    function [res, grad] = evaluate(obj, params)
         % Update transform parameters, and compute metric value (and grad)
         
         % uupdate params
-        setParameters(this.transform, params);
+        setParameters(obj.Transform, params);
         
         % compute value and eventually gradient
         if nargout <= 1
-            res = computeValue(this.metric);
+            res = computeValue(obj.Metric);
         else
-            [res, grad] = computeValueAndGradient(this.metric);
+            [res, grad] = computeValueAndGradient(obj.Metric);
         end
     end
 end % general methods

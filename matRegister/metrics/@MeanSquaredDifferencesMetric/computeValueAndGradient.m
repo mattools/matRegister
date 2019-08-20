@@ -1,12 +1,12 @@
-function [res, grad, isInside] = computeValueAndGradient(this, varargin)
+function [res, grad, isInside] = computeValueAndGradient(obj, varargin)
 % Compute metric value and gradient
 %
-%   [RES, DERIV] = this.computeValueAndGradient();
+%   [RES, DERIV] = obj.computeValueAndGradient();
 %   This syntax requires that both fields 'transform' and 'gradientImage'
 %   have been initialized.
 %
-%   [RES, DERIV] = this.computeValueAndGradient(TRANSFO, GRADX, GRADY);
-%   [RES, DERIV] = this.computeValueAndGradient(TRANSFO, GRADX, GRADY, GRADZ);
+%   [RES, DERIV] = obj.computeValueAndGradient(TRANSFO, GRADX, GRADY);
+%   [RES, DERIV] = obj.computeValueAndGradient(TRANSFO, GRADX, GRADY, GRADZ);
 %   This (deprecated) syntax passes transform model and gradient components
 %   as input arguments.
 %
@@ -16,28 +16,28 @@ function [res, grad, isInside] = computeValueAndGradient(this, varargin)
 % res = ssdMetric.computeValueAndGradient(model);
 %
 
-nd = ndims(this.img1);
+nd = ndims(obj.Img1);
 
 % The first part of the file consists in analyzing input, and to call the
 % most appropriate subfunction
-if ~isempty(this.transform) && ~isempty(this.gradientImage)
+if ~isempty(obj.Transform) && ~isempty(obj.GradientImage)
     
     % If the gradient image is an image function, it is assumed to be a 
     % gradient interpolator or a gradient evaluator
-    if isa(this.gradientImage, 'ImageFunction')
+    if isa(obj.GradientImage, 'ImageFunction')
         [res, grad, isInside] = ...
-            computeValueAndGradientFromGradientFunction(this);
+            computeValueAndGradientFromGradientFunction(obj);
         return;
     end
     
     % if gradient image is a standard image, use specific methods that
     % perform dimension-specific nearest-neighbor interpolation
     if nd == 2
-        [res, grad, isInside] = computeValueAndGradientLocal2d(this);
+        [res, grad, isInside] = computeValueAndGradientLocal2d(obj);
     elseif nd == 3
-        [res, grad, isInside] = computeValueAndGradientLocal3d(this);
+        [res, grad, isInside] = computeValueAndGradientLocal3d(obj);
     else
-        [res, grad, isInside] = computeValueAndGradientLocal(this);
+        [res, grad, isInside] = computeValueAndGradientLocal(obj);
     end
     
 else
@@ -51,30 +51,30 @@ else
     
     % assumes transform and gradient components are given as arguments
     if nd == 2
-        [res, grad, isInside] = computeValueAndGradient2d(this, varargin{:});
+        [res, grad, isInside] = computeValueAndGradient2d(obj, varargin{:});
     else
-        [res, grad, isInside] = computeValueAndGradient3d(this, varargin{:});
+        [res, grad, isInside] = computeValueAndGradient3d(obj, varargin{:});
     end
 end
 
 % end of main function
 
 
-function [res, grad, isInside] = computeValueAndGradientLocal(this)
+function [res, grad, isInside] = computeValueAndGradientLocal(obj)
 
 % error checking
-if isempty(this.transform)
+if isempty(obj.Transform)
     error('Gradient computation requires transform');
 end
-if isempty(this.gradientImage)
+if isempty(obj.GradientImage)
     error('Gradient computation requires a gradient image');
 end
 
 % compute values in image 1
-[values1, inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(obj.Img1, obj.Points);
 
 % compute values in image 2
-[values2, inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(obj.Img2, obj.Points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -92,24 +92,24 @@ res = sum(diff .^ 2) / np;
 inds    = find(isInside);
 nInds   = length(inds);
 
-transfo = this.transform;
+transfo = obj.Transform;
 nParams = length(getParameterLength(transfo));
 gd = zeros(nInds, nParams);
 
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
-points2 = transformPoint(transfo, this.points);
+points2 = transformPoint(transfo, obj.Points);
 indices = round(points2(inds, :)) + 1;
 
 for i = 1:length(inds)
     iInd = inds(i);
     
     % compute jacobian for valid points (in fixed image reference system)
-    jac = getParametricJacobian(transfo, this.points(iInd, :));
+    jac = parametricJacobian(transfo, obj.Points(iInd, :));
     
     % local gradient in moving image
     subs = num2cell(indices(i, :));
-    grad = getPixel(this.gradientImage, subs{:});
+    grad = getPixel(obj.GradientImage, subs{:});
     
     % local contribution to metric gradient
     gd(i, :) = grad * jac;
@@ -125,24 +125,24 @@ grad = mean(gd, 1);
 
 
 
-function [res, grad, isInside] = computeValueAndGradientLocal2d(this)
+function [res, grad, isInside] = computeValueAndGradientLocal2d(obj)
 % Compute metric value and gradient in 2D, using inner gradient image
 %
 % Assumes that gradient is a 2D image.
 
 % error checking
-if isempty(this.transform)
+if isempty(obj.Transform)
     error('Gradient computation requires transform');
 end
-if isempty(this.gradientImage)
+if isempty(obj.GradientImage)
     error('Gradient computation requires a gradient image');
 end
 
 % compute values in image 1
-[values1, inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(obj.Img1, obj.Points);
 
 % compute values in image 2
-[values2, inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(obj.Img2, obj.Points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -161,27 +161,27 @@ res = mean(diff .^ 2);
 inds    = find(isInside);
 nInds   = length(inds);
 
-transfo = this.transform;
+transfo = obj.Transform;
 nParams = getParameterLength(transfo);
 gd      = zeros(nInds, nParams);
 
 % compute transformed coordinates
-points2 = transformPoint(transfo, this.points);
+points2 = transformPoint(transfo, obj.Points);
 
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
 % indices = round(points2(inds, :)) + 1;
-indices = pointToIndex(this.gradientImage, points2(inds,:));
+indices = pointToIndex(obj.GradientImage, points2(inds,:));
 
-gradImg = this.gradientImage.data;
+gradImg = obj.GradientImage.Data;
 
 % iterate over sampling points within bounds
 for i = 1:nInds
     iInd = inds(i);
     
     % compute jacobian for valid points (in fixed image reference system)
-    p0 = this.points(iInd, :);
-    jac = getParametricJacobian(transfo, p0);
+    p0 = obj.Points(iInd, :);
+    jac = parametricJacobian(transfo, p0);
     
     % local gradient in moving image
     ind1 = indices(i,1);
@@ -202,16 +202,16 @@ grad = mean(gd, 1);
 
 
 
-function [res, grad, isInside] = computeValueAndGradientLocal3d(this)
+function [res, grad, isInside] = computeValueAndGradientLocal3d(obj)
 %Assumes gradient image is 3D
 
 % TODO: need to update to compute diff on all values
 
 % compute values in image 1
-[values1, inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(obj.Img1, obj.Points);
 
 % compute values in image 2
-[values2, inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(obj.Img2, obj.Points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -233,17 +233,17 @@ res = sum(diff.^2)/np;
 inds    = find(isInside);
 nInds   = length(inds);
 
-transfo = this.transform;
+transfo = obj.Transform;
 nParams = getParameterLength(transfo);
 gd = zeros(nInds, nParams);
 
 % compute transformed coordinates
-points2 = transformPoint(transfo, this.points);
+points2 = transformPoint(transfo, obj.Points);
 
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
 % indices = round(points2(inds, :)) + 1;
-gradImg = this.gradientImage.data;
+gradImg = obj.GradientImage.Data;
 indices = pointToIndex(gradImg, points2(inds,:));
 
 % iterate over sampling points within bounds
@@ -251,8 +251,8 @@ for i = 1:length(inds)
     iInd = inds(i);
     
     % calcule jacobien pour points valides (repere image fixe)
-    p0 = this.points(iInd, :);
-    jac = getParametricJacobian(transfo, p0);
+    p0 = obj.Points(iInd, :);
+    jac = parametricJacobian(transfo, p0);
     
     % local gradient in moving image
     ind1 = indices(i,1);
@@ -276,17 +276,17 @@ gd = gd .* diff(:, ones(1, nParams));
 grad = mean(gd, 1);
 
 
-function [res, grad, isInside] = computeValueAndGradientFromGradientFunction(this)
+function [res, grad, isInside] = computeValueAndGradientFromGradientFunction(obj)
 % Assumes gradient image is an ImageFunction that evaluates or interpolates
 % gradient of another image
-% the interpolated/evaluated gradient is not transformed, this operation is
-% left to this function
+% the interpolated/evaluated gradient is not transformed, obj operation is
+% left to obj function
 
 % compute values in image 1
-[values1, inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(obj.Img1, obj.Points);
 
 % compute values in image 2
-[values2, inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(obj.Img2, obj.Points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -305,15 +305,15 @@ res = sum(diff .^ 2) / np;
 %fprintf('Initial SSD: %f\n', res);
 
 
-transfo = this.transform;
+transfo = obj.Transform;
 nParams = getParameterLength(transfo);
 
 % compute transformed coordinates
-points2 = transformPoint(transfo, this.points);
+points2 = transformPoint(transfo, obj.Points);
 
 % evaluate gradient, and re-compute points within image frame, as gradient
 % evaluator can have different behaviour at image borders.
-[gradVals, gradInside] = evaluate(this.gradientImage, points2);
+[gradVals, gradInside] = evaluate(obj.GradientImage, points2);
 
 % convert to indices
 inds    = find(gradInside);
@@ -324,8 +324,8 @@ for i = 1:nInds
     iInd = inds(i);
     
     % compute jacobian for valid points (in fixed image reference system)
-    p0  = this.points(iInd, :);
-    jac = getParametricJacobian(transfo, p0);
+    p0  = obj.Points(iInd, :);
+    jac = parametricJacobian(transfo, p0);
     
     % % local contribution to metric gradient
     gd(i, :) = gradVals(iInd, :)*jac;
@@ -346,14 +346,14 @@ grad = mean(gd, 1);
 
 
 
-function [res, grad, isInside] = computeValueAndGradient2d(this, transfo, gx, gy)
+function [res, grad, isInside] = computeValueAndGradient2d(obj, transfo, gx, gy)
 % Old function to compute metric and gradient of a 2D image using 2 args
 
 % compute values in image 1
-[values1, inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(obj.Img1, obj.Points);
 
 % compute values in image 2
-[values2, inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(obj.Img2, obj.Points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -379,12 +379,12 @@ gd = zeros(nInds, nParams);
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
 % also converts from (x,y) to (i,j)
-points2 = transfo.transformPoint(this.points);
+points2 = TransformPoint(transfo, obj.Points);
 index = round(points2(inds, [2 1]))+1;
 
 for i = 1:nInds
     % compute jacobian for valid points (in fixed image reference system)
-    jac = getParametricJacobian(transfo, this.points(inds(i), :));
+    jac = parametricJacobian(transfo, obj.Points(inds(i), :));
     
     % local gradient in moving image
     i1 = index(i, 1);
@@ -402,14 +402,14 @@ gd = gd .* diff(:, ones(1, nParams));
 grad = mean(gd, 1);
 
 
-function [res, grad, isInside] = computeValueAndGradient3d(this, transfo, gx, gy, gz)
+function [res, grad, isInside] = computeValueAndGradient3d(obj, transfo, gx, gy, gz)
 % Old function to compute metric and gradient of a 3D image using 3 args
 
 % compute values in image 1
-[values1, inside1] = evaluate(this.img1, this.points);
+[values1, inside1] = evaluate(obj.Img1, obj.Points);
 
 % compute values in image 2
-[values2, inside2] = evaluate(this.img2, this.points);
+[values2, inside2] = evaluate(obj.Img2, obj.Points);
 
 % keep only valid values
 isInside = inside1 & inside2;
@@ -432,12 +432,12 @@ gd      = zeros(nInds, nParams);
 % convert from physical coordinates to index coordinates
 % (assumes spacing is 1 and origin is 0)
 % also converts from (x,y) to (i,j)
-points2 = transformPoint(transfo, this.points);
+points2 = transformPoint(transfo, obj.Points);
 index = round(points2(inds, [2 1 3]))+1;
 
 for i = 1:nInds
     % compute jacobian for valid points (in fixed image reference system)
-    jac = getParametricJacobian(transfo, this.points(inds(i),:));
+    jac = parametricJacobian(transfo, obj.Points(inds(i),:));
     
     % local gradient in moving image
     i1 = index(i, 1);

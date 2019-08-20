@@ -1,5 +1,5 @@
-function [value isInside] = evaluate(this, varargin)
-% Evaluate intensity of image at a given physical position
+function [value, isInside] = evaluate(obj, varargin)
+% Evaluate intensity of image at a given physical position.
 %
 % VAL = INTERP.evaluate(POS);
 % where POS is a N-by-2 array containing alues of x- and y-coordinates
@@ -17,10 +17,10 @@ function [value isInside] = evaluate(this, varargin)
 
 
 % eventually convert inputs to a single nPoints-by-ndims array
-[point dim] = ImageFunction.mergeCoordinates(varargin{:});
+[point, dim] = ImageFunction.mergeCoordinates(varargin{:});
 
 % Evaluates image value for a given position
-coord = pointToContinuousIndex(this.image, point);
+coord = pointToContinuousIndex(obj.Image, point);
 
 % extract x and y
 xt  = coord(:, 1);
@@ -29,7 +29,7 @@ zt  = coord(:, 3);
 
 % select points located inside interpolation area
 % (smaller than image physical size)
-siz = size(this.image);
+siz = size(obj.Image);
 isBefore    = sum(coord < 1, 2) > 0;
 isAfter     = xt >= siz(1) | yt >= siz(2) | zt >= siz(3);
 isInside    = ~(isBefore | isAfter);
@@ -62,17 +62,17 @@ dimXY   = siz(1) * siz(2);
 inds    = (k1 - 1) * dimXY + (j1 - 1) * dimX + i1;
 
 % values of the 4 pixels around each point
-vals = double(this.image.data(inds))                 .*dxi   .* dyi  .* dzi;
-vals = vals + double(this.image.data(inds + 1))      .*dx    .* dyi  .* dzi;
-vals = vals + double(this.image.data(inds + dimX))   .*dxi   .* dy   .* dzi;
-vals = vals + double(this.image.data(inds + dimX+1)) .*dx    .* dy   .* dzi;
+vals = double(obj.Image.Data(inds))                 .*dxi   .* dyi  .* dzi;
+vals = vals + double(obj.Image.Data(inds + 1))      .*dx    .* dyi  .* dzi;
+vals = vals + double(obj.Image.Data(inds + dimX))   .*dxi   .* dy   .* dzi;
+vals = vals + double(obj.Image.Data(inds + dimX+1)) .*dx    .* dy   .* dzi;
 inds = inds + dimXY;
-vals = vals + double(this.image.data(inds))          .* dxi  .* dyi  .* dz;
-vals = vals + double(this.image.data(inds + 1))      .* dx   .* dyi  .* dz;
-vals = vals + double(this.image.data(inds + dimX))   .* dxi  .* dy   .* dz;
-vals = vals + double(this.image.data(inds + dimX+1)) .* dx   .* dy   .* dz;
+vals = vals + double(obj.Image.Data(inds))          .* dxi  .* dyi  .* dz;
+vals = vals + double(obj.Image.Data(inds + 1))      .* dx   .* dyi  .* dz;
+vals = vals + double(obj.Image.Data(inds + dimX))   .* dxi  .* dy   .* dz;
+vals = vals + double(obj.Image.Data(inds + dimX+1)) .* dx   .* dy   .* dz;
 
 % Create default result image
 value = zeros(dim);
-value(:) = this.fillValue;
+value(:) = obj.FillValue;
 value(isInside) = vals;

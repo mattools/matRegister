@@ -1,5 +1,5 @@
 classdef BackwardTransformedImage < ImageFunction
-% Describes an image associated with a backward transform
+% Describes an image associated with a backward transform.
 %
 %   TIM = BackwardTransformedImage(IMG, TRANS, 'linear');
 %   where IMG is an image, and TRANS a transform.
@@ -19,19 +19,20 @@ classdef BackwardTransformedImage < ImageFunction
 %   See also
 %
 %
+
 % ------
 % Author: David Legland
-% e-mail: david.legland@grignon.inra.fr
+% e-mail: david.legland@inra.fr
 % Created: 2010-04-08,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
     
 %% Declaration of class properties
 properties        
     % the transform from physical space to image space
-    transform       = [];
+    Transform       = [];
 
     % an interpolator, that must inherit ImageFunction
-    interpolator    = [];
+    Interpolator    = [];
 end
 
 %% Static methods
@@ -43,7 +44,7 @@ end
 
 %% Constructors
 methods
-    function this = BackwardTransformedImage(varargin)
+    function obj = BackwardTransformedImage(varargin)
         % Constructs a new BackwardTransformedImage object.
         if nargin==0
             % empty constructor
@@ -52,30 +53,30 @@ methods
         elseif nargin==1 && isa(varargin{1}, 'BackwardTransformedImage')
             % copy constructor: copy each field
             tim = varargin{1};
-            this.transform      = tim.transform;
-            this.interpolator   = tim.interpolator;
+            obj.Transform      = tim.Transform;
+            obj.Interpolator   = tim.Interpolator;
 
         elseif isa(varargin{1}, 'ImageFunction')
             % standard constructor: interpolator and transform
-            this.interpolator   = varargin{1};
-            this.transform      = varargin{2};
+            obj.Interpolator   = varargin{1};
+            obj.Transform      = varargin{2};
 
         elseif isa(varargin{1}, 'Image')
             % can also specify image+transform+interpolator type
             img = varargin{1};
-            this.transform = varargin{2};
+            obj.Transform = varargin{2};
             % parse the interpolator
             if length(varargin)>2
                 var = varargin{3};
                 if ischar(var)
-                    this.interpolator = ImageInterpolator.create(img, var);
+                    obj.Interpolator = ImageInterpolator.create(img, var);
                 elseif isa(var, 'ImageFunction')
-                    this.interpolator = var;
+                    obj.Interpolator = var;
                 end
             else
                 % if no interpolation method is specified, use linear
                 % interpolator as default
-                this.interpolator = ImageInterpolator.create(img, 'linear');
+                obj.Interpolator = ImageInterpolator.create(img, 'linear');
             end
 
         else

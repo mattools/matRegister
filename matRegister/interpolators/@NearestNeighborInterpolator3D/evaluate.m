@@ -1,5 +1,5 @@
-function [val isInside] = evaluate(this, varargin)
-% Evaluate intensity of image at a given physical position
+function [val, isInside] = evaluate(obj, varargin)
+% Evaluate intensity of image at a given physical position.
 %
 % VAL = INTERP.evaluate(POS);
 % where POS is a Nx2 array containing alues of x- and y-coordinates
@@ -18,13 +18,13 @@ function [val isInside] = evaluate(this, varargin)
 
 
 % eventually convert inputs to a single nPoints-by-ndims array
-[point dim] = ImageFunction.mergeCoordinates(varargin{:});
+[point, dim] = ImageFunction.mergeCoordinates(varargin{:});
 
 % Evaluates image value for a given position
-coord = this.image.pointToContinuousIndex(point);
+coord = pointToContinuousIndex(obj.Image, point);
 
 % Create default result image
-val = ones(dim) * this.fillValue;
+val = ones(dim) * obj.FillValue;
 
 % number of positions to process
 N = size(coord, 1);
@@ -36,7 +36,7 @@ zt = coord(:, 3);
 
 % select points located inside interpolation area
 % (smaller than image physical size)
-siz = this.image.getSize();
+siz = size(obj.Image);
 isBefore    = sum(coord <  .5, 2) > 0;
 isAfter     = sum(coord >= (siz(ones(N,1), :))+.5, 2) > 0;
 isInside    = ~(isBefore | isAfter);
@@ -52,5 +52,5 @@ j1 = round(yt);
 k1 = round(zt);
 
 % values of the nearest neighbor
-val(isInside) = double(this.image.getPixels(i1, j1, k1));
+val(isInside) = double(getPixels(obj.Image, i1, j1, k1));
 
