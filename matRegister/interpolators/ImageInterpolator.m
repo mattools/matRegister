@@ -1,5 +1,5 @@
 classdef ImageInterpolator < ImageFunction
-%IMAGEINTERPOLATOR Abstract class that groups image interpolators.
+% Abstract class that groups image interpolators.
 %
 %   This class is both an abstract class for deriving more specialized
 %   interpolators, and a static factory for building the most appropriate
@@ -24,7 +24,7 @@ classdef ImageInterpolator < ImageFunction
 % Copyright 2010 INRA - Cepia Software Platform.
 
 properties
-    % inner image that will be interpolated
+    % The image to be interpolated
     Image;
     
     % The value used when intepolation is made outside the image extent.
@@ -122,7 +122,7 @@ methods
     
 
     function d = getDimension(obj)
-        %GETDIMENSION  Dimension of the interpolated image
+        % Dimension of the interpolated image.
         %
         %   D = img.getDimension();
         %   Returns the dimension of the inner image
@@ -130,7 +130,7 @@ methods
     end
     
     function dim = getElementSize(obj, varargin)
-        % GETELEMENTSIZE Return the size of the interpolated elements
+        % Return the size of the interpolated elements.
         % 
         %   Result is [1 1] for scalar images, [Nc 1] for color or vector
         %   images, [1 Nf] for frame images (movies).

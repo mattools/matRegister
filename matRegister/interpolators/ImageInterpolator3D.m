@@ -1,5 +1,5 @@
 classdef ImageInterpolator3D < ImageInterpolator
-%IMAGEINTERPOLATOR3D Abstract class that groups image interpolators.
+% Abstract class that groups 3D image interpolators.
 %   output = ImageInterpolator3D(input)
 %
 

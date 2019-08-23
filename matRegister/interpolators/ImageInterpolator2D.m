@@ -1,5 +1,5 @@
 classdef ImageInterpolator2D < ImageInterpolator
-%INTERPOLATOR2D Abstract class that groups image interpolators.
+% Abstract class that groups 2D image interpolators.
 %
 %
 

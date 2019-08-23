@@ -1,10 +1,10 @@
 classdef ImageFunction < handle
-%IMAGEFUNCTION Represent any object that determines value from an image.
+% Represent any object that determines value from an image.
 %   
 %   Serves as a base class for Interpolators.
 %
 %   See also
-%   ImageInterpolator
+%     ImageInterpolator, BackwardTransformedImage
 %
 
 % ------

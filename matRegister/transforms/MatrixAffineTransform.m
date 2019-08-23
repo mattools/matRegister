@@ -81,7 +81,13 @@ end
 methods (Static)
     function transfo = fromStruct(str)
         % Creates a new instance from a structure
-        transfo = MatrixAffineTransform(str.Matrix);
+        if isfield(str, 'Matrix')
+            transfo = MatrixAffineTransform(str.Matrix);
+        elseif isfield(str, 'matrix')
+            transfo = MatrixAffineTransform(str.matrix);
+        else
+            error('Requires a structure with a field ''Matrix''.');
+        end
     end
 end
 

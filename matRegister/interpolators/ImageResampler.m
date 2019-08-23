@@ -1,5 +1,5 @@
 classdef ImageResampler < handle
-%IMAGERESAMPLER  Resample an image using a given spatial basis.
+% Resample an image using a given spatial basis.
 %
 %   RES = ImageResampler(LX, LY);
 %   RES = ImageResampler(LX, LY, LZ);
@@ -97,14 +97,14 @@ methods
     function img2 = resample(obj, varargin)
         % Resample an image, or an interpolated image
         %
-        % IMG2 = obj.resample(IMGFUN);
+        % IMG2 = resample(OBJ, IMGFUN);
         % Use image function IMGFUN as reference. IMGFUN is an instance of 
         % ImageFunction, such as ImageInterpolator.
         %
-        % IMG2 = obj.resample(IMG);
+        % IMG2 = resample(OBJ, IMG);
         % Resample image IMG using linear interpolation.
         %
-        % IMG2 = obj.resample(IMG, TYPE);  
+        % IMG2 = resample(OBJ, IMG, TYPE);  
         % Resample image with specified interpolation type. TYPE can be:
         % 'linear' (default)
         % 'nearest', but is only supported for 2D images.
