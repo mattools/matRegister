@@ -384,9 +384,9 @@ methods
     end
     
     function jac = jacobianMatrix(obj, point)
-        % Jacobian matrix of the given point
+        % Compute Jacobian matrix at the given point.
         %
-        %   JAC = getJacobian(TRANS, PT)
+        %   JAC = jacobianMatrix(TRANSFO, PT)
         %   where PT is a N-by-3 array of points, returns the spatial
         %   jacobian matrix of each point in the form of a 3-by-3-by-N
         %   array.
@@ -559,9 +559,6 @@ methods
         by  = zeros(size(xu));
         byd = zeros(size(xu));
         bys = zeros(size(xu));
-        bx  = zeros(size(xu));
-        bxd = zeros(size(xu));
-        bxs = zeros(size(xu));
         
         %% Iteration on neighbor tiles 
         for k = -1:2
