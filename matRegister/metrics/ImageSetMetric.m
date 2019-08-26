@@ -1,5 +1,5 @@
 classdef ImageSetMetric < handle
-%IMAGESETMETRIC  One-line description here, please.
+% A metric defined for a collection of images.
 %
 %   METRIC = ImageSetMetric(IMAGES, POINTS);
 %   IMAGES: a cell array containing image functions (image interpolators,

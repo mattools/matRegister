@@ -1,14 +1,13 @@
 classdef ImageToImageMetric < BaseFunction
-%IMAGETOIMAGEMETRIC Abstract class that define a metric between 2 images.
+% Abstract class that define a metric between 2 images.
 %
-%   output = ImageToImageMetric(input)
-%
+%   M = ImageToImageMetric(IMG1, IMG2, PTS)
 %   IMG1 and IMG2 should be instance of ImageFunction. If they are not,
 %   they are converted using LinearInterpolator by default.
 %
 %   Example
 %   M = ImageToImageMetric(IMG1, IMG2, PTS)
-%   M.evaluate()
+%   evaluate(M)
 %
 %   See also
 %     MeanSquaredDifferencesMetric
@@ -88,6 +87,35 @@ end % methods
 methods (Abstract)
     computeValue(obj)
     % Evaluate the difference between the two images.
+end
+
+methods
+    function setFixedImage(this, img)
+        % Setup fixed image of registration algorithm.
+        %
+        %   setFixedImage(METRIC, IMG)
+        %   IMG can be either an instance of image, or an instance of
+        %   ImageFunction, for example an interpolated image.
+        
+        this.Img1 = img;
+    end
+    
+    function setMovingImage(this, img)
+        % Setup moving image of registration algorithm.
+        %
+        %   setMovingImage(METRIC, IMG)
+        %   IMG can be either an instance of image, or an instance of
+        %   ImageFunction, for example an interpolated image.
+        
+        this.Img2 = img;
+    end
+    
+    function setPoints(this, points)
+        % Setup the inner set of test points for this metric.
+        %
+        %   setPoints(METRIC, POINTS);
+        this.Points = points;
+    end
 end
 
 end % classdef
