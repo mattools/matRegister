@@ -214,15 +214,21 @@ methods
         res = MatrixAffineTransform(mat1 * mat2);
     end
     
-    function res = getInverse(obj)
-        % Computes the inverse transform of obj affine transform
+    function res = inverse(obj)
+        % Compute the inverse transform of this affine transform.
         % 
-        % TINV = T.getInverse();
-        % or 
-        % TINV = getInverse(T);
+        % TINV = inverse(T);
         %
         mat = affineMatrix(obj);
         res = MatrixAffineTransform(inv(mat));
+    end
+    
+    function res = getInverse(obj)
+        % Computes the inverse transform of this affine transform
+        % 
+        % Deprecated: use 'inverse' method instead
+        warning('deprecated: use method inverse instead');
+        res = inverse(obj);
     end
 end
 
