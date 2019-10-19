@@ -100,6 +100,44 @@ end % end constructors
 
 %% Methods specific to class
 methods
+    function res = subdivide(obj)
+        %SUBDIVIDE Subdivide the transform grid.
+        %
+        % T2 = subdivide(T);
+        
+        % get 2D arrays of displacements in each direction
+        dims = obj.GridSize;
+        ux = reshape(obj.Params(1:2:end), dims);
+        uy = reshape(obj.Params(2:2:end), dims);
+
+        % subdivide first dimension
+        dims2 = [dims(1)*2-1 dims(2)];
+        ux2 = zeros(dims2);
+        uy2 = zeros(dims2);
+        ux2(1:2:end,:) = ux;
+        uy2(1:2:end,:) = uy;
+        ux2(2:2:end,:) = (ux(1:end-1,:) + ux(2:end,:)) / 2;
+        uy2(2:2:end,:) = (uy(1:end-1,:) + uy(2:end,:)) / 2;
+        ux = ux2;
+        uy = uy2;
+        dims = dims2;
+        
+        % subdivide second dimension
+        dims2 = [dims(1) dims(2)*2-1];
+        ux2 = zeros(dims2);
+        uy2 = zeros(dims2);
+        ux2(:,1:2:end) = ux;
+        uy2(:,1:2:end) = uy;
+        ux2(:,2:2:end) = (ux(:,1:end-1) + ux(:,2:end)) / 2;
+        uy2(:,2:2:end) = (uy(:,1:end-1) + uy(:,2:end)) / 2;
+        
+        params = [ux2(:) uy2(:)]' / 2;
+        params = params(:)';
+        
+        res = BSplineTransformModel2D(dims2, obj.GridSpacing/2, obj.GridOrigin);
+        res.Params = params;
+    end
+    
     function drawVertexShifts(obj, varargin)
         % Draw the displacement associated to each vertex of the grid
         %
@@ -201,9 +239,9 @@ end % end methods
 %% Methods implementing the ParametricTransform interface
 methods
     function jac = parametricJacobian(obj, x, varargin)
-        % Computes parametric jacobian for a specific position
+        % Compute parametric jacobian for a specific position.
         % 
-        % jac = getParametricJacobian(obj, x)
+        % jac = parametricJacobian(obj, x)
         % 
         % The result is a ND-by-NP array, where ND is the number of
         % dimension, and NP is the number of parameters.

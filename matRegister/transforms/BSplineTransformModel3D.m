@@ -24,7 +24,7 @@ classdef BSplineTransformModel3D < ParametricTransform
 
 %% Properties
 properties
-    % Number of vertices of the grid in each direction
+    % Number of vertices of the grid in each direction, in XYZ order.
     % (as a 1-by-3 row vector of non zero integers)
     GridSize;
     
@@ -94,6 +94,68 @@ end % end constructors
 
 %% Methods specific to class
 methods
+    function res = subdivide(obj)
+        %SUBDIVIDE Subdivide the transform grid.
+        %
+        % T2 = subdivide(T);
+        
+        % get 2D arrays of displacements in each direction
+        dims = obj.GridSize;
+        ux = reshape(obj.Params(1:3:end), dims);
+        uy = reshape(obj.Params(2:3:end), dims);
+        uz = reshape(obj.Params(3:3:end), dims);
+
+        % subdivide first dimension
+        dims2 = [dims(1)*2-1 dims(2) dims(3)];
+        ux2 = zeros(dims2);
+        uy2 = zeros(dims2);
+        uz2 = zeros(dims2);
+        ux2(1:2:end,:,:) = ux;
+        uy2(1:2:end,:,:) = uy;
+        uz2(1:2:end,:,:) = uz;
+        ux2(2:2:end,:,:) = (ux(1:end-1,:,:) + ux(2:end,:,:)) / 2;
+        uy2(2:2:end,:,:) = (uy(1:end-1,:,:) + uy(2:end,:,:)) / 2;
+        uz2(2:2:end,:,:) = (uz(1:end-1,:,:) + uz(2:end,:,:)) / 2;
+        ux = ux2;
+        uy = uy2;
+        uz = uz2;
+        dims = dims2;
+        
+        % subdivide second dimension
+        dims2 = [dims(1) dims(2)*2-1 dims(3)];
+        ux2 = zeros(dims2);
+        uy2 = zeros(dims2);
+        uz2 = zeros(dims2);
+        ux2(:,1:2:end,:) = ux;
+        uy2(:,1:2:end,:) = uy;
+        uz2(:,1:2:end,:) = uz;
+        ux2(:,2:2:end,:) = (ux(:,1:end-1,:) + ux(:,2:end,:)) / 2;
+        uy2(:,2:2:end,:) = (uy(:,1:end-1,:) + uy(:,2:end,:)) / 2;
+        uz2(:,2:2:end,:) = (uz(:,1:end-1,:) + uz(:,2:end,:)) / 2;
+        ux = ux2;
+        uy = uy2;
+        uz = uz2;
+        dims = dims2;
+        
+        % subdivide third dimension
+        dims2 = [dims(1) dims(2) dims(3)*2-1];
+        ux2 = zeros(dims2);
+        uy2 = zeros(dims2);
+        uz2 = zeros(dims2);
+        ux2(:,:,1:2:end) = ux;
+        uy2(:,:,1:2:end) = uy;
+        uz2(:,:,1:2:end) = uz;
+        ux2(:,:,2:2:end) = (ux(:,:,1:end-1) + ux(:,:,2:end)) / 2;
+        uy2(:,:,2:2:end) = (uy(:,:,1:end-1) + uy(:,:,2:end)) / 2;
+        uz2(:,:,2:2:end) = (uz(:,:,1:end-1) + uz(:,:,2:end)) / 2;
+
+        params = [ux2(:) uy2(:) uz2(:)]' / 2;
+        params = params(:)';
+        
+        res = BSplineTransformModel3D(dims2, obj.GridSpacing/2, obj.GridOrigin);
+        res.Params = params;
+    end
+    
     function drawVertexShifts(obj, varargin)
         % Draw the displacement associated to each vertex of the grid
         %
