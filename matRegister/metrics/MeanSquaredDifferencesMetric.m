@@ -70,7 +70,7 @@ methods
         [values1, inside1] = evaluate(obj.Img1, obj.Points);
         
         % compute values in image 2
-        [values2, inside2] = evaluate(obj.Img1, obj.Points);
+        [values2, inside2] = evaluate(obj.Img2, obj.Points);
         
         % keep only valid values
         isInside = inside1 & inside2;

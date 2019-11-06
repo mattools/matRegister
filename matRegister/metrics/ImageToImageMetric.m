@@ -73,7 +73,7 @@ methods (Access = protected)
             end
             
             % setup points
-            obj.points = varargin{3};
+            obj.Points = varargin{3};
             
         else
             error(errorID, 'Need at least 2 inputs');
