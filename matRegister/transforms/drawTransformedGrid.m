@@ -1,13 +1,13 @@
 function drawTransformedGrid(transfo, lx, ly, varargin)
 % Draw the result of a transform applied to a grid.
 %
-%   usage:
+%   Usage:
 %   drawTransformedGrid(T, LX, LY)
 %   T: an instance of Transform class
 %   LX, LY: specify spacing of grid vertices, see meshgrid for details.
 %
 %   drawTransformedGrid(T, LX, LY, NPTS)
-%   Speccify the number of line segments used to represent the junction
+%   Specify the number of line segments used to represent the junction
 %   between two grid vertices. Default is 5.
 %
 %   drawTransformedGrid(..., PNAME, PVALUE)
@@ -15,8 +15,8 @@ function drawTransformedGrid(transfo, lx, ly, varargin)
 %   name-value pairs.
 %
 %   Example
-%     % Creates a basic motion transform, and disply the result of grid
-%     % stransformation over a default image.
+%     % Creates a basic motion transform, and display the result of grid
+%     % transformation over a default image.
 %     T = CenteredMotionTransform2D([10 20 30]);
 %     setCenter(T, [128 128]);
 %     img = imread('cameraman.tif');
@@ -24,7 +24,8 @@ function drawTransformedGrid(transfo, lx, ly, varargin)
 %     drawTransformedGrid(T, 16:32:256, 16:32:256, 'color', 'g')
 %
 %   See also
-%     Transform
+%     Transform, meshgrid
+%
  
 % ------
 % Author: David Legland
