@@ -120,10 +120,10 @@ methods
         % convert angles to radians
         theta = obj.Params(3) * pi / 180;
 
-        % scaling factor, converted to ususal scale
+        % scaling factor, converted to usual scale
         k = power(2, obj.Params(4));
         % the partial derivative of 2^k wrt k
-        dk = log(2) * obj.Params(k);
+        dk = log(2) * obj.Params(4);
        
         % precompute angle functions
         cot = cos(theta);
