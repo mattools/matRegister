@@ -1,9 +1,9 @@
 function setupMatRegister(varargin)
-% Add the paths required for using MatRegister library
+% Add the paths required for using MatRegister library.
 %
 %   usage: 
 %       setupMatRegister;
-%   All the required directories are successively added, in appropriate
+%   All the required directories are successively added, in the appropriate
 %   order to comply with dependencies.
 %
 %   Example
@@ -14,9 +14,9 @@ function setupMatRegister(varargin)
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@inra.fr
+% e-mail: david.legland@inrae.fr
 % Created: 2008-01-17,    using Matlab 7.4.0.287 (R2007a)
-% Copyright 2008 INRA - BIA PV Nantes - MIAJ Jouy-en-Josas.
+% Copyright 2008 INRAE - BIA PV Nantes - MIAJ Jouy-en-Josas.
 % Licensed under the terms of the modified BSD licence
 
 % extract library path
