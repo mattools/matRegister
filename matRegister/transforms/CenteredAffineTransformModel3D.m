@@ -19,7 +19,7 @@ classdef CenteredAffineTransformModel3D < AffineTransform & ParametricTransform 
 %% Constructors
 methods
     function obj = CenteredAffineTransformModel3D(varargin)
-        % Create a new centered affine transform model
+        % Create a new centered affine transform model.
         
         obj.Params = [1 0 0 0   0 1 0 0   0 0 1 0];
         
@@ -79,7 +79,7 @@ end
 %% Methods specific to obj class
 methods
     function initFromAffineTransform(obj, transform)
-        % Initialize parameters from an affine transform (class or matrix)
+        % Initialize parameters from an affine transform (class or matrix).
         %
         % Example
         % T = CenteredAffineTransformModel3D();
@@ -99,6 +99,40 @@ methods
     end
 
 end
+
+
+%% Implementation of methods inherited from ParametricTransform
+methods
+    function jacobian = parametricJacobian(obj, x, varargin)
+        % Compute jacobian matrix, i.e. derivatives for each parameter.
+        
+        % extract coordinate of input point(s)
+        if isempty(varargin)
+            y = x(:,2);
+            z = x(:,3);
+            x = x(:,1);
+        else
+            y = varargin{1};
+            z = varargin{2};
+        end
+        
+        % jacobians are computed with respect to transformation center
+        x = x - obj.Center(1);
+        y = y - obj.Center(2);
+        z = z - obj.Center(3);
+        
+        % compute the Jacobian matrix using pre-computed elements
+        jacobian = [...
+            x y z 1     zeros(1,4)  zeros(1,4); ...
+            zeros(1,4)  x y z 1     zeros(1,4); ...
+            zeros(1,4)  zeros(1,4)  x y z 1   ];
+    end
+    
+    function transfo = clone(obj)
+        transfo = CenteredAffineTransformModel3D(obj.Params, 'Center', obj.Center);
+    end
+
+end % parametric transform methods 
 
 
 %% Implementation of methods inherited from AffineTransform
@@ -121,41 +155,10 @@ methods
 end
 
 
-%% Implementation of methods inherited from ParametricTransform
-methods
-    function jacobian = parametricJacobian(obj, x, varargin)
-        % Compute jacobian matrix, i.e. derivatives for each parameter
-        
-        % extract coordinate of input point(s)
-        if isempty(varargin)
-            y = x(:,2);
-            z = x(:,3);
-            x = x(:,1);
-        else
-            y = varargin{1};
-            z = varargin{2};
-        end
-        
-        % jacobians are computed with respect to transformation center
-        x = x - obj.Center(1);
-        y = y - obj.Center(2);
-        z = z - obj.Center(3);
-        
-        % compute the Jacobian matrix using pre-computed elements
-        jacobian = [...
-            x y z 1     zeros(1,4)  zeros(1,4); ...
-            zeros(1,4)  x y z 1     zeros(1,4); ...
-            zeros(1,4)  zeros(1,4)  x y z 1   ];
-        
-    end
-    
-end % parametric transform methods 
-
-
 %% Serialization methods
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'CenteredAffineTransformModel3D', ...
             'Center', obj.Center, ...
             'Parameters', obj.Params);
@@ -164,7 +167,7 @@ methods
 end
 methods (Static)
     function transfo = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         params = str.Parameters;
         transfo = CenteredAffineTransformModel3D(params, 'Center', str.Center);
     end

@@ -25,7 +25,7 @@ classdef MotionModel2D < AffineTransform & ParametricTransform
 %% Constructors
 methods
     function obj = MotionModel2D(varargin)
-        % Create a new model for 2D motion transform model
+        % Create a new model for 2D motion transform model.
         % (defined by 2 translation parameters and 1 rotation angle)
 
         % call parent constructor for initializing parameters
@@ -42,7 +42,7 @@ methods
                 obj.Params = var.Params;
                 
             elseif isnumeric(var)
-                if length(var) == 1 && var(1) ~= 2
+                if isscalar(var) && var(1) ~= 2
                     % if argument is a scalar, it corresponds to dimension
                     error('MotionModel2D is defined only for 2 dimensions');
                     
@@ -63,36 +63,11 @@ methods
     end % constructor declaration
 end
 
-%% Standard methods
-methods        
-    function dim = getDimension(obj) %#ok<MANU>
-        dim = 2;
-    end
 
-    function mat = affineMatrix(obj)
-        % Compute affine matrix associated with obj transform
-        
-        % translation vector
-        tx = obj.Params(1);
-        ty = obj.Params(2);
-        
-        % rotation angle, converted to radians
-        theta = obj.Params(3) * pi / 180;
-
-        % pre-computations
-        cot = cos(theta);
-        sit = sin(theta);
-
-        % build matrix
-        mat = [...
-        	cot -sit tx ; ...
-        	sit +cot ty ; ...
-             0    0   1 ];
-
-    end
-  
+%% Implementation of ParametricTransform methods
+methods
     function jacobian = parametricJacobian(obj, x, varargin)
-        % Compute jacobian matrix, i.e. derivatives for each parameter
+        % Compute jacobian matrix, i.e. derivatives for each parameter.
        
         % extract coordinate of input point(s)
         if isempty(varargin)
@@ -113,6 +88,39 @@ methods
         jacobian = [...
             1 0 (-sit*x - cot*y) ;
             0 1 ( cot*x - sit*y) ];
+    end
+
+    function transfo = clone(obj)
+        transfo = MotionModel2D(obj.Params);
+    end
+end
+
+
+%% Standard methods
+methods        
+    function mat = affineMatrix(obj)
+        % Compute affine matrix associated with obj transform.
+        
+        % translation vector
+        tx = obj.Params(1);
+        ty = obj.Params(2);
+        
+        % rotation angle, converted to radians
+        theta = obj.Params(3) * pi / 180;
+
+        % pre-computations
+        cot = cos(theta);
+        sit = sin(theta);
+
+        % build matrix
+        mat = [...
+        	cot -sit tx ; ...
+        	sit +cot ty ; ...
+             0    0   1 ];
+    end
+  
+    function dim = getDimension(obj) %#ok<MANU>
+        dim = 2;
     end
 
 end % methods
@@ -155,14 +163,14 @@ end % methods
 %% Serialization methods
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'MotionModel2D', ...
             'Parameters', obj.Params);
     end
 end
 methods (Static)
     function motion = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         if isfield(str, 'Parameters')
             params = str.Parameters;
         elseif isfield(str, 'parameters')

@@ -370,6 +370,11 @@ methods
             end
         end
     end
+    
+    function transfo = clone(obj)
+        transfo = BSplineTransformModel3D(obj.GridSize, obj.GridSpacing, obj.GridOrigin);
+        transfo.Params = obj.Params;
+    end
 end
 
 %% Methods implementing the Transform interface

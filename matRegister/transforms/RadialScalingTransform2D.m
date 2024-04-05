@@ -34,7 +34,7 @@ end % end properties
 %% Constructor
 methods
     function obj = RadialScalingTransform2D(varargin)
-        % Constructor for RadialScalingTransform2D class
+        % Constructor for RadialScalingTransform2D class.
         %
         % T = RadialScalingTransform2D();
         % Empty constructor, using 360 scaling factors by default.
@@ -81,7 +81,7 @@ end % end constructors
 %% Methods implementing the Transform interface
 methods
     function point2 = transformPoint(obj, point)
-        % Compute coordinates of transformed point
+        % Compute coordinates of transformed point.
         
         % polar coordinates wrt center point
         [theta, rho] = cart2pol(point(:,1)-obj.Center(1), point(:,2)-obj.Center(2));
@@ -103,14 +103,14 @@ methods
         point2 = [x2+obj.Center(1) y2+obj.Center(2)];
     end
     
-    function transformVector(obj, varargin)
+    function transformVector(obj, varargin) %#ok<INUSD>
         error('MatRegister:UnimplementedMethod', ...
             'Method "%s" is not implemented for class "%s"', ...
             'transformVector', mfilename);
     end
     
     function jacobianMatrix(obj, point) %#ok<INUSD>
-        % Jacobian matrix of the given point
+        % Jacobian matrix of the given point.
         %
         %   JAC = jacobianMatrix(TRANS, PT)
         %   where PT is a N-by-2 array of points, returns the spatial
@@ -132,7 +132,7 @@ end
 %% Serialization methods
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'RadialScalingTransform2D', ...
             'Angles', obj.Angles, ...
             'Scalings', obj.Scalings);
@@ -143,7 +143,7 @@ methods
 end
 methods (Static)
     function transfo = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         transfo = RadialScalingTransform2D(str.Angles, str.Scalings);
         if isfield(str, 'Center')
             transfo.Center = str.Center;

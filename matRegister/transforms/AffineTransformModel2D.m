@@ -13,7 +13,7 @@ classdef AffineTransformModel2D < AffineTransform & ParametricTransform
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@inra.fr
+% e-mail: david.legland@inrae.fr
 % Created: 2017-09-29,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2017 INRA - Cepia Software Platform.
 
@@ -95,22 +95,6 @@ methods
 end
 
 
-%% Implementation of methods inherited from AffineTransform
-methods
-    function dim = getDimension(obj) %#ok<MANU>
-        % Returns the dimension of the tansform, in obj case 2.
-        dim = 2;
-    end
-
-    function mat = affineMatrix(obj)
-        % Compute affine matrix associated with obj transform
-        
-        % convert parameters to a 3-by-3 affine matrix
-        mat = [obj.Params(1:3); obj.Params(4:6); 0 0 1];
-    end
-end
-
-
 %% Implementation of methods inherited from ParametricTransform
 methods
     function jacobian = parametricJacobian(obj, x, varargin) %#ok<INUSL>
@@ -133,7 +117,26 @@ methods
         
     end
     
+    function transfo = clone(obj)
+        transfo = AffineTransformModel2D(obj.Params);
+    end
 end % parametric transform methods 
+
+
+%% Implementation of methods inherited from AffineTransform
+methods
+    function dim = getDimension(obj) %#ok<MANU>
+        % Returns the dimension of the tansform, in obj case 2.
+        dim = 2;
+    end
+
+    function mat = affineMatrix(obj)
+        % Compute affine matrix associated with obj transform
+        
+        % convert parameters to a 3-by-3 affine matrix
+        mat = [obj.Params(1:3); obj.Params(4:6); 0 0 1];
+    end
+end
 
 
 %% Serialization methods

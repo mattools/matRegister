@@ -32,7 +32,7 @@ end % end properties
 %% Constructor
 methods
     function obj = QuadPolynomialTransformModel2D(varargin)
-    % Constructor for QuadPolynomialTransformModel2D class
+    % Constructor for QuadPolynomialTransformModel2D class.
         
         % default values
         obj.Params = [ ...
@@ -61,6 +61,7 @@ methods
 
 end % end constructors
 
+
 %% Methods specific to the class
 methods
     function deriv = secondDerivatives(obj, indI, indJ, point)
@@ -88,6 +89,38 @@ methods
             deriv = bsxfun(@times, deriv, ones(size(point,1), 1));
         end
     end
+end
+
+
+%% Implementation of ParametricTransform methods
+methods
+    function jac = parametricJacobian(obj, x, varargin) %#ok<INUSL>
+        % Compute jacobian matrix, i.e. derivatives for each parameter.
+        %
+        % jac = parametricJacobian(transfo, pos);
+        % Returns a Jacobian matrix with 2 rows and 12 columns.
+        %
+        jac = [...
+               1    0; ... 
+               0    1; ...
+               x    0; ...
+               0    x; ...
+               y    0; ...
+               0    y; ...
+            x.*x    0; ...
+               0 x.*x; ...
+            x.*y    0; ...
+               0 x.*y; ...
+            y.*y    0; ...
+               0 y.*y; ...
+            ]';
+            
+    end
+    
+    function transfo = clone(obj)
+        transfo = QuadPolynomialTransformModel2D(obj.Params);
+    end
+    
 end
 
 %% Methods implementing the Transform interface
@@ -119,31 +152,8 @@ methods
         pointT = [x2 y2];
     end
     
-    function jac = parametricJacobian(obj, x, varargin) %#ok<INUSL>
-        % Compute jacobian matrix, i.e. derivatives for each parameter
-        %
-        % jac = parametricJacobian(transfo, pos);
-        % Returns a Jacobian matrix with 2 rows and 12 columns.
-        %
-        jac = [...
-               1    0; ... 
-               0    1; ...
-               x    0; ...
-               0    x; ...
-               y    0; ...
-               0    y; ...
-            x.*x    0; ...
-               0 x.*x; ...
-            x.*y    0; ...
-               0 x.*y; ...
-            y.*y    0; ...
-               0 y.*y; ...
-            ]';
-            
-    end
-    
     function jacMat = jacobianMatrix(obj, point)
-        % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
+        % Computes jacobian matrix, matrix of derivatives.
         % jacob(i,j) = d x_i / d x_j
         
         % compute centered coords.
@@ -165,7 +175,7 @@ methods
 %     end
     
     function dim = getDimension (obj) %#ok<MANU>
-        % Compute jacobian matrix, i.e. derivatives for each parameter
+        % Compute jacobian matrix, i.e. derivatives for each parameter.
         dim = 2;
     end
     
@@ -175,7 +185,7 @@ end % end methods
 %% Serialization methods
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'QuadPolynomialTransformModel2D', ...
             'Parameters', obj.Params);
         
@@ -183,7 +193,7 @@ methods
 end
 methods (Static)
     function transfo = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         params = str.Parameters;
         transfo = QuadPolynomialTransformModel2D(params);
     end

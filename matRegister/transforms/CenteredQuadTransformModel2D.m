@@ -31,7 +31,7 @@ classdef CenteredQuadTransformModel2D < CenteredTransformAbstract & ParametricTr
 %% Constructors
 methods
     function obj = CenteredQuadTransformModel2D(varargin)
-        % Create a new centered affine transform model
+        % Create a new centered affine transform model.
         
         obj.Params = [ ...
             0 0 ...   % constant terms for x', y', and z'
@@ -94,14 +94,14 @@ methods
             'x_xy', 'y_xy', ...  % x*y coef
             'x_y2', 'y_y2', ...  % y^2 coef
             };
-    end     
-    
+    end    
 end
 
-%% Methods specific to obj class
+
+%% Methods specific to this class
 methods    
     function initFromAffineTransform(obj, transform)
-        % Initialize parameters from an affine transform (class or matrix)
+        % Initialize parameters from an affine transform (class or matrix).
         %
         % Example
         % T = CenteredAffineTransformModel3D();
@@ -124,8 +124,48 @@ methods
             zeros(1, 18) ...
             ];
     end
-
 end
+
+
+%% Implementation of methods inherited from ParametricTransform
+methods
+    function jacobian = parametricJacobian(obj, x, varargin)
+        % Compute jacobian matrix, i.e. derivatives for each parameter.
+        
+        % extract coordinate of input point(s)
+        if isempty(varargin)
+            y = x(:,2);
+            z = x(:,3);
+            x = x(:,1);
+        else
+            y = varargin{1};
+            z = varargin{2};
+        end
+        
+        % jacobians are computed with respect to transformation center
+        x = x - obj.Center(1);
+        y = y - obj.Center(2);
+        z = z - obj.Center(3);
+        
+        % compute the Jacobian matrix using pre-computed elements
+        jacobian = [...
+            1 1 1 ...
+            x x x ...
+            y y y ...
+            z z z ...
+            x.^2 x.^2 x.^2 ...
+            y.^2 y.^2 y.^2 ...
+            z.^2 z.^2 z.^2 ...
+            x.*y x.*y x.*y ...
+            x.*z x.*z x.*z ...
+            y.*z y.*z y.*z ...
+            ];
+    end
+    
+    function transfo = clone(obj)
+        transfo = CenteredQuadTransformModel2D(obj.Params, 'Center', str.Center);
+    end
+end % parametric transform methods 
 
 
 %% Implementation of methods inherited from Transform
@@ -168,7 +208,7 @@ methods
         point2 = [x2 y2];
     end
     
-    function vect2 = transformVector(obj, vector, position) %#ok<STOUT>
+    function vect2 = transformVector(obj, vector, position) %#ok<INUSD,STOUT>
         % TRANSFORMVECTOR Computes coordinates of transformed vector
         % VEC2 = obj.transformPoint(VEC, PT);
         % TODO: to be done later
@@ -176,7 +216,7 @@ methods
     end
     
     function jacobian = jacobianMatrix(obj, point)
-        % Computes jacobian matrix, i.e. derivatives wrt to each coordinate
+        % Computes jacobian matrix, i.e. matrix of derivatives.
         % jacob(i,j) = d x_i / d x_j
         
         % compute centered coords.
@@ -195,48 +235,11 @@ methods
     
 end % Transform methods 
 
-%% Implementation of methods inherited from ParametricTransform
-methods
-    function jacobian = parametricJacobian(obj, x, varargin)
-        % Compute jacobian matrix, i.e. derivatives for each parameter
-        
-        % extract coordinate of input point(s)
-        if isempty(varargin)
-            y = x(:,2);
-            z = x(:,3);
-            x = x(:,1);
-        else
-            y = varargin{1};
-            z = varargin{2};
-        end
-        
-        % jacobians are computed with respect to transformation center
-        x = x - obj.Center(1);
-        y = y - obj.Center(2);
-        z = z - obj.Center(3);
-        
-        % compute the Jacobian matrix using pre-computed elements
-        jacobian = [...
-            1 1 1 ...
-            x x x ...
-            y y y ...
-            z z z ...
-            x.^2 x.^2 x.^2 ...
-            y.^2 y.^2 y.^2 ...
-            z.^2 z.^2 z.^2 ...
-            x.*y x.*y x.*y ...
-            x.*z x.*z x.*z ...
-            y.*z y.*z y.*z ...
-            ];
-    end
-    
-end % parametric transform methods 
-
 
 %% Serialization methods
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'CenteredQuadTransformModel2D', ...
             'Center', obj.Center, ...
             'Parameters', obj.Params);
@@ -245,7 +248,7 @@ methods
 end
 methods (Static)
     function transfo = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         params = str.Parameters;
         transfo = CenteredQuadTransformModel2D(params, 'Center', str.Center);
     end

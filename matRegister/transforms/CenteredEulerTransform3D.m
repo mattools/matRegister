@@ -75,7 +75,62 @@ methods
     end % constructor declaration
 end
 
-%% Standard methods
+
+%% Implementation of methods from ParametricTransform 
+methods
+    function jacobian = parametricJacobian(obj, x, varargin)
+        % Compute jacobian matrix, i.e. derivatives for each parameter
+       
+        % extract coordinate of input point(s)
+        if isempty(varargin)
+            y = x(:,2);
+            z = x(:,3);
+            x = x(:,1);
+        else
+            y = varargin{1};
+            z = varargin{2};
+        end
+        
+        % extract angles in degrees
+        k = pi / 180;
+        phi     = obj.Params(1) * k;
+        theta   = obj.Params(2) * k;
+        psi     = obj.Params(3) * k;
+
+        % pre-computations of trigonometric functions (in degrees)
+        cx = cos(phi);      sx = sin(phi);
+        cy = cos(theta);    sy = sin(theta);
+        cz = cos(psi);      sz = sin(psi);
+
+        % jacobians are computed with respect to transformation center
+        x = x - obj.Center(1);
+        y = y - obj.Center(2);
+        z = z - obj.Center(3);
+        
+        % compute the Jacobian matrix using pre-computed elements
+        jacobian = [[...
+            ((cz*sy*cx + sz*sx)*y + (sz*cx - cz*sy*sx)*z), ...
+            ((sz*sy*cx - cz*sx)*y - (sz*sy*sx + cz*cx)*z), ...
+            (             cy*cx*y -              cy*sx*z); ...
+            ...
+            (-cz*sy*x + cz*cy*sx*y + cz*cy*cx*z), ...
+            (-sz*sy*x + sz*cy*sx*y + sz*cy*cx*z), ...
+            (-cy*x    -    sy*sx*y -    sy*cx*z); ...
+            ...
+            (-sz*cy*x - (sz*sy*sx + cz*cx)*y + (cz*sx - sz*sy*cx)*z), ...
+            ( cz*cy*x + (cz*sy*sx - sz*cx)*y + (cz*sy*cx + sz*sx)*z), ...
+            0; ...
+            ]' ...
+            eye(3, 3)]; % correspond to translation part of the transform
+    end
+
+    function transfo = clone(obj)
+        transfo = CenteredEulerTransform3D(obj.Params, 'Center', str.Center);
+    end
+end
+
+
+%% Implementation of methods from Transform class
 methods    
     function dim = getDimension(obj) %#ok<MANU>
         dim = 3;
@@ -125,54 +180,8 @@ methods
         shift = p0 - mat*p0 + obj.Params(4:6)';
         mat = [mat shift ; 0 0 0 1];
     end
-  
-    function jacobian = parametricJacobian(obj, x, varargin)
-        % Compute jacobian matrix, i.e. derivatives for each parameter
-       
-        % extract coordinate of input point(s)
-        if isempty(varargin)
-            y = x(:,2);
-            z = x(:,3);
-            x = x(:,1);
-        else
-            y = varargin{1};
-            z = varargin{2};
-        end
-        
-        % extract angles in degrees
-        k = pi / 180;
-        phi     = obj.Params(1) * k;
-        theta   = obj.Params(2) * k;
-        psi     = obj.Params(3) * k;
-
-        % pre-computations of trigonometric functions (in degrees)
-        cx = cos(phi);      sx = sin(phi);
-        cy = cos(theta);    sy = sin(theta);
-        cz = cos(psi);      sz = sin(psi);
-
-        % jacobians are computed with respect to transformation center
-        x = x - obj.Center(1);
-        y = y - obj.Center(2);
-        z = z - obj.Center(3);
-        
-        % compute the Jacobian matrix using pre-computed elements
-        jacobian = [[...
-            ((cz*sy*cx + sz*sx)*y + (sz*cx - cz*sy*sx)*z), ...
-            ((sz*sy*cx - cz*sx)*y - (sz*sy*sx + cz*cx)*z), ...
-            (             cy*cx*y -              cy*sx*z); ...
-            ...
-            (-cz*sy*x + cz*cy*sx*y + cz*cy*cx*z), ...
-            (-sz*sy*x + sz*cy*sx*y + sz*cy*cx*z), ...
-            (-cy*x    -    sy*sx*y -    sy*cx*z); ...
-            ...
-            (-sz*cy*x - (sz*sy*sx + cz*cx)*y + (cz*sx - sz*sy*cx)*z), ...
-            ( cz*cy*x + (cz*sy*sx - sz*cx)*y + (cz*sy*cx + sz*sx)*z), ...
-            0; ...
-            ]' ...
-            eye(3, 3)]; % correspond to translation part of the transform
-    end
-
 end % methods
+
 
 %% I/O Methods
 methods (Static)

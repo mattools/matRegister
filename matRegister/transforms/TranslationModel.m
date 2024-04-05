@@ -19,7 +19,7 @@ classdef TranslationModel < ParametricTransform & AffineTransform
 %% Constructors
 methods
     function obj = TranslationModel(varargin)
-        % Create a new model for translation transform model
+        % Create a new model for translation transform model.
         
         % set parameters to default translation in 2D
         obj.Params = [0 0];
@@ -61,35 +61,44 @@ methods
     end % constructor declaration
 end
 
-%% Standard methods
+
+%% Implementation of methods from ParametricTransform 
 methods
-    function mat = affineMatrix(obj)
-        % Returns the affine matrix that represents obj transform
-        nd = length(obj.Params);
-        mat = eye(nd+1);
-        mat(1:end-1, end) = obj.Params(:);
-    end
-    
     function jac = parametricJacobian(obj, x, varargin) %#ok<INUSD>
-        % Compute jacobian matrix, i.e. derivatives for each parameter
+        % Compute jacobian matrix, i.e. derivatives for each parameter.
         nd = length(obj.Params);
         jac = eye(nd);
     end
     
+    function transfo = clone(obj)
+        transfo = TranslationModel(obj.Params);
+    end
+
 end % methods
+
+
+%% Implementation of AffineTransform methods
+methods
+    function mat = affineMatrix(obj)
+        % Returns the affine matrix that represents obj transform.
+        nd = length(obj.Params);
+        mat = eye(nd+1);
+        mat(1:end-1, end) = obj.Params(:);
+    end
+end
 
 
 %% Serialization methods
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'TranslationModel', ...
             'Parameters', obj.Params);
     end
 end
 methods (Static)
     function motion = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         params = str.Parameters;
         motion = TranslationModel(params);
     end

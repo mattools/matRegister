@@ -7,9 +7,10 @@ classdef ParametricTransform < Transform & ParametricObject
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@inra.fr
+% e-mail: david.legland@inrae.fr
 % Created: 2010-04-09,    using Matlab 7.9.0.529 (R2009b)
 % Copyright 2010 INRA - Cepia Software Platform.
+
 
 %% Properties definition
 properties
@@ -20,6 +21,7 @@ properties
     % Given as row vector of char arrays.
     ParamNames = {};
 end
+
 
 %% Constructor (protected)
 methods (Access = protected)
@@ -54,25 +56,26 @@ methods (Access = protected)
     end
 end
 
+
 %% Methods for managing parameters
 methods
     function p = getParameters(obj)
-        % Returns the parameter vector of the transform
+        % Returns the parameter vector of the transform.
         p = obj.Params;
     end
     
     function setParameters(obj, params)
-        % Changes the parameter vector of the transform
+        % Changes the parameter vector of the transform.
         obj.Params = params;
     end
     
     function Np = getParameterLength(obj)
-        % Returns the length of the vector parameter
+        % Returns the length of the vector parameter.
         Np = length(obj.Params);
     end
     
     function name = getParameterName(obj, paramIndex)
-        % Return the name of the i-th parameter
+        % Return the name of the i-th parameter.
         %
         % NAME = Transfo.getParameterName(PARAM_INDEX);
         % PARAM_INDEX is the parameter index, between 0 and the number of
@@ -97,7 +100,7 @@ methods
     end
     
     function name = getParameterNames(obj)
-        % Return the names of all parameters in a cell array of strings
+        % Return the names of all parameters in a cell array of strings.
         %
         % NAMES = Transfo.getParameterNames();
         % 
@@ -118,9 +121,10 @@ methods
     end
 end % methods
 
+
 %% Abstract methods
 methods (Abstract)
-    % Compute jacobian matrix, i.e. derivatives for each parameter
+    % Compute jacobian matrix, i.e. derivatives for each parameter.
     % 
     % jac = parametricJacobian(transfo, pos);
     % The Jacobian matrix has as many rows as the number of dimensions of
@@ -136,13 +140,16 @@ methods (Abstract)
     %              0    1.0000    3.6603
     parametricJacobian(obj, x, varargin)
 
+    % Create a copy of this parametric transform.
+    clone(obj);
+
 end % abstract methods 
 
 
 %% I/O Methods
 methods
     function writeToFile(obj, file)
-        % Write transform parameter to the given file handle
+        % Write transform parameter to the given file handle.
         % Assumes file handle is an instance of FileWriter.
         %
         % Example

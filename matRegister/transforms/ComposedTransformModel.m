@@ -25,7 +25,7 @@ end
 %% Constructor
 methods
     function obj = ComposedTransformModel(varargin)
-        % class constructor
+        % class constructor.
         % T = ComposedTransformModel(T1, T2);
         
         if isa(varargin{1}, 'ComposedTransform') && nargin == 1
@@ -52,37 +52,10 @@ methods
     end % constructor
 end
 
-
-%% Methods implementing Transform interface
+%% Implements abstract methods from ParametricTransform
 methods
-    function dim = getDimension(obj)
-        dim = getDimension(obj.Transforms{1});
-    end
-
-    function point = transformPoint(obj, point)
-        for i = 1:length(obj.Transforms)
-            point = TransformPoint(obj.Transforms{i}, point);
-        end
-    end
-    
-    function vector = transformVector(obj, vector, position)
-        for i = 1:length(obj.Transforms)
-            vector = TransformVector(obj.Transforms{i}, vector, position);
-        end
-    end
-    
-    function jacobian = jacobianMatrix(obj, point, varargin)
-        % Compute jacobian matrix, i.e. derivatives for coordinate
-        % jacob(i,j) = d x_i / d x_j
-        
-        jacobian = jacobianMatrix(obj.Transforms{1}, point);
-        for i = 2:length(obj.Transforms)
-            jacobian = jacobianMatrix(obj.Transforms{i}, point, varargin{:}) * jacobian;
-        end
-    end
-    
     function jacobian = parametricJacobian(obj, point, varargin)
-        % Compute jacobian matrix, i.e. derivatives for coordinate
+        % Compute jacobian matrix, i.e. derivatives for coordinate.
         % jacob(i,j) = d x_i / d x_j
 
         nTransfos = length(obj.Transforms);
@@ -94,9 +67,14 @@ methods
 
         % then, compute parametric jacobian of the last transform
         jacobian = getParametricJacobian(obj.Transforms{end}, point, varargin{:});
-        
     end
-end % methods
+
+    function transfo = clone(obj)
+        transfoList = obj.Transforms;
+        transfoList(end) = clone(transfoList(end));
+        transfo = ComposedTransformModel(transfoList);
+    end
+end
 
 
 %% Overrides several methods from ParametricTransform 
@@ -106,22 +84,22 @@ end % methods
 
 methods
     function p = getParameters(obj)
-        % Returns the parameter vector of the transform
+        % Returns the parameter vector of the transform.
         p = obj.Transforms{end}.Params;
     end
     
     function setParameters(obj, params)
-        % Changes the parameter vector of the transform
+        % Changes the parameter vector of the transform.
         obj.Transforms{end}.Params = params;
     end
     
     function Np = getParameterLength(obj)
-        % Returns the length of the vector parameter
+        % Returns the length of the vector parameter.
         Np = length(obj.Transforms{end}.Params);
     end
     
     function name = getParameterName(obj, paramIndex)
-        % Return the name of the i-th parameter
+        % Return the name of the i-th parameter.
         %
         % NAME = Transfo.getParameterName(PARAM_INDEX);
         % PARAM_INDEX is the parameter index, between 0 and the number of
@@ -146,7 +124,7 @@ methods
     end
     
     function name = getParameterNames(obj)
-        % Return the names of all parameters in a cell array of strings
+        % Return the names of all parameters in a cell array of strings.
         %
         % NAMES = Transfo.getParameterNames();
         % 
@@ -160,5 +138,35 @@ methods
         name = obj.Transforms{end}.ParamNames;
     end
 end % overridden methods
+
+%% Methods implementing Transform interface
+methods
+    function dim = getDimension(obj)
+        dim = getDimension(obj.Transforms{1});
+    end
+
+    function point = transformPoint(obj, point)
+        for i = 1:length(obj.Transforms)
+            point = TransformPoint(obj.Transforms{i}, point);
+        end
+    end
+    
+    function vector = transformVector(obj, vector, position)
+        for i = 1:length(obj.Transforms)
+            vector = TransformVector(obj.Transforms{i}, vector, position);
+        end
+    end
+    
+    function jacobian = jacobianMatrix(obj, point, varargin)
+        % Compute jacobian matrix, i.e. derivatives for coordinate.
+        % jacob(i,j) = d x_i / d x_j
+        
+        jacobian = jacobianMatrix(obj.Transforms{1}, point);
+        for i = 2:length(obj.Transforms)
+            jacobian = jacobianMatrix(obj.Transforms{i}, point, varargin{:}) * jacobian;
+        end
+    end
+end % methods
+
 
 end % classdef

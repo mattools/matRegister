@@ -28,7 +28,7 @@ end
 %% Constructor
 methods
     function obj = InitializedTransformModel(varargin)
-        % class constructor
+        % class constructor.
         % T = InitializedTransformModel(T1, T2);
         
         if isa(varargin{1}, 'ComposedTransform') && nargin == 1
@@ -65,22 +65,22 @@ end
 
 methods
     function p = getParameters(obj)
-        % Returns the parameter vector of the transform
+        % Returns the parameter vector of the transform.
         p = obj.Transform.Params;
     end
     
     function setParameters(obj, params)
-        % Changes the parameter vector of the transform
+        % Changes the parameter vector of the transform.
         obj.Transform.Params = params;
     end
     
     function Np = getParameterLength(obj)
-        % Returns the length of the vector parameter
+        % Returns the length of the vector parameter.
         Np = length(obj.Transform.Params);
     end
     
     function name = getParameterName(obj, paramIndex)
-        % Return the name of the i-th parameter
+        % Return the name of the i-th parameter.
         %
         % NAME = Transfo.getParameterName(PARAM_INDEX);
         % PARAM_INDEX is the parameter index, between 0 and the number of
@@ -105,7 +105,7 @@ methods
     end
     
     function names = getParameterNames(obj)
-        % Return the names of all parameters in a cell array of strings
+        % Return the names of all parameters in a cell array of strings.
         %
         % NAMES = transfo.getParameterNames();
         % 
@@ -130,7 +130,12 @@ methods
         jacobian = parametricJacobian(obj.Transform, point, varargin{:});
         
     end
+
+    function transfo = clone(obj)
+        transfo = InitializedTransformModel(obj.Initial, clone(obj.Transform));
+    end
 end % methods implementing ParametricTransform interface
+
 
 %% Methods implementing Transform interface
 methods
@@ -139,7 +144,7 @@ methods
     end
     
     function jacobian = jacobianMatrix(obj, point, varargin)
-        % Compute jacobian matrix, i.e. derivatives for coordinate
+        % Compute jacobian matrix, i.e. derivatives for coordinate.
         % jacob(i,j) = d x_i / d x_j
         
         jacobian = jacobianMatrix(obj.Initial, point);
@@ -157,7 +162,7 @@ end % methods implementing Transform interface
 
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'InitializedTransformModel', ...
             'Initial', toStruct(obj.Initial), ...
             'Transform', toStruct(obj.Transform));
@@ -166,7 +171,7 @@ end
 
 methods (Static)
     function transfo = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         init = Transform.fromStruct(str.Initial);
         transform = Transform.fromStruct(str.Transform);
         transfo = InitializedTransformModel(init, transform);

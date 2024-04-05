@@ -54,7 +54,7 @@ methods
                 obj.Params = var.Params;
                 
             elseif isnumeric(var)
-                if length(var) == 1 && var(1) ~= 2
+                if isscalar(var) && var(1) ~= 2
                     % if argument is a scalar, it corresponds to dimension
                     error('SimilarityModel2D is defined only for 2 dimensions');
                     
@@ -75,39 +75,11 @@ methods
     end % constructor declaration
 end
 
-%% Standard methods
-methods        
-    function dim = getDimension(obj) %#ok<MANU>
-        dim = 2;
-    end
 
-    function mat = affineMatrix(obj)
-        % Compute affine matrix associated with obj transform
-        
-        % translation vector
-        tx = obj.Params(1);
-        ty = obj.Params(2);
-        
-        % rotation angle, converted to radians
-        theta = obj.Params(3) * pi / 180;
-
-        % scaling factor, converted to ususal scale
-        k = power(2, obj.Params(4));
-        
-        % pre-computations
-        cot = cos(theta);
-        sit = sin(theta);
-
-        % build matrix
-        mat = [...
-        	k*cot -k*sit tx ; ...
-        	k*sit +k*cot ty ; ...
-              0      0    1 ];
-
-    end
-  
+%% Implementation of ParametricTransform methods
+methods
     function jacobian = parametricJacobian(obj, x, varargin)
-        % Compute jacobian matrix, i.e. derivatives for each parameter
+        % Compute jacobian matrix, i.e. derivatives for each parameter.
        
         % extract coordinate of input point(s)
         if isempty(varargin)
@@ -134,21 +106,58 @@ methods
             1 0 k*(-sit*x - cot*y)*pi/180 (cot*x-sit*y)*dk ;
             0 1 k*( cot*x - sit*y)*pi/180 (sit*x+cot*y)*dk];
     end
+    
+    function transfo = clone(obj)
+        transfo = SimilarityModel2D(obj.Params);
+    end
 
 end % methods
+
+
+%% Implementation of AffineTransform methods
+methods        
+    function dim = getDimension(obj) %#ok<MANU>
+        dim = 2;
+    end
+
+    function mat = affineMatrix(obj)
+        % Compute affine matrix associated with obj transform.
+        
+        % translation vector
+        tx = obj.Params(1);
+        ty = obj.Params(2);
+        
+        % rotation angle, converted to radians
+        theta = obj.Params(3) * pi / 180;
+
+        % scaling factor, converted to ususal scale
+        k = power(2, obj.Params(4));
+        
+        % pre-computations
+        cot = cos(theta);
+        sit = sin(theta);
+
+        % build matrix
+        mat = [...
+        	k*cot -k*sit tx ; ...
+        	k*sit +k*cot ty ; ...
+              0      0    1 ];
+
+    end
+end
 
 
 %% Serialization methods
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'SimilarityModel2D', ...
             'Parameters', obj.Params);
     end
 end
 methods (Static)
     function motion = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         if isfield(str, 'Parameters')
             params = str.Parameters;
         elseif isfield(str, 'parameters')
@@ -159,6 +168,5 @@ methods (Static)
         motion = SimilarityModel2D(params);
     end
 end
-
 
 end % classdef
