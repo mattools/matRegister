@@ -3,8 +3,9 @@ classdef SumSquaredDistanceToClosestPoint3D < handle
 %
 %   output = SumSqDistancesVertexToClosestVertex3d(PTS1, PTS2, TRANSFO)
 %
-%   This version computes distances by iterating over the reference points,
-%   and computing distance to closest point among transformed point set 2.
+%   This version computes distances by applying transform to the point set
+%   2, iterating over transformed points and computing distance to closest
+%   point among reference point set 1.
 %
 %   Example
 %   SumSquaredDistanceToClosestPoint3D
@@ -29,11 +30,18 @@ properties
     
     % the parametric transform
     Transfo;
+    
+    % The name of the matching method
+    % Must be one of "naive", "kdtree"
+    MatchingMethod = 'KDTree';
+
+    % If matching method is "kd-tree", stores the KDTree for repeated queries.
+    KDTree;
 end
 
 %% Constructor method
 methods
-    function obj = SumSquaredDistanceToClosestPoint3D(refPoints, points, transfo)
+    function obj = SumSquaredDistanceToClosestPoint3D(refPoints, points, transfo, varargin)
         % Creates a new metric based on vertex to vertex distances
         %
         % Input arguments are the reference vertex set, the moving set of
@@ -54,6 +62,26 @@ methods
         obj.Points = points;
         obj.Transfo = transfo;
         
+        % Process optional arguments
+        while length(varargin) > 1
+            pname = varargin{1};
+            if ~ischar(pname)
+                error('Requires paramaters given as name-value pairs');
+            end
+            if strcmpi(pname, 'matchingMethod')
+                obj.MatchingMethod = varargin{2};
+            else
+                error("Unknown option name: %s", pname);
+            end
+
+            varargin(1:2) = [];
+        end
+
+
+        if strcmpi(obj.MatchingMethod, 'kdTree')
+            obj.KDTree = KDTreeSearcher(obj.RefPoints);
+        end
+
     end % constructor
 end
 
@@ -68,7 +96,14 @@ methods
         pointsT = transformPoint(obj.Transfo, obj.Points);
         
         % compute metric
-        minDist = minDistancePoints(obj.RefPoints, pointsT);
+        if strcmpi(obj.MatchingMethod, 'Naive')
+            minDist = minDistancePoints(pointsT, obj.RefPoints);
+        elseif strcmpi(obj.MatchingMethod, 'KDTree')
+            [~, minDist] = knnsearch(obj.KDTree, pointsT);
+        else
+            error('Unknow point matching method');
+        end
+
         res = sum(minDist .^ 2);
     end
     
