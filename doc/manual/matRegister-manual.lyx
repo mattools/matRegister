@@ -1,0 +1,2704 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass scrreprt
+\begin_preamble
+\usepackage{textcomp}
+
+\usepackage[dvipsnames]{xcolor}
+
+\usepackage{hyperref}
+%\usepackage{lstlinebgrd}
+
+\definecolor{bl}{rgb}{0.0,0.2,0.6} 
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{lightgray}{rgb}{0.95,0.95,0.95}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\hypersetup{colorlinks=true, citecolor=blue, linkcolor=blue}
+
+% package that modifies style of section headers
+\addtokomafont{chapter}{\color{bl}\scshape \selectfont}
+\addtokomafont{section}{\color{bl}\scshape \selectfont}
+\addtokomafont{subsection}{\color{bl}\scshape \selectfont}
+\addtokomafont{subsubsection}{\color{bl}\scshape \selectfont}
+%\allsectionsfont{\color{bl}\scshape \selectfont }
+
+% setup font style for different title elements
+\setkomafont{title}{\color{bl} \bfseries \scshape}
+\setkomafont{author}{\centering \small}
+\setkomafont{date}{\centering \small}
+
+
+% Change the abstract environment
+\usepackage[runin]{abstract}		% runin option for a run-in title
+\setlength\absleftindent{30pt}		% left margin
+\setlength\absrightindent{30pt}		% right margin
+\abslabeldelim{\quad }						% 
+\setlength{\abstitleskip}{-10pt}
+\renewcommand{\abstractname}{}
+\renewcommand{\abstracttextfont}{\color{bl} \small \slshape }	% slanted text
+
+% Custom headers and footers using KOMA-Script
+\usepackage{scrlayer-scrpage}
+\usepackage{lastpage}	% for page numbering	
+
+% Left header: chapter title on even pages
+\lehead{\slshape\leftmark}
+\lohead{}
+% Center header: empty
+\chead{}
+% Right header: section title on odd pages
+\rehead{}
+\rohead{\slshape\rightmark}
+
+% Outer footer (left of even pages, right of odd pages)
+\KOMAoptions{footsepline=on}
+\ofoot[\footnotesize page \thepage\ / \pageref{LastPage}]{\footnotesize page \thepage\ / \pageref{LastPage}}
+% Center footer: empty
+\cfoot{}
+% Inner footer (right of even pages, left of odd pages)
+\ifoot[\footnotesize \jobname]{\footnotesize \jobname}
+
+% left chapter no number, nothing on the right
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+% right section with number
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+
+% Added by lyx2lyx
+\usepackage[charter]{mathdesign}
+
+% setup of figure captions 
+\usepackage[format=plain,font=it,labelfont=bf]{caption}
+%\captionsetup[figure]{name=Figure}
+%\DeclareCaptionLabelSeparator{colon}{.}
+
+% Pretty display of Matlab Listings (better than mcode)
+\usepackage{matlab-prettifier}
+
+\usepackage{minitoc}
+
+\author{D. Legland}
+\date{\today}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format pdf2
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement h
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 1
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 2
+\paperpagestyle default
+\listings_params "language=Matlab,style={Matlab-editor},tabsize=2,frame=single,breaklines=true,basicstyle={\footnotesize\mlttfamily},aboveskip=5pt,showspaces=false"
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+MatRegister - Matlab library for registration of image data
+\end_layout
+
+\begin_layout Abstract
+Short user manual of the MatRegister library, that aims at performing 2D/3D
+ image registration, and registration of geometric data structures.
+ The library provides several parametric models of transformation, metrics
+ to compare images or point clouds, and facilities for optimisation.
+ 
+\end_layout
+
+\begin_layout Abstract
+It relies on the Image Processing and Optimisation Toolboxes, and requires
+ an Image class available as an independent module.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dominitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Introduction
+\end_layout
+
+\begin_layout Section
+The MatRegister library
+\end_layout
+
+\begin_layout Standard
+The MatRegister library was originally developped for registration of 2D
+ or 3D images, with an objective of group-wise registration.
+ It also provides some tools for the registration of geometric data structures:
+ polygons, point sets, polygonal meshes.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO: add two small examples, one with image, one with mesh
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The development of the library was strongly inspired by the ITK library
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Ibanez2003"
+literal "false"
+
+\end_inset
+
+, developped in C++, as well as the Elastix wrapper 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Klein2010_elastix"
+literal "false"
+
+\end_inset
+
+.
+ For the formalism, the book of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Modersitzki2004"
+literal "false"
+
+\end_inset
+
+ was found to be very useful.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/registration-main-workflow.png
+	width 80text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Workflow_Registration_Images"
+
+\end_inset
+
+General workflow for the registration of two images.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The general workflow for the registration of two images is given in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Workflow_Registration_Images"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Dependencies
+\end_layout
+
+\begin_layout Standard
+The MatRegister library requires several Matlab toolboxes:
+\end_layout
+
+\begin_layout Itemize
+the Image Processing Toolbox 
+\end_layout
+
+\begin_layout Itemize
+the Optimization toolbox
+\end_layout
+
+\begin_layout Standard
+Several external contributions are also required:
+\end_layout
+
+\begin_layout Itemize
+The management of images together with their meta-data requires the 
+\begin_inset Quotes eld
+\end_inset
+
+Image-class
+\begin_inset Quotes erd
+\end_inset
+
+ library, distributed independently
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/mattools/matlab-image-class
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+The MatGeom library
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/mattools/matGeom
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ is necessary for performing registration on geometric data (polygons, 3D
+ point clouds...).
+ 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+The 
+\begin_inset Quotes cld
+\end_inset
+
+Geometry
+\begin_inset Quotes crd
+\end_inset
+
+ library may be necessary in a future version for the management of 3D polygonal
+ meshes
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+The serialisation (reading / writing) of MatRegister data is often performed
+ using the jsonlab library
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/fangq/jsonlab
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+FileReader et peut-être FileWriter pour certaines fonctions de sauvegarde
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Installation and configuration
+\end_layout
+
+\begin_layout Standard
+For developers, the simplest way is to clone the repository from the GitHub
+ project page
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/mattools/matRegister
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The path to the matRegister directories should be added to Matlab, either
+ manually, or by running the script 
+\begin_inset Quotes eld
+\end_inset
+
+setupMatRegister.m
+\begin_inset Quotes erd
+\end_inset
+
+ (in the root folder of the sources).
+\end_layout
+
+\begin_layout Section
+Library organisation
+\end_layout
+
+\begin_layout Standard
+The library is composed of different modules, each modules belonging to
+ its directory.
+ The different modules are:
+\end_layout
+
+\begin_layout Description
+transforms a collection of classes for representing geometric transformations.
+ This module is developed in chapter 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:Geometric-Transforms"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+metrics a collection of classes and functions for computing dissimilarity
+ metrics between images.
+ 
+\end_layout
+
+\begin_layout Description
+optimizers provides classes for multidimensional optimisation, and utilities
+ for interfacing with the optimisation toolbox from Matlab.
+\end_layout
+
+\begin_layout Description
+interpolators provides common interpolators for 2D or 3D images.
+\end_layout
+
+\begin_layout Description
+shapeMetrics a collection of classes and functions for computing dissimilarity
+ metrics between geometric shapes such as polygons or polygonal meshes.
+\end_layout
+
+\begin_layout Description
+imageSamplers utility classes that allows to sample positions within 2D/3D
+ images, without considering all pixels/voxels within the image.
+\end_layout
+
+\begin_layout Description
+utils some utility functions to parse files from other libraries.
+\end_layout
+
+\begin_layout Section
+Mathematical conventions
+\end_layout
+
+\begin_layout Standard
+Computations with angles are made in radians, but the representation of
+ angles within classes is made in degrees: this makes it easier to interpret,
+ and to save into text files.
+\end_layout
+
+\begin_layout Chapter
+Geometric transforms
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Geometric-Transforms"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+MatRegister represents geometric transforms as classes.
+ The class ParametricTransform provides support for a parameter vector describin
+g the transform, facilitating the minimization of anobjective function.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+minitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Definitions
+\end_layout
+
+\begin_layout Standard
+A transformation 
+\begin_inset Formula $\boldsymbol{T}$
+\end_inset
+
+ is seen as an application from 
+\begin_inset Formula $\mathbb{R}^{d}$
+\end_inset
+
+ into 
+\begin_inset Formula $\mathbb{R}^{d}$
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{T}: & \mathbb{R}^{d}\rightarrow\mathbb{R}^{d}\\
+ & \boldsymbol{x}\rightarrow\boldsymbol{x}'=\boldsymbol{T}(\boldsymbol{x})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The different components of the transform can be decomposed:
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{T}(x,y,z) & =\left(\begin{array}{c}
+T_{x}(x,y,z)\\
+T_{y}(x,y,z)\\
+T_{z}(x,y,z)
+\end{array}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Parametric transforms are denoted by 
+\begin_inset Formula $\boldsymbol{T}_{\boldsymbol{\theta}}$
+\end_inset
+
+, with 
+\begin_inset Formula $\boldsymbol{\theta}$
+\end_inset
+
+ being a vector with 
+\begin_inset Formula $n_{p}$
+\end_inset
+
+ elements.
+\end_layout
+
+\begin_layout Section
+Transform model hierarchy
+\end_layout
+
+\begin_layout Standard
+MatRegister represents geometric transforms as classes.
+ Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Class-Transform-Hierarchy"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ shows the hierarchy of the main transformation classes.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/transforms/transformClasses.png
+	width 80text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Class-Transform-Hierarchy"
+
+\end_inset
+
+Simplified hierarchy of the classes representing transformations.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The base class is the 
+\series bold
+Transform
+\series default
+ class.
+ It mostly defines a 
+\begin_inset Quotes eld
+\end_inset
+
+transformPoint
+\begin_inset Quotes erd
+\end_inset
+
+ methods.
+ The AffineTransform class is an abstract subclass of Transform, that is
+ intended to be the superclass of all affine transforms, independently of
+ their inner representation.
+ The 
+\series bold
+ParametricTransform
+\series default
+ class is a specialization of the Transform class that adds the managment
+ of the parameters to optimize.
+ The suffix 
+\begin_inset Quotes eld
+\end_inset
+
+Model
+\begin_inset Quotes erd
+\end_inset
+
+ is commonly used to differentiate parametric transforms from non parametric
+ ones.
+\end_layout
+
+\begin_layout Subsection
+Transform
+\end_layout
+
+\begin_layout Standard
+This is the most generic class for representing transforms.
+ It declares several abstract methods, that are implemented in derived classes:
+\end_layout
+
+\begin_layout Minisec
+getDimension
+\end_layout
+
+\begin_layout Standard
+Returns the dimension of the space this transformation operates in.
+\end_layout
+
+\begin_layout Minisec
+transformPoint
+\end_layout
+
+\begin_layout Standard
+Applies the transformation to the coordinates of a point given by a 
+\begin_inset Formula $1\times d$
+\end_inset
+
+ row vectror.
+ Can also be applied to a list of 
+\begin_inset Formula $n$
+\end_inset
+
+ points represented by a 
+\begin_inset Formula $n\times d$
+\end_inset
+
+ array.
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+transfo = ...
+\end_layout
+
+\begin_layout Plain Layout
+
+pts = randn(10, 3);
+\end_layout
+
+\begin_layout Plain Layout
+
+pts2 = transformPoint(transfo, pts);
+\end_layout
+
+\end_inset
+
+Some classes may also support alternative syntax:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+[x2,y2,z2] = transformPoint(transfo, x, y, z);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Minisec
+transformVector 
+\end_layout
+
+\begin_layout Standard
+Applies the transform to a vector located at a position.
+ Can be used to visualize deformations.
+\end_layout
+
+\begin_layout Minisec
+jacobianMatrix 
+\end_layout
+
+\begin_layout Standard
+Returns the 
+\begin_inset Formula $d\times d$
+\end_inset
+
+ Jacobian matrix of the transformation at a given point.
+ The Jacobian matrix is formed by the spatial derivatives of each component
+ 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ of the transformation.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Subsection
+ParametricTransform
+\end_layout
+
+\begin_layout Standard
+The ParametricTransform class stores a 
+\begin_inset Quotes eld
+\end_inset
+
+Params
+\begin_inset Quotes erd
+\end_inset
+
+ property which is used to compute the actual transform.
+ The correspondency between the parameter vector and the transformation
+ is implemented in the subclasses.
+\end_layout
+
+\begin_layout Subsubsection*
+Serialisation of transformations
+\end_layout
+
+\begin_layout Standard
+Transforms can be saved as text files using the JSON file format.
+ Each transform is expected to implement the methods 
+\begin_inset Quotes eld
+\end_inset
+
+toStruct
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+fromStruct
+\begin_inset Quotes erd
+\end_inset
+
+, that manage the conversion to and from a structure.
+ The structure can be converted to or from a JSON representation.
+ 
+\end_layout
+
+\begin_layout Standard
+Example of use:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+>> transfo = Motion2D(30, [20 10]); % rotate by 30 degrees, then translate
+\end_layout
+
+\begin_layout Plain Layout
+
+>> write(transfo, 'motion.json');   % save transform
+\end_layout
+
+\begin_layout Plain Layout
+
+>> % Load the transform by using the static 
+\begin_inset Quotes eld
+\end_inset
+
+read
+\begin_inset Quotes erd
+\end_inset
+
+ method in Transform class
+\end_layout
+
+\begin_layout Plain Layout
+
+>> transfo2 = Transform.read('motion.json')
+\end_layout
+
+\begin_layout Plain Layout
+
+transfo2 = 
+\end_layout
+
+\begin_layout Plain Layout
+
+  Motion2D with properties:
+\end_layout
+
+\begin_layout Plain Layout
+
+          Theta: 30
+\end_layout
+
+\begin_layout Plain Layout
+
+    Translation: [20 10]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Affine transforms
+\end_layout
+
+\begin_layout Standard
+Affine transforms comprise a large family of transformations, such as translatio
+ns, rotations, scaling...
+ and their compositions.
+ They can be used either to re-align images or shapes, or as a pre-registration
+ step.
+\end_layout
+
+\begin_layout Standard
+Affine transform can be represented by a transform matrix, using homogeneous
+ coordinates:
+\begin_inset Formula 
+\begin{align*}
+\left(\begin{array}{c}
+x'\\
+y'\\
+z'\\
+1
+\end{array}\right) & =\left(\begin{array}{cccc}
+m_{00} & m_{01} & m_{02} & m_{03}\\
+m_{10} & m_{11} & m_{12} & m_{13}\\
+m_{20} & m_{21} & m_{22} & m_{23}\\
+0 & 0 & 0 & 1
+\end{array}\right)\cdot\left(\begin{array}{c}
+x'\\
+y'\\
+z'\\
+1
+\end{array}\right)
+\end{align*}
+
+\end_inset
+
+where the 
+\begin_inset Formula $3\times3$
+\end_inset
+
+ upper-right corner corresponds to the linear part of the transform, and
+ the 
+\begin_inset Formula $m_{i3}$
+\end_inset
+
+ coefficients correspond to the translation part.
+\end_layout
+
+\begin_layout Standard
+Several classes are implemented to represent affine transforms.
+ They inherit the AffineTransform abstract class.
+\end_layout
+
+\begin_layout Subsection
+AffineTransform
+\end_layout
+
+\begin_layout Standard
+The AffineTransform class is the base class for all classes that can represent
+ affine transforms.
+ It is an abstract class, meaning that it can not be instanciated directly,
+ but rather by creating an instance of a derived class.
+\end_layout
+
+\begin_layout Standard
+The class declares a new method, that needs to be implemented by derived
+ classes:
+\end_layout
+
+\begin_layout Minisec
+affineMatrix 
+\end_layout
+
+\begin_layout Standard
+Returns the 
+\begin_inset Formula $4\times4$
+\end_inset
+
+ array of coefficients representing the affine transform in homogeneous
+ coordinates.
+\end_layout
+
+\begin_layout Standard
+Most methods from Transform class are implemented based on the affineMatrix
+ method.
+ Other new method is provided:
+\end_layout
+
+\begin_layout Minisec
+inverse
+\end_layout
+
+\begin_layout Standard
+Returns the affine transform corresponding to the inverse of this transform.
+\end_layout
+
+\begin_layout Standard
+Also, several static methods are provided to quickly generate common transforms:
+\end_layout
+
+\begin_layout Minisec
+createTranslation 
+\end_layout
+
+\begin_layout Standard
+Creates an affine transform representing a translation in 2D, 3D or other
+ dimension.
+\end_layout
+
+\begin_layout Minisec
+createRotation
+\end_layout
+
+\begin_layout Standard
+Creates an affine transform representing a 2D rotation by an angle 
+\begin_inset Formula $\theta$
+\end_inset
+
+ around the origin.
+\end_layout
+
+\begin_layout Minisec
+createRotationOx
+\end_layout
+
+\begin_layout Standard
+Creates an affine transform representing a 3D rotation by an angle 
+\begin_inset Formula $\theta$
+\end_inset
+
+ around the 
+\begin_inset Formula $x$
+\end_inset
+
+-axis.
+\end_layout
+
+\begin_layout Minisec
+createRotationOy
+\end_layout
+
+\begin_layout Standard
+Creates an affine transform representing a 3D rotation by an angle 
+\begin_inset Formula $\theta$
+\end_inset
+
+ around the 
+\begin_inset Formula $y$
+\end_inset
+
+-axis.
+\end_layout
+
+\begin_layout Minisec
+createRotationOz
+\end_layout
+
+\begin_layout Standard
+Creates an affine transform representing a 3D rotation by an angle 
+\begin_inset Formula $\theta$
+\end_inset
+
+ around the 
+\begin_inset Formula $z$
+\end_inset
+
+-axis.
+\end_layout
+
+\begin_layout Minisec
+createScaling
+\end_layout
+
+\begin_layout Standard
+Creates an affine transform representing a scaling in 2D, 3D or other dimension.
+\end_layout
+
+\begin_layout Subsection
+MatrixAffineTransform
+\end_layout
+
+\begin_layout Standard
+An implementation of AffineTransform that stores the coefficients in an
+ array.
+\end_layout
+
+\begin_layout Subsection
+Translation
+\end_layout
+
+\begin_layout Standard
+An implementation of a translation in arbitrary dimension, defined by a
+ translation vector.
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+>> T = Translation([3 4]); % create a 2D translation
+\end_layout
+
+\begin_layout Plain Layout
+
+>> affineMatrix(T)
+\end_layout
+
+\begin_layout Plain Layout
+
+ans =
+\end_layout
+
+\begin_layout Plain Layout
+
+     1     0     3
+\end_layout
+
+\begin_layout Plain Layout
+
+     0     1     4
+\end_layout
+
+\begin_layout Plain Layout
+
+     0     0     1
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Parametric affine transforms
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Parametric-Affine-Transforms"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This sections describes several classes representing affine transforms whose
+ parameters can be optimised.
+ Such classes inherit both the AffineTransform interface and the ParametricTrans
+form class.
+\end_layout
+
+\begin_layout Subsection
+TranslationModel
+\end_layout
+
+\begin_layout Standard
+A translation in an arbitrary dimension.
+ The vector of parameters corresponds to the translation vector.
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+>> T = TranslationModel([3 4]);
+\end_layout
+
+\begin_layout Plain Layout
+
+>> T.Params
+\end_layout
+
+\begin_layout Plain Layout
+
+ans =
+\end_layout
+
+\begin_layout Plain Layout
+
+     3     4
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+MotionModel2D
+\end_layout
+
+\begin_layout Standard
+This class represents the composition of a rotation around the center (specified
+ in degrees) followed by a translation.
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+>> M = MotionModel2D([3 4 30]);
+\end_layout
+
+\begin_layout Plain Layout
+
+>> affineMatrix(M)
+\end_layout
+
+\begin_layout Plain Layout
+
+ans =
+\end_layout
+
+\begin_layout Plain Layout
+
+    0.8660   -0.5000    3.0000
+\end_layout
+
+\begin_layout Plain Layout
+
+    0.5000    0.8660    4.0000
+\end_layout
+
+\begin_layout Plain Layout
+
+         0         0    1.0000
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+SimilarityModel2D
+\end_layout
+
+\begin_layout Standard
+Represents a 2D similarity, taking into account translation, rotation, and
+ scaling.
+ The four parameters correspond to:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $t_{x}$
+\end_inset
+
+ the translation along 
+\begin_inset Formula $x$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $t_{y}$
+\end_inset
+
+ the translation along 
+\begin_inset Formula $y$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\alpha$
+\end_inset
+
+ the angle of rotation around the origin, in degrees
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\text{ln}_{2}k$
+\end_inset
+
+, the base-2 logarithm of the scale factor.
+\end_layout
+
+\begin_layout Standard
+Usign the logarithm of the scale factor allows to represents expansions
+ and shrinking in a more similar way, and making the parameter vary on 
+\begin_inset Formula $\mathbb{R}$
+\end_inset
+
+ instead of 
+\begin_inset Formula $\mathbb{R}^{+}$
+\end_inset
+
+.
+ The equivalent matrix is as follow:
+\begin_inset Formula 
+\[
+\left[\begin{array}{ccc}
+k\text{cosd}\alpha & -k\text{sind}\alpha & t_{x}\\
+k\text{sind}\alpha & k\text{cosd}\alpha & t_{y}\\
+0 & 0 & 1
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The parametric Jacobian matrix is given by:
+\begin_inset Formula 
+\begin{align*}
+J_{\theta}(x,y) & =\left(\begin{array}{cccc}
+1 & 0 & -k\cdot(x\text{sind}\alpha+y\text{cosd}\alpha)\cdot\frac{\pi}{180} & (x\text{cosd}\alpha-y\text{sind}\alpha)\cdot\ln_{2}\cdot p_{4}\\
+0 & 1 & k\cdot(x\text{cosd}\alpha-y\text{sind}\alpha)\cdot\frac{\pi}{180} & (x\text{sind}\alpha+y\text{cosd}\alpha)\cdot\ln_{2}\cdot p_{4}
+\end{array}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+AffineTransformModel2D
+\end_layout
+
+\begin_layout Standard
+An affine transform whose parameters 
+\begin_inset Formula $\boldsymbol{\theta}=[p_{1},p_{2},p_{3},p_{4},p_{5},p_{6}]$
+\end_inset
+
+ simply correspond to the coefficients of the affine matrix:
+\begin_inset Formula 
+\begin{align*}
+\left(\begin{array}{c}
+x'\\
+y'\\
+1
+\end{array}\right) & =\left(\begin{array}{ccc}
+p_{1} & p_{2} & p_{3}\\
+p_{4} & p_{5} & p_{5}\\
+0 & 0 & 0
+\end{array}\right)\cdot\left(\begin{array}{c}
+x'\\
+y'\\
+1
+\end{array}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Polynomial transform models
+\end_layout
+
+\begin_layout Standard
+Polynomial models represent each component 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ of the transformation as a polynomial of the input coordinates 
+\begin_inset Formula $x$
+\end_inset
+
+, 
+\begin_inset Formula $y$
+\end_inset
+
+ and eventually 
+\begin_inset Formula $z$
+\end_inset
+
+.
+ Polynomial models can be useful to represent a global deformation with
+ few parameters, but may lead to irrelevant deformations.
+ 
+\end_layout
+
+\begin_layout Standard
+The general formulation for polynomial transforms is as follow:
+\begin_inset Formula 
+\begin{align*}
+T_{i}(x,y) & =\sum_{i,j=0}^{n}a_{ij}x^{i}y^{j}\\
+T_{i}(x,y,z) & =\sum_{i,j,k=0}^{n}a_{ijk}x^{i}y^{j}z^{k}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Polynomial transforms are implemented only for degree two (quadratic polynomials
+), and for two and three dimensions.
+\end_layout
+
+\begin_layout Subsection
+QuadTransformModel2D
+\end_layout
+
+\begin_layout Standard
+Transform model for which the 2D coordinates of the transformed point are
+ computed from a quadratic polynomial of input point coordinates:
+\begin_inset Formula 
+\begin{eqnarray*}
+x' & = & p_{1}+p_{3}x+p_{5}y+p_{7}x^{2}+p_{9}xy+p_{11}y^{2}\\
+y' & = & p_{2}+p_{4}x+p_{6}y+p_{8}x^{2}+p_{10}xy+p_{12}y^{2}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+QuadTransformModel3D
+\end_layout
+
+\begin_layout Standard
+Transform model for which the 3D coordinates of the transformed point are
+ computed from a quadratic polynomial of input point coordinates:
+\begin_inset Formula 
+\begin{eqnarray*}
+x' & = & p_{1}+p_{4}x+p_{7}y+p_{10}z+p_{13}x^{2}+p_{16}y^{2}+p_{19}z^{2}+p_{22}xy+p_{25}xz+p_{28}yz\\
+y' & = & p_{2}+p_{5}x+p_{8}y+p_{11}z+p_{14}x^{2}+p_{17}y^{2}+p_{20}z^{2}+p_{23}xy+p_{26}xz+p_{29}yz\\
+z' & = & p_{3}+p_{6}x+p_{9}y+p_{12}z+p_{15}x^{2}+p_{18}y^{2}+p_{21}z^{2}+p_{24}xy+p_{27}xz+p_{30}yz
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Elastic Transforms
+\end_layout
+
+\begin_layout Standard
+Elastic transforms consist in modelling the deformation field 
+\begin_inset Formula $\boldsymbol{U}$
+\end_inset
+
+ such that:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{T}(\boldsymbol{x}) & =\boldsymbol{x}+\boldsymbol{U}(\boldsymbol{x})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The most common model is based on B-Splines 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Rueckert_1999_TransMedIm"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+BSplineTransformModel2D
+\end_layout
+
+\begin_layout Standard
+Transformation model based on 2D cubic splines.
+ The parameters correspond to the components of vectors associated to a
+ deformation grid.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/transforms/BSplineTransformModel2D_cameraman_smallGrid_shifts.png
+	width 23text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/transforms/BSplineTransformModel2D_cameraman_smallGrid_transformedGrid.png
+	width 23text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/transforms/BSplineTransformModel2D_cameraman_smallGrid_transformedImage.png
+	width 23text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/transforms/BSplineTransformModel2D_cameraman_smallGrid_jacobianMap.png
+	width 23text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:BSpline-Transform-Example"
+
+\end_inset
+
+Example of use of the BSplineTransformModel2D class.
+ Original image with superimposition of the deformation grid, result of
+ deformation applied to a regular grid, deformation of the original image,
+ determinant of the Jacobian matrix.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+An example of image deformation using B-Spline grid is given on Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:BSpline-Transform-Example"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ The reduced script is as follow:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+% read image and create transform
+\end_layout
+
+\begin_layout Plain Layout
+
+img = imread('cameraman.tif');
+\end_layout
+
+\begin_layout Plain Layout
+
+transfo = BSplineTransformModel2D([3 3], [64 64], [64 64]);
+\end_layout
+
+\begin_layout Plain Layout
+
+transfo.params = [...
+\end_layout
+
+\begin_layout Plain Layout
+
+    +1 -1  0  +1 -1 +1   0 -1 +1 ...
+\end_layout
+
+\begin_layout Plain Layout
+
+    +1 +1  0  -1 -1 -1   0 +1 +1     ] * 30;
+\end_layout
+
+\begin_layout Plain Layout
+
+% display transform
+\end_layout
+
+\begin_layout Plain Layout
+
+figure(1); imshow(img); hold on; 
+\end_layout
+
+\begin_layout Plain Layout
+
+drawGrid(transfo); drawVertexShifts(transfo, 'm');
+\end_layout
+
+\begin_layout Plain Layout
+
+drawTransformedGrid(transfo, 10:10:250, 10:10:250);
+\end_layout
+
+\begin_layout Plain Layout
+
+% compute transformed image
+\end_layout
+
+\begin_layout Plain Layout
+
+[x, y] = meshgrid(1:256, 1:256);
+\end_layout
+
+\begin_layout Plain Layout
+
+pts2 = transformPoint(transfo, [x(:) y(:)]);
+\end_layout
+
+\begin_layout Plain Layout
+
+img2 = reshape(imEvaluate(img, pts2), size(img));
+\end_layout
+
+\begin_layout Plain Layout
+
+figure; imshow(img2, [0 255]);
+\end_layout
+
+\begin_layout Plain Layout
+
+% Compute map of jacobian
+\end_layout
+
+\begin_layout Plain Layout
+
+tjr = TransformJacobianResampler(1:256, 1:256);
+\end_layout
+
+\begin_layout Plain Layout
+
+logJacMap = log2(resample(tjr, transfo));
+\end_layout
+
+\begin_layout Plain Layout
+
+rgb = double2rgb(getBuffer(logJacMap), 'blue2White2Red', [-2 2], 'm'); 
+\end_layout
+
+\begin_layout Plain Layout
+
+figure; imshow(rgb);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Properties
+\end_layout
+
+\begin_layout Standard
+Main properties:
+\end_layout
+
+\begin_layout Description
+GridSize the size of the grid, as a two-elements row vector.
+\end_layout
+
+\begin_layout Description
+GridOrigin the position of the first point of the grid (located top-left),
+ as a two-elements row vector.
+\end_layout
+
+\begin_layout Description
+GridSpacing the spacing between the grid vertices, as a two-elements row
+ vector.
+\end_layout
+
+\begin_layout Standard
+Parameters correspond to the shift along 
+\begin_inset Formula $x$
+\end_inset
+
+ for each vertex, then to the shifts along 
+\begin_inset Formula $y$
+\end_inset
+
+ for each vertex.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Standard
+Some methods are defined: 
+\end_layout
+
+\begin_layout Minisec
+getGridVertices
+\end_layout
+
+\begin_layout Standard
+Returns the coordinates of the grid vertices.
+\end_layout
+
+\begin_layout Minisec
+drawGrid
+\end_layout
+
+\begin_layout Standard
+Displays the grid as an overlay over the current plot.
+\end_layout
+
+\begin_layout Minisec
+drawVertexShifts
+\end_layout
+
+\begin_layout Standard
+Display the deformation vector associated to each vertex of the grid, as
+ an arrow located on the grid vertex.
+\end_layout
+
+\begin_layout Minisec
+subdivide 
+\end_layout
+
+\begin_layout Standard
+Returns a new instance of the deformation model, with a grid twice finer
+ in each dimension.
+ The main puprose of this fucntion is to provide a convenient way to perform
+ multi-resolution registration.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+BSplineTransformModel3D
+\end_layout
+
+\begin_layout Standard
+Transformation model based on 3D cubic splines.
+ Implementation is a transposition of the 2D version to 3D.
+ The parameters correspond to the components of vectors associated to a
+ deformation grid.
+\end_layout
+
+\begin_layout Subsubsection*
+Properties
+\end_layout
+
+\begin_layout Standard
+Main properties:
+\end_layout
+
+\begin_layout Description
+GridSize the size of the grid, as a three-elements row vector.
+\end_layout
+
+\begin_layout Description
+GridOrigin the position of the first point of the grid (located top-left),
+ as a three-elements row vector.
+\end_layout
+
+\begin_layout Description
+GridSpacing the spacing between the grid vertices, as a three-elements row
+ vector.
+\end_layout
+
+\begin_layout Standard
+Parameters correspond to the shift along 
+\begin_inset Formula $x$
+\end_inset
+
+ for each vertex, then to the shifts along 
+\begin_inset Formula $y$
+\end_inset
+
+ for each vertex, then to the shifts along 
+\begin_inset Formula $z$
+\end_inset
+
+ for each vertex.
+\end_layout
+
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
+\begin_layout Standard
+Some methods are defined: 
+\end_layout
+
+\begin_layout Minisec
+getGridVertices
+\end_layout
+
+\begin_layout Standard
+Returns the coordinates of the grid vertices.
+\end_layout
+
+\begin_layout Minisec
+drawGrid
+\end_layout
+
+\begin_layout Standard
+Displays the grid as an overlay over the current plot.
+\end_layout
+
+\begin_layout Minisec
+drawVertexShifts
+\end_layout
+
+\begin_layout Standard
+Displays the deformation vector associated to each vertex of the grid, as
+ an arrow located on the grid vertex.
+\end_layout
+
+\begin_layout Minisec
+subdivide 
+\end_layout
+
+\begin_layout Standard
+Returns a new instance of the deformation model, with a grid twice finer
+ in each dimension.
+ The main puprose of this fucntion is to provide an convenient way to perform
+ multi-resolution registration.
+ 
+\end_layout
+
+\begin_layout Chapter
+Metrics
+\end_layout
+
+\begin_layout Standard
+Registration requires to define a metric, that measure the dissimilarity
+ between the registered and the target shape.
+ 
+\end_layout
+
+\begin_layout Standard
+This chapter first presents the main classes, then describes the metrics
+ defined for images and for point clouds.
+ It is planned to implement more metrics for meshes (taking into account
+ the topology of the mesh).
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+minitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Main classes
+\end_layout
+
+\begin_layout Subsection
+BaseFunction
+\end_layout
+
+\begin_layout Standard
+This is an abstract class that simply defines the method returning the value
+ to optimise:
+\end_layout
+
+\begin_layout Minisec
+value = computeValue(obj);
+\end_layout
+
+\begin_layout Standard
+Computes the value associated to the current state of the class.
+\end_layout
+
+\begin_layout Section
+Image metrics
+\end_layout
+
+\begin_layout Standard
+Image metrics are based on the comparison of corresponding pixel values.
+ Two main families can be considered.
+ A first family relies on the minimisation of the differences between values.
+ The sum of squared differences is the main method, but correlation measures,
+ eventually normalised, can also be used.
+ A second family considers the joint distribution of the values evaluated
+ in both images.
+ The methods are usually based on mutual information and entropy.
+\end_layout
+
+\begin_layout Subsection
+ImageToImageMetric 
+\end_layout
+
+\begin_layout Standard
+An abstract class that register the two images to compare, and a set of
+ positions on which the comparison will be performed.
+ The actual comparison is implemented in derived classes.
+\end_layout
+
+\begin_layout Subsection
+MeanSquareDifferencesMetric
+\end_layout
+
+\begin_layout Standard
+Corresponds to a discretization of the integral:
+\begin_inset Formula 
+\begin{align*}
+MSD & =\int(I_{1}(\boldsymbol{x})-I_{2}(\boldsymbol{x}))^{2}d\boldsymbol{x}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In practice, one uses a sum over a finite set of points.
+\end_layout
+
+\begin_layout Standard
+Several variants of this metric are implemented, the difference has to be
+ documented.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Point clouds metrics
+\end_layout
+
+\begin_layout Standard
+Compute a 
+\begin_inset Quotes eld
+\end_inset
+
+distance
+\begin_inset Quotes erd
+\end_inset
+
+ between a set of points (as a 
+\begin_inset Formula $n_{1}\times d$
+\end_inset
+
+ array) and a registered set of points (as a 
+\begin_inset Formula $n_{2}\times d$
+\end_inset
+
+ array).
+\end_layout
+
+\begin_layout Subsection
+SumSquaredDistanceToClosestPoint3D
+\end_layout
+
+\begin_layout Standard
+Defined from two set of points and a transformation model.
+ The metric is obtained by computing, for each point of the first set, the
+ distance to the nearest transformed point (of second set), and computing
+ the sum of the squares of the distances.
+\end_layout
+
+\begin_layout Standard
+Example of use:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+% initialize transform
+\end_layout
+
+\begin_layout Plain Layout
+
+gridSize = [2 2 3];
+\end_layout
+
+\begin_layout Plain Layout
+
+gridSpacing = [4 4 4];
+\end_layout
+
+\begin_layout Plain Layout
+
+gridOrigin = [-2 -2 -4];
+\end_layout
+
+\begin_layout Plain Layout
+
+transfo = BSplineTransformModel3D(gridSize, gridSpacing, gridOrigin);
+\end_layout
+
+\begin_layout Plain Layout
+
+params0 = transfo.Params;
+\end_layout
+
+\begin_layout Plain Layout
+
+% function to evaluate (v1 and v2 are two n-by-3 point sets, not necessarily
+ the same size)
+\end_layout
+
+\begin_layout Plain Layout
+
+metric = SumSquaredDistanceToClosestPoint3D(v2, v1, transfo);
+\end_layout
+
+\begin_layout Plain Layout
+
+fun = @(x) metric.evaluate(x);
+\end_layout
+
+\begin_layout Plain Layout
+
+% run optimisation
+\end_layout
+
+\begin_layout Plain Layout
+
+tic; params = fminunc(fun, params0); toc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Optimization
+\end_layout
+
+\begin_layout Standard
+Registration requires the minimization of a metric that describes the difference
+ between the target shape and the transformed shape.
+ Such a minimization is performed by an optimization algorithm, that seeks
+ for the minimum of a function of several variables.
+ 
+\end_layout
+
+\begin_layout Standard
+The Matlab Optimization toolbox provides a number of optimization algorithms.
+ The optimization module of the MatRegister library provides some helper
+ functions that facilitate the use of these algorithms, as well as alternative
+ implementations of some optimization methods.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+minitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Registration using Matlab Optimization toolbox
+\end_layout
+
+\begin_layout Standard
+The Optimization toolbox of Matlab provides several algorithms for optimization.
+ Two of them are easily adaptable for registration:
+\end_layout
+
+\begin_layout Description
+fminsearch identifies the minimum of a function using the Nelder-Mead simplex
+ algorithm (derivative free method).
+\end_layout
+
+\begin_layout Description
+fminunc identifies the minimum of a function using second derivative estimates.
+\end_layout
+
+\begin_layout Standard
+Both can be used by using a function handle to the 
+\begin_inset Quotes eld
+\end_inset
+
+evaluate
+\begin_inset Quotes erd
+\end_inset
+
+ method of a Metric objet:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+fun = @(x) metric.evaluate(x);
+\end_layout
+
+\begin_layout Plain Layout
+
+params = fminunc(fun, params0);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+An example of use in context of registration is given in the following script:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+% initialize transform
+\end_layout
+
+\begin_layout Plain Layout
+
+gridSize = [2 2 3];
+\end_layout
+
+\begin_layout Plain Layout
+
+gridSpacing = [4 4 4];
+\end_layout
+
+\begin_layout Plain Layout
+
+gridOrigin = [-2 -2 -4];
+\end_layout
+
+\begin_layout Plain Layout
+
+transfo = BSplineTransformModel3D(gridSize, gridSpacing, gridOrigin);
+\end_layout
+
+\begin_layout Plain Layout
+
+params0 = transfo.Params;
+\end_layout
+
+\begin_layout Plain Layout
+
+% function to evaluate (v1 and v2 are two n-by-3 point sets, not necessarily
+ the same size)
+\end_layout
+
+\begin_layout Plain Layout
+
+metric = SumSquaredDistanceToClosestPoint3D(v2, v1, transfo);
+\end_layout
+
+\begin_layout Plain Layout
+
+fun = @(x) metric.evaluate(x);
+\end_layout
+
+\begin_layout Plain Layout
+
+% run optimisation
+\end_layout
+
+\begin_layout Plain Layout
+
+tic; params = fminunc(fun, params0); toc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Class hierarchy for Optimization
+\end_layout
+
+\begin_layout Standard
+(to be done)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/optim/classes_optimisation_image_metric.png
+	width 80text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Optimization-Classes"
+
+\end_inset
+
+Simplified hierarchy of the classes used for registration optimization.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Subsection
+Optimizer
+\end_layout
+
+\begin_layout Standard
+Abstract class, basis of all optimization algorithms.
+ Contains mostly two fields:
+\end_layout
+
+\begin_layout Description
+CostFunction the function to optimize, as a function handle.
+\end_layout
+
+\begin_layout Description
+Params the current value of parameter vector
+\end_layout
+
+\begin_layout Standard
+The optimization is started by the following method:
+\end_layout
+
+\begin_layout Minisec
+startOptimization
+\end_layout
+
+\begin_layout Standard
+Starts the optimization algorithm until a stopping condition is reached.
+ The management of stopping conditions (iteration number, step length...) is
+ left to sub-classes.
+\end_layout
+
+\begin_layout Subsection
+CostFunction
+\end_layout
+
+\begin_layout Standard
+An abstract class that can be used to specify the function to minimize.
+ It declares one method:
+\end_layout
+
+\begin_layout Minisec
+evaluate(params)
+\end_layout
+
+\begin_layout Standard
+Evaluates the value of the cost function depending on the input parameters.
+ If several outputs arguments are requested, the gradient and the hessian
+ matrix can be returned.
+\end_layout
+
+\begin_layout Standard
+It can be used with an Optimizer instance in the following way:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+evaluator = ...
+ % create an instance of CostFunction
+\end_layout
+
+\begin_layout Plain Layout
+
+% associate the cost function with the evaluator
+\end_layout
+
+\begin_layout Plain Layout
+
+fun = @evaluator.evaluate;
+\end_layout
+
+\begin_layout Plain Layout
+
+optimizer.setCostFunction(fun);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Subsection
+MetricEvaluator
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Optimization monitoring
+\end_layout
+
+\begin_layout Standard
+Some classes have been developed to monitor the execution of a running Optimizat
+ion algorithm.
+ They all inherits the 
+\begin_inset Quotes eld
+\end_inset
+
+OptimizationListener
+\begin_inset Quotes erd
+\end_inset
+
+ abstract class.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/optim/classes_optimisation.png
+	width 80text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Optimization-Monitoring"
+
+\end_inset
+
+Simplified hierarchy of the classes used for optimization monitoring.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+OptimizationListener
+\end_layout
+
+\begin_layout Standard
+Abstract class whose aim is to provide a minimal implementation for the
+ following methods:
+\end_layout
+
+\begin_layout Minisec
+optimizationStarted
+\end_layout
+
+\begin_layout Standard
+Called when the optimization procedure starts.
+\end_layout
+
+\begin_layout Minisec
+optimizationIterated
+\end_layout
+
+\begin_layout Standard
+Called at the end of each iteration of the algorithm.
+\end_layout
+
+\begin_layout Minisec
+optimizationTerminated
+\end_layout
+
+\begin_layout Standard
+Called when the optimization procedure terminates.
+\end_layout
+
+\begin_layout Standard
+The derived class only need to re-implement one or all the necessary methods
+ to have the desired behaviour.
+ A listener can be linked to an optimizer as follow:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+opt = NelderMeadSimplexOptimizer();
+\end_layout
+
+\begin_layout Plain Layout
+
+listener = ...
+\end_layout
+
+\begin_layout Plain Layout
+
+opt.addOptimizationListener(listener);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+ParametersEvolutionDisplay
+\end_layout
+
+\begin_layout Standard
+Display the evolution of several parameters into a given figure, and updates
+ at each iteration.
+\end_layout
+
+\begin_layout Subsection
+OptimizedValueListener
+\end_layout
+
+\begin_layout Standard
+Display the evolution of the current value of the optimisation function,
+ as a function of the iteration.
+ Display into an Axes objets.
+\end_layout
+
+\begin_layout Subsection
+OptimizationIterationLogger
+\end_layout
+
+\begin_layout Standard
+Save some parameters at each iteration into a text file (
+\begin_inset Quotes eld
+\end_inset
+
+log-file
+\begin_inset Quotes erd
+\end_inset
+
+).
+ Example of use:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+logger = OptimizationIterationLogger(fileName);
+\end_layout
+
+\begin_layout Plain Layout
+
+addOptimizationListener(optimizer, logger);
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This saves the following parameters:
+\end_layout
+
+\begin_layout Itemize
+iteration number
+\end_layout
+
+\begin_layout Itemize
+value of the cost function
+\end_layout
+
+\begin_layout Itemize
+norm of the gradient vector
+\end_layout
+
+\begin_layout Itemize
+elapsed time from previous iteration
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "matRegister_biblio"
+options "apalike2"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
