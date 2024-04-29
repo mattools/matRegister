@@ -218,6 +218,37 @@ LatexCommand tableofcontents
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO:
+\end_layout
+
+\begin_layout Itemize
+chapter on registration (chapter 1)
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+principle
+\end_layout
+
+\begin_layout Itemize
+image registration
+\end_layout
+
+\begin_layout Itemize
+shape registration
+\end_layout
+
+\end_deeper
+\end_inset
+
+
+\end_layout
+
 \begin_layout Chapter
 Introduction
 \end_layout
@@ -286,7 +317,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/registration-main-workflow.png
-	width 80text%
+	width 70text%
 
 \end_inset
 
@@ -1956,13 +1987,21 @@ Displays the deformation vector associated to each vertex of the grid, as
 \end_layout
 
 \begin_layout Minisec
+drawDisplacements
+\end_layout
+
+\begin_layout Standard
+Displays the displacements associated to specified positions.
+\end_layout
+
+\begin_layout Minisec
 subdivide 
 \end_layout
 
 \begin_layout Standard
 Returns a new instance of the deformation model, with a grid twice finer
- in each dimension.
- The main puprose of this fucntion is to provide an convenient way to perform
+ along each dimension.
+ The main purpose of this function is to provide a convenient way to perform
  multi-resolution registration.
  
 \end_layout
