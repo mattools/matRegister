@@ -240,6 +240,26 @@ methods
 end
 
 
+methods
+    function drawDisplacements(obj, pts, varargin)
+        % Draw the displacements associated to points.
+        %
+        % Example
+        %    drawDisplacements(T, pts, 'g');
+        %
+        % See also
+        %    drawGrid
+        
+        % apply transform to points
+        pts2 = transformPoint(obj, pts);
+
+        % compute displacements
+        vecs = pts2 - pts;
+        
+        drawVector3d(pts, vecs, varargin{:});
+    end
+end
+
 %% Modify or access the grid parameters
 % the ix and iy parameters are the indices of the transform grid.
 methods
