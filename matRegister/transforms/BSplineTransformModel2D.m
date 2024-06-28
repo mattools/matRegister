@@ -40,7 +40,7 @@ end % end properties
 %% Constructor
 methods
     function obj = BSplineTransformModel2D(varargin)
-        % Constructor for BSplineTransformModel2D class
+        % Constructor for BSplineTransformModel2D class.
         %
         % T = BSplineTransformModel2D();
         % Creates a new transform initialized with default values
@@ -139,7 +139,7 @@ methods
     end
     
     function drawVertexShifts(obj, varargin)
-        % Draw the displacement associated to each vertex of the grid
+        % Draw the displacement associated to each vertex of the grid.
         %
         % Example
         %    drawVertexShifts(T, 'g');
@@ -156,7 +156,7 @@ methods
     end
     
     function drawGrid(obj)
-        % Draw the grid used to defined the deformation
+        % Draw the grid used to defined the deformation.
         % (Do not deform the grid)
         %
         % Example
@@ -186,7 +186,7 @@ methods
     end
     
     function vertices = getGridVertices(obj)
-        % Returns coordinates of grid vertices
+        % Returns coordinates of grid vertices.
         
         % base coordinates of grid vertices
         lx = (0:obj.GridSize(1) - 1) * obj.GridSpacing(1) + obj.GridOrigin(1);
@@ -315,6 +315,7 @@ methods
     end
     
     function transfo = clone(obj)
+        % Create a new BSplineTransformModel2D initialized with same parameters.
         transfo = BSplineTransformModel2D(obj.GridSize, obj.GridSpacing, obj.GridOrigin);
         transfo.Params = obj.Params;
     end
@@ -323,7 +324,7 @@ end
 %% Methods implementing the Transform interface
 methods
     function point2 = transformPoint(obj, point)
-        % Compute coordinates of transformed point
+        % Compute coordinates of transformed point.
         
         % initialize coordinate of result
         point2 = point;
@@ -377,7 +378,7 @@ methods
     end
     
     function jac = jacobianMatrix(obj, point)
-        % Jacobian matrix of the given point
+        % Jacobian matrix of the given point.
         %
         %   JAC = getJacobian(TRANS, PT)
         %   where PT is a N-by-2 array of points, returns the spatial
@@ -470,7 +471,7 @@ methods
     end
 
     function deriv = secondDerivatives(obj, point, indI, indJ)
-        % Second derivatives for the given point(s)
+        % Second derivatives for the given point(s).
         %
         % D2 = secondDerivatives(T, POINT, INDI, INDJ)
         % Return a M-by-2 array, with as many rows as the number of points.
@@ -581,7 +582,7 @@ methods
     end % secondDerivatives
 
     function lap = curvatureOperator(obj, point)
-        % Compute curvature operator at given position(s)
+        % Compute curvature operator at given position(s).
         %
         %   LAP = getLaplacian(TRANS, PT)
         %   where PT is a N-by-2 array of points, returns the laplacian of
@@ -605,7 +606,7 @@ end
 %% Serialization methods
 methods
     function str = toStruct(obj)
-        % Converts to a structure to facilitate serialization
+        % Converts to a structure to facilitate serialization.
         str = struct('Type', 'BSplineTransformModel2D', ...
             'GridSize', obj.GridSize, ...
             'GridSpacing', obj.GridSpacing, ...
@@ -615,7 +616,7 @@ methods
 end
 methods (Static)
     function transfo = fromStruct(str)
-        % Creates a new instance from a structure
+        % Creates a new instance from a structure.
         transfo = BSplineTransformModel2D(str.GridSize, str.GridSpacing, str.GridOrigin);
         transfo.Params = str.Parameters;
     end

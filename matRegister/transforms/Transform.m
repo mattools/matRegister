@@ -60,7 +60,7 @@ end
 %% General methods
 methods
     function res = transformVector(obj, vector, position)
-        % Computes coordinates of transformed vector at a given position
+        % Computes coordinates of transformed vector at a given position.
         %
         % vec2 = transformVector(transfo, vec, pos);
         %
@@ -89,7 +89,7 @@ end % methods
 %% Serialization methods
 methods
     function write(obj, fileName, varargin)
-        % Writes transform into a JSON file
+        % Writes transform into a JSON file.
         % 
         % Requires implementation of the "toStruct" method.
         
@@ -106,7 +106,7 @@ end
 
 methods (Static)
     function transfo = fromStruct(str)
-        % Creates a new transform instance from a structure
+        % Creates a new transform instance from a structure.
         
         % check existence of 'type' field
         if isfield(str, 'Type')
@@ -126,7 +126,7 @@ methods (Static)
     end
     
     function transfo = read(fileName)
-        % Reads a transform from a file in JSON format
+        % Reads a transform from a file in JSON format.
         if exist('loadjson', 'file') == 0
             error('Requires the ''jsonlab'' library');
         end
