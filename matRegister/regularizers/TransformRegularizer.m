@@ -33,7 +33,7 @@ end % end constructors
 
 %% Methods
 methods (Abstract)
-    % evaluate the regularization for a given point
+    % Evaluate the regularization for a given point.
     evaluate(obj, point);
 end % end methods
 

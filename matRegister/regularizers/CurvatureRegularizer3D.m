@@ -1,5 +1,5 @@
-classdef CurvatureRegularizer2D < TransformRegularizer
-%CURVATUREREGULARIZER2D Curvature regularizer for 2D transforms.
+classdef CurvatureRegularizer3D < TransformRegularizer
+%CURVATUREREGULARIZER2D Curvature regularizer for 3D transforms.
 %
 %   Class CurvatureRegularizer2D
 %
@@ -16,7 +16,7 @@ classdef CurvatureRegularizer2D < TransformRegularizer
 
 % ------
 % Author: David Legland
-% e-mail: david.legland@inra.fr
+% e-mail: david.legland@inrae.fr
 % Created: 2018-08-08,    using Matlab 9.4.0.813654 (R2018a)
 % Copyright 2018 INRA - BIA-BIBS.
 
@@ -30,7 +30,7 @@ end % end properties
 
 %% Constructor
 methods
-    function obj = CurvatureRegularizer2D(varargin)
+    function obj = CurvatureRegularizer3D(varargin)
     % Constructor for CurvatureRegularizer2D class
     
         if ~isa(varargin{1}, 'Transform')
@@ -49,7 +49,8 @@ methods
         
         d11 = secondDerivatives(obj.Transform, points, 1, 1);
         d22 = secondDerivatives(obj.Transform, points, 2, 2);
-        val = sum(d11.^2 + d22.^2, 2);
+        d33 = secondDerivatives(obj.Transform, points, 3, 3);
+        val = sum(d11.^2 + d22.^2 + d33.^2, 2);
     end
 end % end methods
 
