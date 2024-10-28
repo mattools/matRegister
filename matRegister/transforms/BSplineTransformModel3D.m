@@ -590,7 +590,7 @@ methods
         % Second derivatives for the given point(s).
         %
         % D2 = secondDerivatives(T, POINT, INDI, INDJ)
-        % Return a M-by-2 array, with as many rows as the number of points.
+        % Return a M-by-3 array, with as many rows as the number of points.
         % First columns is the second derivative of the x-transform part,
         % and second column is the second derivative of the y-transform
         % part.
@@ -725,7 +725,7 @@ methods
                         deriv(inds,3) = deriv(inds,3) + (bx .* byd(inds) .* bzd(inds) .* dzv) / (deltaY*deltaZ);
                         
                     else
-                        error('indI and indJ should be between 1 and 2');
+                        error('indI and indJ should be between 1 and 3');
                     end
                 end
             end
