@@ -180,7 +180,7 @@
 \begin_body
 
 \begin_layout Title
-MatRegister - Matlab library for registration of image data
+MatRegister - Matlab library for image and geometric data registration 
 \end_layout
 
 \begin_layout Abstract
@@ -270,22 +270,6 @@ The MatRegister library was originally developped for registration of 2D or 3D i
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO:
- add two small examples,
- one with image,
- one with mesh
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 The development of the library was strongly inspired by the ITK library 
 \begin_inset CommandInset citation
 LatexCommand citep
@@ -318,64 +302,19 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement document
-alignment document
-wide false
-sideways false
+\begin_inset Note Note
 status open
 
 \begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename images/registration-main-workflow.png
-	width 70text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Workflow_Registration_Images"
-
-\end_inset
-
-General workflow for the registration of two images.
+TODO:
+ add two small examples,
+ one with image,
+ one with mesh
 \end_layout
 
 \end_inset
 
 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The general workflow for the registration of two images is given in Figure
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Workflow_Registration_Images"
-plural "false"
-caps "false"
-noprefix "false"
-nolink "false"
-
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Subsection
@@ -619,6 +558,176 @@ Computations with angles are made in radians,
  but the representation of angles within classes is made in degrees:
  this makes it easier to interpret,
  and to save into text files.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Registration workflow
+\end_layout
+
+\begin_layout Subsection
+Image registration
+\end_layout
+
+\begin_layout Standard
+In the most simple case,
+ image registration consists in identifying a geometric transformation 
+\begin_inset Formula $\hat{T}$
+\end_inset
+
+ that will put in correspondence the pixels of a reference image 
+\begin_inset Formula $I_{1}$
+\end_inset
+
+ with thoses of a moving image 
+\begin_inset Formula $I_{2}$
+\end_inset
+
+.
+ A classical formulation is as follow:
+\begin_inset Formula 
+\begin{align*}
+\hat{T} & =\underset{T\in\mathcal{T}}{\text{argmin}}\mathcal{D}\left(I_{1},T(I_{2})\right)
+\end{align*}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathcal{T}$
+\end_inset
+
+ is the space of possible transforms,
+ and 
+\begin_inset Formula $\mathcal{D}$
+\end_inset
+
+ is a measure of the difference between the reference image and the transformed image.
+ The general workflow for the registration of two images is given in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Workflow_Registration_Images"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+
+\end_inset
+
+.
+ The main 
+\begin_inset Quotes eld
+\end_inset
+
+components
+\begin_inset Quotes erd
+\end_inset
+
+ of the workflow are the geometric transform,
+ the metric for comparing the registered shape or image to the reference,
+ and the optimisation algorithm for identifying the transform that generates the best metric.
+ In the case of image registration,
+ it is also necessary to interpolate one (or both) of the images in order to compute the metrics.
+ 
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/registration-main-workflow.png
+	width 70text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Workflow_Registration_Images"
+
+\end_inset
+
+General workflow for the registration of two images.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Shape Registration
+\end_layout
+
+\begin_layout Standard
+We consider here shapes as geometric data,
+ such as point sets,
+ polygons,
+ or polygonal meshes.
+ Various specialized algorithms have been developed for the registration of geometric data.
+ One of the most common ones is the 
+\begin_inset Quotes eld
+\end_inset
+
+Iterative Closest Point
+\begin_inset Quotes erd
+\end_inset
+
+ approach 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Besl_1992_pami"
+literal "false"
+
+\end_inset
+
+.
+ The image registration workflow may anyway be applied to the transformation of geometric shapes.
+ The main differences consist in the metrics,
+ and in the fact that it is not necessary to resample the transformed shapes.
+\end_layout
+
+\begin_layout Subsection
+Computational anatomy
+\end_layout
+
+\begin_layout Standard
+The concepts of computational anatomy were developed during the 80's,
+ mostly following the works of 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Grenander_Miller_1998_QAM"
+literal "false"
+
+\end_inset
+
+.
+ The idea is to compute an average image or shape based on a collection of individual subjects.
+ The approach implementations usually differ depending on the nature of the data (image or geometric shapes).
 \end_layout
 
 \begin_layout Standard
@@ -2073,11 +2182,23 @@ This is an abstract class that simply defines the method returning the value to 
 \end_layout
 
 \begin_layout Minisec
-value = computeValue(obj);
+computeValue
 \end_layout
 
 \begin_layout Standard
 Computes the value associated to the current state of the class.
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+value = computeValue(obj);
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
