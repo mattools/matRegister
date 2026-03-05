@@ -4,7 +4,7 @@
 \begin_header
 \save_transient_properties true
 \origin unavailable
-\textclass scrartcl
+\textclass scrreprt
 \begin_preamble
 \usepackage{textcomp}
 \usepackage[dvipsnames]{xcolor}
@@ -17,7 +17,7 @@
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 \hypersetup{colorlinks=true, citecolor=blue, linkcolor=blue}
 % package that modifies style of section headers
-%\addtokomafont{chapter}{\color{bl}\scshape \selectfont}
+\addtokomafont{chapter}{\color{bl}\scshape \selectfont}
 \addtokomafont{section}{\color{bl}\scshape \selectfont}
 \addtokomafont{subsection}{\color{bl}\scshape \selectfont}
 \addtokomafont{subsubsection}{\color{bl}\scshape \selectfont}
@@ -53,18 +53,22 @@
 % Inner footer (right of even pages, left of odd pages)
 \ifoot[\footnotesize \jobname]{\footnotesize \jobname}
 % left chapter no number, nothing on the right
-%\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
 % right section with number
 \renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
 % Added by lyx2lyx
 \usepackage[charter]{mathdesign}
 % setup of figure captions
 \usepackage[format=plain,font=it,labelfont=bf]{caption}
-%\captionsetup[figure]{name=Figure}
-%\DeclareCaptionLabelSeparator{colon}{.}
+% To add mini-TOC in the beginning of each chapter
+% The 'nohints' option is to prevent a conflict with the lastpage package,
+% resulting in an extra empty page at the end of the document.
+\usepackage[nohints]{minitoc}
 % Pretty display of Matlab Listings (better than mcode)
 \usepackage{matlab-prettifier}
-\usepackage{minitoc}
+\usepackage{hyperref}
+
+% some info for populating document title page
 \author{D. Legland}
 \date{\today}
 \end_preamble
@@ -144,7 +148,7 @@
 \color #008000
 \end_index
 \secnumdepth 3
-\tocdepth 2
+\tocdepth 1
 \paragraph_separation indent
 \paragraph_indentation default
 \is_math_indent 0
@@ -189,6 +193,21 @@ It relies on the Image Processing and Optimisation Toolboxes,
  and requires an Image class available as an independent module.
 \end_layout
 
+\begin_layout Abstract
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\backslash
+dominitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage newpage
 \end_inset
@@ -205,49 +224,11 @@ LatexCommand tableofcontents
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-TODO:
-\end_layout
-
-\begin_layout Itemize
-chapter on registration (chapter 1)
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-principle
-\end_layout
-
-\begin_layout Itemize
-image registration
-\end_layout
-
-\begin_layout Itemize
-shape registration
-\end_layout
-
-\end_deeper
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
+\begin_layout Chapter
 Introduction
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 The MatRegister library
 \end_layout
 
@@ -308,7 +289,7 @@ TODO:
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Dependencies
 \end_layout
 
@@ -440,7 +421,7 @@ FileReader et peut-être FileWriter pour certaines fonctions de sauvegarde
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Installation and configuration
 \end_layout
 
@@ -483,7 +464,7 @@ setupMatRegister.m
  (in the root folder of the sources).
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Library organisation
 \end_layout
 
@@ -498,7 +479,7 @@ transforms a collection of classes for representing geometric transformations.
  This module is developed in chapter 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:Geometric-Transforms"
+reference "chap:Geometric-Transforms"
 plural "false"
 caps "false"
 noprefix "false"
@@ -536,7 +517,7 @@ imageSamplers utility classes that allows to sample positions within 2D/3D image
 utils some utility functions to parse files from other libraries.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Mathematical conventions
 \end_layout
 
@@ -547,18 +528,11 @@ Computations with angles are made in radians,
  and to save into text files.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
+\begin_layout Chapter
 Registration workflow
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Image registration
 \end_layout
 
@@ -715,7 +689,7 @@ General workflow for the registration of two images.
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Shape Registration
 \end_layout
 
@@ -747,7 +721,7 @@ literal "false"
  and in the fact that it is not necessary to resample the transformed shapes.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Computational anatomy
 \end_layout
 
@@ -766,21 +740,14 @@ literal "false"
  The approach implementations usually differ depending on the nature of the data (image or geometric shapes).
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
+\begin_layout Chapter
 Geometric transforms
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Geometric-Transforms"
+name "chap:Geometric-Transforms"
 
 \end_inset
 
@@ -797,7 +764,7 @@ MatRegister represents geometric transforms as classes.
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:Optimization"
+reference "chap:Optimization"
 plural "false"
 caps "false"
 noprefix "false"
@@ -805,10 +772,32 @@ nolink "false"
 
 \end_inset
 
-)..
+).
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\backslash
+minitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Definitions
 \end_layout
 
@@ -870,7 +859,7 @@ Parametric transforms are denoted by
  elements.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Transform model hierarchy
 \end_layout
 
@@ -906,7 +895,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename images/transforms/transformClasses.png
-	width 80text%
+	width 95text%
 
 \end_inset
 
@@ -941,7 +930,23 @@ The base class is the
 \series bold
 Transform
 \series default
- class.
+ class (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Transform-Class"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+).
  It mostly defines a method 
 \begin_inset Quotes eld
 \end_inset
@@ -953,12 +958,44 @@ transformPoint
 .
  The AffineTransform class is an abstract subclass of Transform,
  that is intended to be the superclass of all affine transforms,
- independently of their inner representation.
+ independently of their inner representation (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Affine-transforms"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+).
  The 
 \series bold
 ParametricTransform
 \series default
- class is a specialization of the Transform class that adds the managment of the parameters to optimize.
+ class is a specialization of the Transform class that adds the managment of the parameters to optimize (section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:ParametricTransform"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+).
  The suffix 
 \begin_inset Quotes eld
 \end_inset
@@ -970,8 +1007,25 @@ Model
  is commonly used to differentiate parametric transforms from non parametric ones.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
 Transform
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Transform-Class"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1074,8 +1128,18 @@ Returns the
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 ParametricTransform
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:ParametricTransform"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1091,7 +1155,7 @@ Params
  The correspondency between the parameter vector and the transformation is implemented in the subclasses.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Serialisation of transformations
 \end_layout
 
@@ -1177,8 +1241,25 @@ transfo2 =
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Affine transforms
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Affine-transforms"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -1233,7 +1314,7 @@ Several classes are implemented to represent affine transforms.
  They inherit the AffineTransform abstract class.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 AffineTransform
 \end_layout
 
@@ -1357,7 +1438,7 @@ Creates an affine transform representing a scaling in 2D,
  3D or other dimension.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 MatrixAffineTransform
 \end_layout
 
@@ -1365,7 +1446,7 @@ MatrixAffineTransform
 An implementation of AffineTransform that stores the coefficients in an array.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Translation
 \end_layout
 
@@ -1406,7 +1487,7 @@ ans =
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Parametric affine transforms
 \end_layout
 
@@ -1425,7 +1506,7 @@ This sections describes several classes representing affine transforms whose par
  Such classes inherit both the AffineTransform interface and the ParametricTransform class.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 TranslationModel
 \end_layout
 
@@ -1457,7 +1538,7 @@ ans =
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 MotionModel2D
 \end_layout
 
@@ -1496,7 +1577,7 @@ ans =
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 SimilarityModel2D
 \end_layout
 
@@ -1587,7 +1668,7 @@ J_{\theta}(x,y) & =\left(\begin{array}{cccc}
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Section
 AffineTransformModel2D
 \end_layout
 
@@ -1619,7 +1700,14 @@ y'\\
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Polynomial transform models
 \end_layout
 
@@ -1644,7 +1732,7 @@ Polynomial models represent each component
 .
  Polynomial models can be useful to represent a global deformation with few parameters,
  but may lead to irrelevant deformations.
- 
+ The use of spline-based free-form deformations is usually more appropriate.
 \end_layout
 
 \begin_layout Standard
@@ -1665,7 +1753,7 @@ Polynomial transforms are implemented only for degree two (quadratic polynomials
  and for two and three dimensions.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 QuadTransformModel2D
 \end_layout
 
@@ -1682,7 +1770,7 @@ y' & = & p_{2}+p_{4}x+p_{6}y+p_{8}x^{2}+p_{10}xy+p_{12}y^{2}
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 QuadTransformModel3D
 \end_layout
 
@@ -1700,7 +1788,14 @@ z' & = & p_{3}+p_{6}x+p_{9}y+p_{12}z+p_{15}x^{2}+p_{18}y^{2}+p_{21}z^{2}+p_{24}x
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Non-rigid (Free-Form) Transforms
 \end_layout
 
@@ -1744,7 +1839,7 @@ literal "false"
 .
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 BSplineTransformModel2D
 \end_layout
 
@@ -2030,7 +2125,7 @@ Returns a new instance of the deformation model,
  
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 BSplineTransformModel3D
 \end_layout
 
@@ -2141,7 +2236,7 @@ Returns a new instance of the deformation model,
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Metrics
 \end_layout
 
@@ -2157,11 +2252,33 @@ This section first presents the main classes,
  It is planned to implement more metrics for meshes (taking into account the topology of the mesh).
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\backslash
+minitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Main classes
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 BaseFunction
 \end_layout
 
@@ -2188,7 +2305,7 @@ value = computeValue(obj);
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Image metrics
 \end_layout
 
@@ -2204,7 +2321,7 @@ Image metrics are based on the comparison of corresponding pixel values.
  The methods are usually based on mutual information and entropy.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 ImageToImageMetric
 \end_layout
 
@@ -2214,7 +2331,7 @@ An abstract class that register the two images to compare,
  The actual comparison is implemented in derived classes.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 MeanSquareDifferencesMetric
 \end_layout
 
@@ -2247,7 +2364,7 @@ Several variants of this metric are implemented,
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Point clouds metrics
 \end_layout
 
@@ -2271,7 +2388,7 @@ distance
  array).
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 SumSquaredDistanceToClosestPoint3D
 \end_layout
 
@@ -2346,7 +2463,7 @@ tic;
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Regularization
 \end_layout
 
@@ -2377,7 +2494,7 @@ literal "false"
 .
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Curvature regularizers
 \end_layout
 
@@ -2415,7 +2532,7 @@ CurvatureRegularizer3D
 Provides curvature-based regularization of 3D transformation.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Thin-plate spline
 \end_layout
 
@@ -2433,21 +2550,14 @@ literal "false"
 .
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
+\begin_layout Chapter
 Optimization
 \end_layout
 
 \begin_layout Standard
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Optimization"
+name "chap:Optimization"
 
 \end_inset
 
@@ -2467,7 +2577,29 @@ The Matlab Optimization toolbox provides a number of optimization algorithms.
  as well as alternative implementations of some optimization methods.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\backslash
+minitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Registration using Matlab Optimization toolbox
 \end_layout
 
@@ -2581,7 +2713,7 @@ tic;
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Class hierarchy for Optimization
 \end_layout
 
@@ -2631,11 +2763,7 @@ Simplified hierarchy of the classes used for registration optimization.
 
 \end_layout
 
-\begin_layout Standard
-
-\end_layout
-
-\begin_layout Subsubsection
+\begin_layout Subsection
 Optimizer
 \end_layout
 
@@ -2668,7 +2796,7 @@ Starts the optimization algorithm until a stopping condition is reached.
  step length...) is left to sub-classes.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 CostFunction
 \end_layout
 
@@ -2728,7 +2856,7 @@ MetricEvaluator
 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Optimization monitoring
 \end_layout
 
@@ -2787,7 +2915,7 @@ Simplified hierarchy of the classes used for optimization monitoring.
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 OptimizationListener
 \end_layout
 
@@ -2843,7 +2971,7 @@ opt.addOptimizationListener(listener);
 
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 ParametersEvolutionDisplay
 \end_layout
 
@@ -2852,7 +2980,7 @@ Display the evolution of several parameters into a given figure,
  and updates at each iteration.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 OptimizedValueListener
 \end_layout
 
@@ -2862,7 +2990,7 @@ Display the evolution of the current value of the optimisation function,
  Display into an Axes objets.
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 OptimizationIterationLogger
 \end_layout
 
@@ -2915,7 +3043,7 @@ norm of the gradient vector
 elapsed time from previous iteration
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 \start_of_appendix
 Notations
 \end_layout
