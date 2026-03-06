@@ -290,6 +290,49 @@ TODO:
 \end_layout
 
 \begin_layout Section
+Installation and configuration
+\end_layout
+
+\begin_layout Standard
+For developers,
+ the simplest way is to clone the repository from the GitHub project page
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+https://github.com/mattools/matRegister
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The path to the matRegister directories should be added to Matlab,
+ either manually,
+ or by running the script 
+\begin_inset Quotes eld
+\end_inset
+
+setupMatRegister.m
+\begin_inset Quotes erd
+\end_inset
+
+ (in the root folder of the sources).
+\end_layout
+
+\begin_layout Subsection
 Dependencies
 \end_layout
 
@@ -419,49 +462,6 @@ FileReader et peut-être FileWriter pour certaines fonctions de sauvegarde
 \end_inset
 
 
-\end_layout
-
-\begin_layout Section
-Installation and configuration
-\end_layout
-
-\begin_layout Standard
-For developers,
- the simplest way is to clone the repository from the GitHub project page
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Flex URL
-status open
-
-\begin_layout Plain Layout
-https://github.com/mattools/matRegister
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-.
- 
-\end_layout
-
-\begin_layout Standard
-The path to the matRegister directories should be added to Matlab,
- either manually,
- or by running the script 
-\begin_inset Quotes eld
-\end_inset
-
-setupMatRegister.m
-\begin_inset Quotes erd
-\end_inset
-
- (in the root folder of the sources).
 \end_layout
 
 \begin_layout Section
@@ -1031,15 +1031,7 @@ name "subsec:Transform-Class"
 \begin_layout Standard
 This is the most generic class for representing transforms.
  It declares several abstract methods,
- that are implemented in derived classes:
-\end_layout
-
-\begin_layout Minisec
-getDimension
-\end_layout
-
-\begin_layout Standard
-Returns the dimension of the space this transformation operates in.
+ that are implemented in derived classes.
 \end_layout
 
 \begin_layout Minisec
@@ -1122,6 +1114,14 @@ Returns the
 \end_inset
 
  of the transformation.
+\end_layout
+
+\begin_layout Minisec
+getDimension
+\end_layout
+
+\begin_layout Standard
+Returns the dimension of the space this transformation operates in.
 \end_layout
 
 \begin_layout Standard
@@ -1325,6 +1325,10 @@ The AffineTransform class is the base class for all classes that can represent a
  but rather by creating an instance of a derived class.
 \end_layout
 
+\begin_layout Subsubsection*
+Methods
+\end_layout
+
 \begin_layout Standard
 The class declares a new method,
  that needs to be implemented by derived classes:
@@ -1342,11 +1346,6 @@ Returns the
  array of coefficients representing the affine transform in homogeneous coordinates.
 \end_layout
 
-\begin_layout Standard
-Most methods from Transform class are implemented based on the affineMatrix method.
- Other new method is provided:
-\end_layout
-
 \begin_layout Minisec
 inverse
 \end_layout
@@ -1356,8 +1355,29 @@ Returns the affine transform corresponding to the inverse of this transform.
 \end_layout
 
 \begin_layout Standard
+Most methods from Transform class are implemented based on the affineMatrix method.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Static methods
+\end_layout
+
+\begin_layout Standard
 Also,
- several static methods are provided to quickly generate common transforms:
+ several static methods are provided to quickly generate common transforms.
+ Usage is as follow:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+rotX = AffineTransform.createRotationOx(pi/3);
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Minisec
@@ -1845,7 +1865,37 @@ BSplineTransformModel2D
 
 \begin_layout Standard
 Transformation model based on 2D cubic splines.
- The parameters correspond to the components of vectors associated to a deformation grid.
+ The deformation is represented as a set of displacement vectors organized as a two-dimensional grid (see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:BSpline-Transform-Example"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+).
+ The deformation at a given point 
+\begin_inset Formula $\boldsymbol{x}$
+\end_inset
+
+ is computed by interpolating the displacement vectors associated to the 
+\begin_inset Formula $4\times4$
+\end_inset
+
+ neighbor grid vertices.
+ Vectors outside the grid are set to zero.
+\end_layout
+
+\begin_layout Standard
+The parameters correspond to the components of the vectors associated to the deformation grid.
 \end_layout
 
 \begin_layout Standard
@@ -2081,7 +2131,7 @@ Parameters correspond to the shift along
 \end_layout
 
 \begin_layout Subsubsection*
-Methods
+New methods
 \end_layout
 
 \begin_layout Standard
@@ -2121,8 +2171,34 @@ subdivide
 \begin_layout Standard
 Returns a new instance of the deformation model,
  with a grid twice finer in each dimension.
- The main puprose of this fucntion is to provide a convenient way to perform multi-resolution registration.
+ The main purpose of this method is to provide a convenient way to perform multi-resolution registration.
  
+\end_layout
+
+\begin_layout Minisec
+secondDerivatives
+\end_layout
+
+\begin_layout Standard
+Computes the second derivative of each component 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ of the transformation for a given set of positions,
+ and a pair of derivative indices (between 1 and 2).
+ The result is a 
+\begin_inset Formula $N\times2$
+\end_inset
+
+ array,
+ with as many rows as the number of points.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -2132,7 +2208,37 @@ BSplineTransformModel3D
 \begin_layout Standard
 Transformation model based on 3D cubic splines.
  Implementation is a transposition of the 2D version to 3D.
- The parameters correspond to the components of vectors associated to a deformation grid.
+ The deformation is represented as a set of displacement vectors organized as a three-dimensional grid (see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:BSpline-Transform-Example"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+).
+ The deformation at a given point 
+\begin_inset Formula $\boldsymbol{x}$
+\end_inset
+
+ is computed by interpolating the displacement vectors associated to the 
+\begin_inset Formula $4\times4\times4$
+\end_inset
+
+ neighbor grid vertices.
+ Vectors outside the grid are set to zero.
+\end_layout
+
+\begin_layout Standard
+The parameters correspond to the components of the vectors associated to the deformation grid.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -2149,8 +2255,23 @@ GridSize the size of the grid,
 \end_layout
 
 \begin_layout Description
-GridOrigin the position of the first point of the grid (located top-left),
+GridOrigin the position of the first point of the grid,
  as a three-elements row vector.
+ The first point has minimal 
+\begin_inset Formula $x$
+\end_inset
+
+,
+ 
+\begin_inset Formula $y$
+\end_inset
+
+,
+ and 
+\begin_inset Formula $z$
+\end_inset
+
+ coordinates.
 \end_layout
 
 \begin_layout Description
@@ -2225,8 +2346,26 @@ subdivide
 \begin_layout Standard
 Returns a new instance of the deformation model,
  with a grid twice finer along each dimension.
- The main purpose of this function is to provide a convenient way to perform multi-resolution registration.
- 
+ The main purpose of this method is to provide a convenient way to perform multi-resolution registration.
+\end_layout
+
+\begin_layout Minisec
+secondDerivatives
+\end_layout
+
+\begin_layout Standard
+Computes the second derivative of each component 
+\begin_inset Formula $T_{i}$
+\end_inset
+
+ of the transformation for a given set of positions,
+ and a pair of derivative indices (between 1 and 3).
+ The result is a 
+\begin_inset Formula $N\times3$
+\end_inset
+
+ array,
+ with as many rows as the number of points.
 \end_layout
 
 \begin_layout Standard
@@ -2377,11 +2516,11 @@ distance
 \begin_inset Quotes erd
 \end_inset
 
- between a set of points (as a 
+ between a reference set of points (as a 
 \begin_inset Formula $n_{1}\times d$
 \end_inset
 
- array) and a registered set of points (as a 
+ array) and a moving set of points (as a 
 \begin_inset Formula $n_{2}\times d$
 \end_inset
 
@@ -2394,10 +2533,9 @@ SumSquaredDistanceToClosestPoint3D
 
 \begin_layout Standard
 Defined from two set of points and a transformation model.
- The metric is obtained by computing,
- for each point of the first set,
- the distance to the nearest transformed point (of second set),
- and computing the sum of the squares of the distances.
+ The metric is obtained by applying the transform to the moving points,
+ computing for each transformred point the distance to point of the original set,
+ and returning the sum of the squares of the distances.
 \end_layout
 
 \begin_layout Standard
@@ -2433,13 +2571,17 @@ params0 = transfo.Params;
 \end_layout
 
 \begin_layout Plain Layout
-% function to evaluate (v1 and v2 are two n-by-3 point sets,
- not necessarily the same size)
+% function to evaluate (refPoints and movingPoints are two n-by-3 point sets,
+ 
 \end_layout
 
 \begin_layout Plain Layout
-metric = SumSquaredDistanceToClosestPoint3D(v2,
- v1,
+% not necessarily the same size)
+\end_layout
+
+\begin_layout Plain Layout
+metric = SumSquaredDistanceToClosestPoint3D(refPoints,
+ movingPoints,
  transfo);
 \end_layout
 
@@ -2496,6 +2638,16 @@ literal "false"
 
 \begin_layout Subsection
 Curvature regularizers
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Curvature-Regularization"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3071,7 +3223,7 @@ Vectors and matrices,
 \begin_inset Formula $\mathcal{D}$
 \end_inset
 
- a metric to compare two images or two shapes
+ a dissimilarity metric to compare two images or two shapes
 \end_layout
 
 \begin_layout Description
@@ -3103,6 +3255,13 @@ Vectors and matrices,
 \end_inset
 
  the vector of parameter of a transformation
+\end_layout
+
+\begin_layout Description
+\begin_inset Formula $\boldsymbol{U}$
+\end_inset
+
+ the local defomration part of a transformation
 \end_layout
 
 \begin_layout Standard
