@@ -263,7 +263,7 @@ end
 %% Modify or access the grid parameters
 % the ix and iy parameters are the indices of the transform grid.
 methods
-    function ux = getUx(obj, ix, iy)
+    function ux = getUx(obj, ix, iy, iz)
         ind = sub2ind(obj.GridSize, ix, iy, iz) * 3 - 2;
         ux = obj.Params(ind);
     end
