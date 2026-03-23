@@ -225,7 +225,7 @@ methods
         drawVector(v, shifts, varargin{:});
     end
     
-    function drawGrid(obj)
+    function drawGrid(obj, varargin)
         % Draw the grid used to defined the deformation.
         % (Do not deform the grid)
         %
@@ -252,7 +252,8 @@ methods
         % create edge array
         e = cat(1, e1, e2);
 
-        drawGraph(v, e);
+        drawGraphEdges(v, e, varargin{:});
+        % drawGraph(v, e);
     end
     
     function vertices = getGridVertices(obj)
