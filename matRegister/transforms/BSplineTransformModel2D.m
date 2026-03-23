@@ -107,37 +107,107 @@ methods
         
         % get 2D arrays of displacements in each direction
         dims = obj.GridSize;
-        ux = reshape(obj.Params(1:2:end), dims);
-        uy = reshape(obj.Params(2:2:end), dims);
+        vertices = getGridVertices(obj);
+        vx = reshape(vertices(:,1), dims);
+        vy = reshape(vertices(:,2), dims);
 
         % subdivide first dimension
         dims2 = [dims(1)*2-1 dims(2)];
-        ux2 = zeros(dims2);
-        uy2 = zeros(dims2);
-        ux2(1:2:end,:) = ux;
-        uy2(1:2:end,:) = uy;
-        ux2(2:2:end,:) = (ux(1:end-1,:) + ux(2:end,:)) / 2;
-        uy2(2:2:end,:) = (uy(1:end-1,:) + uy(2:end,:)) / 2;
-        ux = ux2;
-        uy = uy2;
+        vx2 = zeros(dims2);
+        vy2 = zeros(dims2);
+        vx2(1:2:end,:) = vx;
+        vy2(1:2:end,:) = vy;
+        vx2(2:2:end,:) = (vx(1:end-1,:) + vx(2:end,:)) / 2;
+        vy2(2:2:end,:) = (vy(1:end-1,:) + vy(2:end,:)) / 2;
+        vx = vx2;
+        vy = vy2;
         dims = dims2;
         
         % subdivide second dimension
         dims2 = [dims(1) dims(2)*2-1];
-        ux2 = zeros(dims2);
-        uy2 = zeros(dims2);
-        ux2(:,1:2:end) = ux;
-        uy2(:,1:2:end) = uy;
-        ux2(:,2:2:end) = (ux(:,1:end-1) + ux(:,2:end)) / 2;
-        uy2(:,2:2:end) = (uy(:,1:end-1) + uy(:,2:end)) / 2;
-        
-        params = [ux2(:) uy2(:)]' / 2;
+        vx2 = zeros(dims2);
+        vy2 = zeros(dims2);
+        vx2(:,1:2:end) = vx;
+        vy2(:,1:2:end) = vy;
+        vx2(:,2:2:end) = (vx(:,1:end-1) + vx(:,2:end)) / 2;
+        vy2(:,2:2:end) = (vy(:,1:end-1) + vy(:,2:end)) / 2;
+
+        % the new grid size
+        dims = dims2;
+
+        % index of grid vertices (new subdivision)
+        inds = reshape(1:prod(dims), dims);
+
+        % pre-compute the ponderation weights
+        wa = BSplines.beta3_1(0);
+        wb = BSplines.beta3_1(1);
+        wa2 = wa ^2;
+        wab = wa * wb;
+        wb2 = wb^2;
+
+        % build the matrix A of the equation
+        %    Y = A * X + b
+        % with:
+        %   Y: values (Ux),
+        %   X: array of weights (what we are looking for)
+        %       rows: index of the function value (in Y)
+        %       cols: index of the weight (in X)
+        %   A: b-by-n matrix
+        %   b: offset (here, equal 0)
+        n = numel(inds);
+        A = wa2 * speye(n);
+
+        % iterate over index of function values
+        for i = 1:n
+            ind_f = inds(i);
+
+            % retrieve grid vertex coords
+            [ind_i, ind_j] = ind2sub(size(inds), i);
+
+            if ind_i > 1
+                A(ind_f, inds(ind_i-1, ind_j)) = wab;       % top
+                if ind_j > 1
+                    A(ind_f, inds(ind_i-1, ind_j-1)) = wb2; % top-left
+                end
+                if ind_j < size(inds, 2)
+                    A(ind_f, inds(ind_i-1, ind_j+1)) = wb2; % top-right
+                end
+            end
+
+            if ind_j > 1
+                A(ind_f, inds(ind_i, ind_j-1)) = wab;       % left
+            end
+            if ind_j < size(inds, 2)
+                A(ind_f, inds(ind_i, ind_j+1)) = wab;       % right
+            end
+
+            if ind_i < size(inds, 1)
+                A(ind_f, inds(ind_i+1, ind_j)) = wab;       % bottom
+                if ind_j > 1
+                    A(ind_f, inds(ind_i+1, ind_j-1)) = wb2; % bottom-left
+                end
+                if ind_j < size(inds, 2)
+                    A(ind_f, inds(ind_i+1, ind_j+1)) = wb2; % bottom-right
+                end
+            end
+        end
+
+        % evaluate shift values at vertices of the new grid
+        shifts = getShift(obj, [vx2(:) vy2(:)]);
+
+        % compute parameters that result in the computed shifts
+        ux2 = A \ shifts(:,1);
+        uy2 = A \ shifts(:,2);
+
+        % create the new vector of parameters
+        params = [ux2 uy2]';
         params = params(:)';
-        
+
+        % create the new transform
         res = BSplineTransformModel2D(dims2, obj.GridSpacing/2, obj.GridOrigin);
         res.Params = params;
     end
-    
+
     function drawVertexShifts(obj, varargin)
         % Draw the displacement associated to each vertex of the grid.
         %
@@ -376,7 +446,65 @@ methods
             end
         end
     end
+
     
+    function shift = getShift(obj, point)
+        % Compute the shift associated to a point.
+        % 
+        % Returns the shift as a N-by-2 array, where N is the number of
+        % points.
+        
+        % initialize coordinates of result
+        shift = zeros(size(point,1), 2);
+        
+        % compute position wrt to the grid vertices (1-indexed)
+        xg = (point(:, 1) - obj.GridOrigin(1)) / obj.GridSpacing(1) + 1;
+        yg = (point(:, 2) - obj.GridOrigin(2)) / obj.GridSpacing(2) + 1;
+        
+        % coordinates within the unit tile
+        xu = xg - floor(xg);
+        yu = yg - floor(yg);
+       
+        baseFuns = {...
+            @BSplines.beta3_0, ...
+            @BSplines.beta3_1, ...
+            @BSplines.beta3_2, ...
+            @BSplines.beta3_3};
+        
+        % iteration on neighbor tiles 
+        eval_i = zeros(size(xu));
+        for i = -1:2
+            % coordinates of neighbor grid vertex
+            xv = floor(xg) + i;
+            indOkX = xv >= 1 & xv <= obj.GridSize(1);
+
+            % evaluate weight associated to grid vertex
+            fun_i = baseFuns{i+2};
+            eval_i(indOkX) = fun_i(xu(indOkX));
+            
+            for j = -1:2
+                yv = floor(yg) + j;
+                indOkY = yv >= 1 & yv <= obj.GridSize(2);
+
+                % indices of points whose grid vertex is defined
+                inds = indOkX & indOkY;
+                
+                % linear index of translation components
+                indX = sub2ind(obj.GridSize, xv(inds), yv(inds)) * 2 - 1;
+                
+                % spline basis for y vertex
+                fun_j = baseFuns{j+2};
+                
+                % evaluate weight associated to current grid vertex
+                b = eval_i(inds) .* fun_j(yu(inds));
+                
+                % update coordinates of transformed points
+                shift(inds,1) = shift(inds,1) + b .* obj.Params(indX)';
+                shift(inds,2) = shift(inds,2) + b .* obj.Params(indX+1)';
+            end
+        end
+    end
+
     function jac = jacobianMatrix(obj, point)
         % Jacobian matrix of the given point.
         %
