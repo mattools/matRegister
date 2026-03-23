@@ -2368,6 +2368,113 @@ Computes the second derivative of each component
  with as many rows as the number of points.
 \end_layout
 
+\begin_layout Subsection
+Utilities
+\end_layout
+
+\begin_layout Subsubsection
+BSplines
+\end_layout
+
+\begin_layout Standard
+A collection of static functions for the manipulation of cubic B-splines.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/transforms/bsplines/bsplines_basisFunction.png
+	lyxscale 30
+	width 35text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/transforms/bsplines/bsplines_derivatives.png
+	lyxscale 30
+	width 35text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/transforms/bsplines/bsplines_secondDerivatives.png
+	lyxscale 30
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+B-Splines basis functions and derivatives.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Minisec
+
+\series bold
+beta3_0,
+ beta3_1,
+ beta3_2,
+ beta3_3
+\end_layout
+
+\begin_layout Standard
+Computes the i-th basis function.
+\end_layout
+
+\begin_layout Minisec
+
+\series bold
+beta3_0d,
+ beta3_1d,
+ beta3_2d,
+ beta3_3d
+\end_layout
+
+\begin_layout Standard
+Computes the derivative of the i-th basis function.
+\end_layout
+
+\begin_layout Minisec
+
+\series bold
+beta3_0s,
+ beta3_1s,
+ beta3_2s,
+ beta3_3s
+\end_layout
+
+\begin_layout Standard
+Computes the second derivative of the i-th basis function.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage newpage
 \end_inset
