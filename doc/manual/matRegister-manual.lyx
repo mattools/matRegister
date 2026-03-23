@@ -2170,9 +2170,82 @@ subdivide
 
 \begin_layout Standard
 Returns a new instance of the deformation model,
- with a grid twice finer in each dimension.
+ with a grid twice finer in each dimension (See Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:BSplineTransformModel2D-Subdivide"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+).
  The main purpose of this method is to provide a convenient way to perform multi-resolution registration.
  
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/transforms/bsplines/BSplineTransformModel2D_3x3_crop.png
+	width 45text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename images/transforms/bsplines/BSplineTransformModel2D_3x3_subdivided_crop.png
+	width 45text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:BSplineTransformModel2D-Subdivide"
+
+\end_inset
+
+Subdivision of a 2D BSpline Transform model based on 3-by-3 grid of displacement vectors.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Minisec
