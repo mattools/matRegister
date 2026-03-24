@@ -1,17 +1,17 @@
 classdef SumSquaredDistanceToClosestPoint3D < handle
 % SSD metric for two 3D point clouds.
 %
-%   output = SumSqDistancesVertexToClosestVertex3d(PTS1, PTS2, TRANSFO)
+%   output = SumSquaredDistanceToClosestPoint3D(REFPTS, PTS, TRANSFO)
 %
 %   This version computes distances by applying transform to the point set
-%   2, iterating over transformed points and computing distance to closest
-%   point among reference point set 1.
+%   PTS, iterating over transformed points and computing distance to the
+%   closest point among reference point set REFPTS.
 %
 %   Example
 %   SumSquaredDistanceToClosestPoint3D
 %
 %   See also
-%
+%     SumSquaredDistanceToClosestPoint2D
  
 % ------
 % Author: David Legland
@@ -105,6 +105,44 @@ methods
         end
 
         res = sum(minDist .^ 2);
+    end
+    
+    function [res, grad] = evaluateWithGradient(obj, params)
+        
+        % update transformation model
+        obj.Transfo.Params = params;
+        
+        % transform moving points
+        pointsT = transformPoint(obj.Transfo, obj.Points);
+        
+        % identify which reference points are the closest
+        % (and keep distance)
+        if strcmpi(obj.MatchingMethod, 'Naive')
+            inds = findClosestPoint(pointsT, obj.RefPoints);
+        elseif strcmpi(obj.MatchingMethod, 'KDTree')
+            inds = knnsearch(obj.KDTree, pointsT);
+        else
+            error('Unknow point matching method');
+        end
+
+        refPoints = obj.RefPoints(inds);
+
+        diff = pointsT - refPoints;
+
+        % compute metric
+        res = sum(sum(diff .^ 2));
+
+        % retrieve parametric jacobian for moving points
+        jac = parametricJacobian(obj.Transfo, obj.Points);
+
+        % compute average of gradient of points
+        nPoints = size(obj.Points, 1);
+        grad = zeros(size(params));
+        for i = 1:nPoints
+            % update gradient
+            grad = grad + diff(i,:) * jac(:,:,i);
+        end
+        grad = grad / nPoints;
     end
     
 end
