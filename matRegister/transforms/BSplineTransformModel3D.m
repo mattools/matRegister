@@ -99,63 +99,154 @@ methods
         %
         % T2 = subdivide(T);
         
-        % get 2D arrays of displacements in each direction
+        % get 3D arrays of displacements in each direction
         dims = obj.GridSize;
-        ux = reshape(obj.Params(1:3:end), dims);
-        uy = reshape(obj.Params(2:3:end), dims);
-        uz = reshape(obj.Params(3:3:end), dims);
+        vertices = getGridVertices(obj);
+        vx = reshape(vertices(:,1), dims);
+        vy = reshape(vertices(:,2), dims);
+        vz = reshape(vertices(:,3), dims);
 
         % subdivide first dimension
         dims2 = [dims(1)*2-1 dims(2) dims(3)];
-        ux2 = zeros(dims2);
-        uy2 = zeros(dims2);
-        uz2 = zeros(dims2);
-        ux2(1:2:end,:,:) = ux;
-        uy2(1:2:end,:,:) = uy;
-        uz2(1:2:end,:,:) = uz;
-        ux2(2:2:end,:,:) = (ux(1:end-1,:,:) + ux(2:end,:,:)) / 2;
-        uy2(2:2:end,:,:) = (uy(1:end-1,:,:) + uy(2:end,:,:)) / 2;
-        uz2(2:2:end,:,:) = (uz(1:end-1,:,:) + uz(2:end,:,:)) / 2;
-        ux = ux2;
-        uy = uy2;
-        uz = uz2;
+        vx2 = zeros(dims2);
+        vy2 = zeros(dims2);
+        vz2 = zeros(dims2);
+        vx2(1:2:end,:,:) = vx;
+        vy2(1:2:end,:,:) = vy;
+        vz2(1:2:end,:,:) = vz;
+        vx2(2:2:end,:,:) = (vx(1:end-1,:,:) + vx(2:end,:,:)) / 2;
+        vy2(2:2:end,:,:) = (vy(1:end-1,:,:) + vy(2:end,:,:)) / 2;
+        vz2(2:2:end,:,:) = (vz(1:end-1,:,:) + vz(2:end,:,:)) / 2;
+        vx = vx2;
+        vy = vy2;
+        vz = vz2;
         dims = dims2;
         
         % subdivide second dimension
         dims2 = [dims(1) dims(2)*2-1 dims(3)];
-        ux2 = zeros(dims2);
-        uy2 = zeros(dims2);
-        uz2 = zeros(dims2);
-        ux2(:,1:2:end,:) = ux;
-        uy2(:,1:2:end,:) = uy;
-        uz2(:,1:2:end,:) = uz;
-        ux2(:,2:2:end,:) = (ux(:,1:end-1,:) + ux(:,2:end,:)) / 2;
-        uy2(:,2:2:end,:) = (uy(:,1:end-1,:) + uy(:,2:end,:)) / 2;
-        uz2(:,2:2:end,:) = (uz(:,1:end-1,:) + uz(:,2:end,:)) / 2;
-        ux = ux2;
-        uy = uy2;
-        uz = uz2;
+        vx2 = zeros(dims2);
+        vy2 = zeros(dims2);
+        vz2 = zeros(dims2);
+        vx2(:,1:2:end,:) = vx;
+        vy2(:,1:2:end,:) = vy;
+        vz2(:,1:2:end,:) = vz;
+        vx2(:,2:2:end,:) = (vx(:,1:end-1,:) + vx(:,2:end,:)) / 2;
+        vy2(:,2:2:end,:) = (vy(:,1:end-1,:) + vy(:,2:end,:)) / 2;
+        vz2(:,2:2:end,:) = (vz(:,1:end-1,:) + vz(:,2:end,:)) / 2;
+        vx = vx2;
+        vy = vy2;
+        vz = vz2;
         dims = dims2;
-        
-        % subdivide third dimension
-        dims2 = [dims(1) dims(2) dims(3)*2-1];
-        ux2 = zeros(dims2);
-        uy2 = zeros(dims2);
-        uz2 = zeros(dims2);
-        ux2(:,:,1:2:end) = ux;
-        uy2(:,:,1:2:end) = uy;
-        uz2(:,:,1:2:end) = uz;
-        ux2(:,:,2:2:end) = (ux(:,:,1:end-1) + ux(:,:,2:end)) / 2;
-        uy2(:,:,2:2:end) = (uy(:,:,1:end-1) + uy(:,:,2:end)) / 2;
-        uz2(:,:,2:2:end) = (uz(:,:,1:end-1) + uz(:,:,2:end)) / 2;
 
-        params = [ux2(:) uy2(:) uz2(:)]' / 2;
-        params = params(:)';
+        % subdivide second dimension
+        dims2 = [dims(1) dims(2) dims(3)*2-1];
+        vx2 = zeros(dims2);
+        vy2 = zeros(dims2);
+        vz2 = zeros(dims2);
+        vx2(:,:,1:2:end) = vx;
+        vy2(:,:,1:2:end) = vy;
+        vz2(:,:,1:2:end) = vz;
+        vx2(:,:,2:2:end) = (vx(:,:,1:end-1) + vx(:,:,2:end)) / 2;
+        vy2(:,:,2:2:end) = (vy(:,:,1:end-1) + vy(:,:,2:end)) / 2;
+        vz2(:,:,2:2:end) = (vz(:,:,1:end-1) + vz(:,:,2:end)) / 2;
+
+        % the new grid size
+        dims = dims2;
+
+        % index of grid vertices (new subdivision)
+        inds = reshape(1:prod(dims), dims);
+
+        % pre-compute the ponderation weights
+        wa = BSplines.beta3_1(0);
+        wb = BSplines.beta3_1(1);
+        waaa = wa^3;
+        waab = wa^2 * wb;
+        wabb = wa * wb^2;
+        wbbb = wb^3;
+
+        % build the matrix A of the equation
+        %    Y = A * X + b
+        % with:
+        %   Y: values (Ux),
+        %   X: array of weights (what we are looking for)
+        %       rows: index of the function value (in Y)
+        %       cols: index of the weight (in X)
+        %   A: b-by-n matrix
+        %   b: offset (here, equal 0)
+        n = numel(inds);
+        A = waaa * speye(n);
+
+        shifts = [...
+             ... % 0  0  0 waaa; ... % central vertex
+            -1  0  0 waab; ... % six adjacent vertices
+            +1  0  0 waab; ...
+             0 -1  0 waab; ...
+             0 +1  0 waab; ...
+             0  0 -1 waab; ...
+             0  0 +1 waab; ...
+            -1 -1  0 wabb; ... % twelve diagonal vertices
+            +1 -1  0 wabb; ...
+            -1 +1  0 wabb; ...
+            +1 +1  0 wabb; ...
+            -1  0 -1 wabb; ...
+            +1  0 -1 wabb; ...
+            -1  0 +1 wabb; ...
+            +1  0 +1 wabb; ...
+             0 -1 -1 wabb; ...
+             0 +1 -1 wabb; ...
+             0 -1 +1 wabb; ...
+             0 +1 +1 wabb; ...
+            -1 -1 -1 wbbb; ...
+            -1 -1 +1 wbbb; ...
+            -1 +1 -1 wbbb; ... % eight cube-diagonal vertices
+            -1 +1 +1 wbbb; ...
+            +1 -1 -1 wbbb; ...
+            +1 -1 +1 wbbb; ...
+            +1 +1 -1 wbbb; ...
+            +1 +1 +1 wbbb; ...
+            ];
+        nShifts = size(shifts, 1);
         
+        % iterate over index of function values
+        for i = 1:n
+            ind_f = inds(i);
+
+            % retrieve grid vertex coords
+            [ind_i, ind_j, ind_k] = ind2sub(size(inds), i);
+
+            % iterate over neighbor control points
+            for iShift = 1:nShifts
+                % coordinates of neighbor
+                i2 = ind_i + shifts(iShift,1);
+                j2 = ind_j + shifts(iShift,2);
+                k2 = ind_k + shifts(iShift,3);
+                % check control point is within grid
+                if i2 < 1 || i2 > size(inds, 1), continue; end
+                if j2 < 1 || j2 > size(inds, 2), continue; end
+                if k2 < 1 || k2 > size(inds, 3), continue; end
+
+                % update matrix with weight associated to current neighbor
+                A(ind_f, inds(i2,j2,k2)) = shifts(iShift,4);
+            end
+        end
+
+        % evaluate shift values at vertices of the new grid
+        shifts = getShift(obj, [vx2(:) vy2(:) vz2(:)]);
+
+        % compute parameters that result in the computed shifts
+        ux2 = A \ shifts(:,1);
+        uy2 = A \ shifts(:,2);
+        uz2 = A \ shifts(:,3);
+
+        % create the new vector of parameters
+        params = [ux2 uy2 uz2]';
+        params = params(:)';
+
+        % create the new transform
         res = BSplineTransformModel3D(dims2, obj.GridSpacing/2, obj.GridOrigin);
         res.Params = params;
     end
-    
+
     function drawVertexShifts(obj, varargin)
         % Draw the displacement associated to each vertex of the grid.
         %
@@ -380,7 +471,10 @@ methods
                     
                     % evaluate weight associated to current grid vertex
                     b = fun_i(xu(inds)) .* eval_j(inds) .* eval_k(inds);
-                    
+
+                    % index of parameters
+                    indP = ones(size(indX));
+
                     % update jacobian for grid vectors located around current
                     % points
                     jac(sub2ind(dim, indP, indX, find(inds))) = b;
@@ -403,9 +497,19 @@ methods
     function point2 = transformPoint(obj, point)
         % Compute coordinates of transformed point.
         
-        % initialize coordinate of result
-        point2 = point;
-        
+        % apply translation to input points
+        point2 = point + getShift(obj, point);
+    end
+    
+    function shift = getShift(obj, point)
+        % Compute the shift associated to a point.
+        %
+        % Returns the shift as a N-by-3 array, where N is the number of
+        % points.
+
+        % initialize coordinates of result
+        shift = zeros(size(point,1), 3);
+
         % compute position wrt to the grid vertices (1-indexed)
         xg = (point(:, 1) - obj.GridOrigin(1)) / obj.GridSpacing(1) + 1;
         yg = (point(:, 2) - obj.GridOrigin(2)) / obj.GridSpacing(2) + 1;
@@ -444,8 +548,6 @@ methods
                 eval_j(indOkY) = fun_j(yu(indOkY));
                 
                 for i = -1:2
-%                     fprintf('%d,%d,%d\n', i, j, k);
-                    
                     % coordinates of neighbor grid vertex
                     xv = floor(xg) + i;
                     indOkX = xv >= 1 & xv <= obj.GridSize(1);
@@ -463,14 +565,14 @@ methods
                     b = fun_i(xu(inds)) .* eval_j(inds) .* eval_k(inds);
                     
                     % update coordinates of transformed points
-                    point2(inds,1) = point2(inds,1) + b .* obj.Params(indX)';
-                    point2(inds,2) = point2(inds,2) + b .* obj.Params(indX+1)';
-                    point2(inds,3) = point2(inds,3) + b .* obj.Params(indX+2)';
+                    shift(inds,1) = shift(inds,1) + b .* obj.Params(indX)';
+                    shift(inds,2) = shift(inds,2) + b .* obj.Params(indX+1)';
+                    shift(inds,3) = shift(inds,3) + b .* obj.Params(indX+2)';
                 end
             end
         end
     end
-    
+
     function jac = jacobianMatrix(obj, point)
         % Compute Jacobian matrix at the given point.
         %
