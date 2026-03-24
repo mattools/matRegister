@@ -528,6 +528,26 @@ Computations with angles are made in radians,
  and to save into text files.
 \end_layout
 
+\begin_layout Standard
+Vectors,
+ matrices and multi-variate functions are written in bold font.
+ Elements of vectors and matrices are written in standard mathematical font.
+ Examples:
+\begin_inset Formula 
+\begin{align*}
+\boldsymbol{x} & =\left(x_{1},x_{2,}x_{3}\right)\\
+\boldsymbol{M} & =\left[\begin{array}{ccc}
+m_{00} & m_{01} & m_{02}\\
+m_{10} & m_{11} & m_{12}\\
+m_{20} & m_{21} & m_{22}
+\end{array}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Chapter
 Registration workflow
 \end_layout
@@ -539,7 +559,7 @@ Image registration
 \begin_layout Standard
 In the most simple case,
  image registration consists in identifying a geometric transformation 
-\begin_inset Formula $\hat{T}$
+\begin_inset Formula $\hat{\boldsymbol{T}}$
 \end_inset
 
  that will put in correspondence the pixels of a reference image 
@@ -554,7 +574,7 @@ In the most simple case,
  A classical formulation is as follow:
 \begin_inset Formula 
 \begin{align}
-\hat{T} & =\underset{T\in\mathcal{T}}{\text{argmin}}\,\mathcal{D}\left(I_{1},T(I_{2})\right)
+\hat{\boldsymbol{T}} & =\underset{\boldsymbol{T}\in\mathcal{T}}{\text{argmin}}\,\mathcal{D}\left(I_{1},\boldsymbol{T}(I_{2})\right)
 \end{align}
 
 \end_inset
@@ -577,7 +597,7 @@ where
  that penalizes transforms with locally too large deformations.
 \begin_inset Formula 
 \begin{align}
-\hat{T} & =\underset{T\in\mathcal{T}}{\text{argmin}}\,\mathcal{D}\left(I_{1},T(I_{2})\right)+\alpha\mathcal{R}(T)
+\hat{\boldsymbol{T}} & =\underset{T\in\mathcal{T}}{\text{argmin}}\,\mathcal{D}\left(I_{1},\boldsymbol{T}(I_{2})\right)+\alpha\mathcal{R}(\boldsymbol{T})
 \end{align}
 
 \end_inset
@@ -609,7 +629,7 @@ In practice,
  The formulation becomes:
 \begin_inset Formula 
 \begin{align}
-\hat{\boldsymbol{\theta}} & =\underset{\boldsymbol{\theta}}{\text{argmin}}\,\mathcal{D}\left(I_{1},T_{\boldsymbol{\theta}}(I_{2})\right)+\alpha\mathcal{R}(T_{\boldsymbol{\theta}})
+\hat{\boldsymbol{\theta}} & =\underset{\boldsymbol{\theta}}{\text{argmin}}\,\mathcal{D}\left(I_{1},\boldsymbol{T}_{\boldsymbol{\theta}}(I_{2})\right)+\alpha\mathcal{R}(\boldsymbol{T}_{\boldsymbol{\theta}})
 \end{align}
 
 \end_inset
@@ -1273,7 +1293,7 @@ Affine transforms comprise a large family of transformations,
 \end_layout
 
 \begin_layout Standard
-Affine transform can be represented by a transform matrix,
+Affine transforms can be represented by a transform matrix,
  using homogeneous coordinates:
 \begin_inset Formula 
 \begin{align*}
@@ -1463,7 +1483,7 @@ MatrixAffineTransform
 \end_layout
 
 \begin_layout Standard
-An implementation of AffineTransform that stores the coefficients in an array.
+An implementation of AffineTransform that stores the coefficients within a 2D array corresponding to the matrix of the transfrom.
 \end_layout
 
 \begin_layout Subsection
@@ -1648,7 +1668,7 @@ Represents a 2D similarity,
 \end_layout
 
 \begin_layout Standard
-Usign the logarithm of the scale factor allows to represents expansions and shrinking in a more similar way,
+Using the logarithm of the scale factor allows to represents expansions and shrinking in a more similar way,
  and making the parameter vary on 
 \begin_inset Formula $\mathbb{R}$
 \end_inset
@@ -1688,7 +1708,7 @@ J_{\theta}(x,y) & =\left(\begin{array}{cccc}
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Subsection
 AffineTransformModel2D
 \end_layout
 
@@ -1815,7 +1835,7 @@ z' & = & p_{3}+p_{6}x+p_{9}y+p_{12}z+p_{15}x^{2}+p_{18}y^{2}+p_{21}z^{2}+p_{24}x
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Chapter
 Non-rigid (Free-Form) Transforms
 \end_layout
 
@@ -1848,7 +1868,9 @@ free-form transform
 \end_layout
 
 \begin_layout Standard
-The most common model is based on B-Splines 
+The deformation field can be represented by a vector field with the same size as the image to register.
+ It is also possible to use a parametric representation of the transform to reduce the number of degrees of fredom of the transform.
+ The most common model is based on B-Splines 
 \begin_inset CommandInset citation
 LatexCommand citep
 key "Rueckert_1999_TransMedIm"
@@ -1857,6 +1879,422 @@ literal "false"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+\backslash
+minitoc
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+B-Spline Transforms
+\end_layout
+
+\begin_layout Standard
+Splines are piecewise polynomials with pieces that are smoothly connected 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Unser_1999_SPM"
+literal "false"
+
+\end_inset
+
+.
+ B-Splines are a subcase of Splines.
+ Applications of BSplines to image registration have been proposed by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Rueckert_1999_TransMedIm"
+literal "false"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+Cubic BSplines
+\end_layout
+
+\begin_layout Standard
+B-splines are symmetrical bell-shaped functions constructed recursively from convolutions of a rectangular pulse 
+\begin_inset Formula $\beta^{0}$
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{align}
+\beta^{0}(x) & =\begin{cases}
+1 & -\frac{1}{2}<x<\frac{1}{2}\\
+\frac{1}{2} & \left|x\right|=\frac{1}{2}\\
+0 & \text{otherwise}
+\end{cases}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align}
+\beta^{n}(x) & =\beta^{0}*\beta^{0}*\cdots*\beta^{0}(x)
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Cubic splines are of particular interest.
+ They are defined as follow 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Unser_1999_SPM"
+literal "false"
+
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{align}
+\beta^{3}(x) & =\begin{cases}
+\frac{2}{3}-\left|x\right|^{2}+\frac{\left|x\right|^{3}}{2} & 0\leq\left|x\right|<1\\
+\frac{\left(2-\left|x\right|\right)^{3}}{6} & 1\leq\left|x\right|<2\\
+0 & \left|x\right|\geq2
+\end{cases}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+B-Spline based transform
+\end_layout
+
+\begin_layout Standard
+Notations are mostly inspired by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Rueckert_1999_TransMedIm"
+literal "false"
+
+\end_inset
+
+.
+ One considers a 
+\begin_inset Formula $n_{x}\times n_{y}$
+\end_inset
+
+ grid of control points (See Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Interpolation-Displacement_BSplines"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+).
+ Coordinates of the control points are denoted by 
+\begin_inset Formula $\boldsymbol{c}_{i,j}=(c_{i,j,1},c_{i,j,2}$
+\end_inset
+
+),
+ and the spacing between points 
+\begin_inset Formula $(\delta_{x},\delta_{y})$
+\end_inset
+
+.
+ To each control point 
+\begin_inset Formula $\boldsymbol{c}_{ij}$
+\end_inset
+
+ is associated a local displacement vector 
+\begin_inset Formula $\phi_{ij}=(\phi_{i,j,1},\phi_{i,j,2})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/transforms/bsplines/interpBSplines.png
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Interpolation-Displacement_BSplines"
+
+\end_inset
+
+Interpolation of a displacement vector from a grid of control points.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+One considers now a point 
+\begin_inset Formula $\boldsymbol{x}$
+\end_inset
+
+,
+ and one looks for the displacement vector 
+\begin_inset Formula $\boldsymbol{U}(\boldsymbol{x})$
+\end_inset
+
+.
+ For cubic B-Splines,
+ the displacement vector 
+\begin_inset Formula $\boldsymbol{U}(\boldsymbol{x})$
+\end_inset
+
+ can be interpolated from a finite number of neighbor control points.
+ One considers 4 control points along each dimension resulting in 16 control points for 2D deformation fields,
+ and 64 control points for 3D ones.
+\end_layout
+
+\begin_layout Standard
+The deformation field is expressed as
+\begin_inset Formula 
+\begin{align}
+\boldsymbol{U}(\boldsymbol{x}) & =\sum^{3}_{l=0}\sum^{3}_{m=0}B_{l}(u)B_{m}(v)\phi_{i+l,j+m}
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $l$
+\end_inset
+
+ and 
+\begin_inset Formula $m$
+\end_inset
+
+ represent the indices of the tiles around the point 
+\begin_inset Formula $\boldsymbol{x}$
+\end_inset
+
+,
+ 
+\begin_inset Formula $u=\text{frac}(x/\delta_{x})$
+\end_inset
+
+ and 
+\begin_inset Formula $y=\text{frac}(y/\delta_{y})$
+\end_inset
+
+ correspond to the normalized coordinates within the local tile
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+We use the notation 
+\begin_inset Formula $\text{frac}(x)=x-\left\lfloor x\right\rfloor $
+\end_inset
+
+ for the fractional part of 
+\begin_inset Formula $x$
+\end_inset
+
+,
+ where 
+\begin_inset Formula $\left\lfloor x\right\rfloor $
+\end_inset
+
+ represents the largest integer lower or equal to 
+\begin_inset Formula $x$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+,
+ 
+\begin_inset Formula $i=\left\lfloor x/\delta_{x}\right\rfloor -1,j=\left\lfloor y/\delta_{y}\right\rfloor -1$
+\end_inset
+
+ are the indices of the control point to consider for the interpolation,
+ and 
+\begin_inset Formula $B_{i}(u)$
+\end_inset
+
+ are the B-Spline basis functions.
+ The basis functions 
+\begin_inset Formula $B_{i}(u)$
+\end_inset
+
+ are defined by:
+\begin_inset Formula 
+\begin{align}
+B_{0}(u) & =(1-u)^{3}/6\\
+B_{1}(u) & =(3u^{3}-6u^{2}+4)/6\\
+B_{2}(u) & =(-3u^{3}+3u^{2}+3u+1)/6\\
+B_{3}(u) & =u^{3}/6
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:BSpline-Basis-Functions"
+plural "false"
+caps "false"
+noprefix "false"
+nolink "false"
+tuple "list"
+
+\end_inset
+
+ shows the different basis function for B-Splines of degree 3.
+\begin_inset Float figure
+placement document
+alignment document
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/transforms/bsplines/bspline_basis_functions.png
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:BSpline-Basis-Functions"
+
+\end_inset
+
+Basis functions for B-Splines of degree 3.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the case of a 3D deformation field,
+ the equation becomes:
+\begin_inset Formula 
+\begin{align}
+\boldsymbol{U}(\boldsymbol{x}) & =\sum^{3}_{l=0}\sum^{3}_{m=0}\sum^{3}_{n=0}B_{l}(u)B_{m}(v)B_{n}(w)\phi_{i+l,j+m,k+n}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Implementations
 \end_layout
 
 \begin_layout Subsection
@@ -2441,6 +2879,13 @@ Computes the second derivative of each component
  with as many rows as the number of points.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Utilities
 \end_layout
@@ -2466,10 +2911,11 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/transforms/bsplines/bsplines_basisFunction.png
 	lyxscale 30
-	width 35text%
+	width 45text%
 
 \end_inset
 
@@ -2477,15 +2923,19 @@ status open
 \begin_inset Graphics
 	filename images/transforms/bsplines/bsplines_derivatives.png
 	lyxscale 30
-	width 35text%
+	width 45text%
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename images/transforms/bsplines/bsplines_secondDerivatives.png
 	lyxscale 30
-	width 35text%
+	width 45text%
 
 \end_inset
 
@@ -2657,9 +3107,9 @@ MeanSquareDifferencesMetric
 \begin_layout Standard
 Corresponds to a discretization of the integral:
 \begin_inset Formula 
-\begin{align*}
+\begin{align}
 MSD & =\int(I_{1}(\boldsymbol{x})-I_{2}(\boldsymbol{x}))^{2}d\boldsymbol{x}
-\end{align*}
+\end{align}
 
 \end_inset
 
@@ -2713,8 +3163,44 @@ SumSquaredDistanceToClosestPoint3D
 
 \begin_layout Standard
 Defined from two set of points and a transformation model.
- The metric is obtained by applying the transform to the moving points,
- computing for each transformred point the distance to point of the original set,
+ Let 
+\begin_inset Formula $\boldsymbol{X}$
+\end_inset
+
+ be the set of moviong points,
+ and 
+\begin_inset Formula $\boldsymbol{Y}$
+\end_inset
+
+ the reference point set.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align}
+SSD & =\sum_{\boldsymbol{x}\in\boldsymbol{X}}d^{2}\left(\boldsymbol{T}\left(\boldsymbol{x}\right),\boldsymbol{Y}\right)
+\end{align}
+
+\end_inset
+
+where 
+\begin_inset Formula $d\left(\boldsymbol{x},\boldsymbol{Y}\right)$
+\end_inset
+
+ is obtained from
+\begin_inset Formula 
+\[
+d\left(\boldsymbol{x},\boldsymbol{Y}\right)=\min_{\boldsymbol{y}\in\boldsymbol{Y}}d\left(\boldsymbol{x},\boldsymbol{y}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The metric is obtained by applying the transform to the moving points,
+ computing for each transformed point the distance to point of the original set,
  and returning the sum of the squares of the distances.
 \end_layout
 
@@ -2780,6 +3266,13 @@ tic;
  toc
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -2907,6 +3400,21 @@ Registration requires the minimization of a metric that describes the difference
 The Matlab Optimization toolbox provides a number of optimization algorithms.
  The optimization module of the MatRegister library provides some helper functions that facilitate the use of these algorithms,
  as well as alternative implementations of some optimization methods.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+TODO:
+ add utility functions for optimization?
+ (Rosenbrock...)
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3040,6 +3548,67 @@ tic;
  toc
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Providing gradient
+\end_layout
+
+\begin_layout Standard
+In some cases,
+ it can be useful to provide the gradient (with respect to the parameters to optimize) of the function to minimize.
+ The documentation of Matlab an example of function with gradient:
+ 
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+function [f,g] = rosenbrockwithgrad(x)
+\end_layout
+
+\begin_layout Plain Layout
+% Calculate objective f
+\end_layout
+
+\begin_layout Plain Layout
+f = 100*(x(2) - x(1)^2)^2 + (1-x(1))^2;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+if nargout > 1 % gradient required
+\end_layout
+
+\begin_layout Plain Layout
+    g = [-400*(x(2)-x(1)^2)*x(1) - 2*(1-x(1));
+\end_layout
+
+\begin_layout Plain Layout
+        200*(x(2)-x(1)^2)];
+\end_layout
+
+\begin_layout Plain Layout
+end
+\end_layout
+
+\begin_layout Plain Layout
+end
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -3183,6 +3752,13 @@ status open
 MetricEvaluator
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
 \end_inset
 
 
